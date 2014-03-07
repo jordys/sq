@@ -296,7 +296,7 @@ class sq {
 		// If errors exist the controller renders an error or debug screen and
 		// ends execution
 		if (self::$error) {
-			if (self::config('debug', $controller)) {
+			if (self::config('debug')) {
 				$controller->action('debug', self::$error);
 			} else {
 				$controller->action('error', self::$error);
