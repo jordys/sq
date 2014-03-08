@@ -31,7 +31,7 @@ abstract class sqComponent implements iterator, countable, arrayaccess {
 		// If a view is defined for layout generate it as a view
 		if ($this->layout) {
 			$this->layout = sq::view($this->layout);
-			$this->layout->layout = true;
+			$this->layout->layout = false;
 		}
 		
 		$this->init();

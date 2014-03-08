@@ -74,7 +74,11 @@ abstract class sqView extends component {
 		
 		$rendered = $this->renderTemplate($view, $data);
 		
-		if (is_object($this->layout) && $full) {
+		if ($this->layout) {
+			if (is_string($this->layout)) {
+				$this->layout = sq::view($this->layout);
+			}
+			
 			$this->layout->content = $rendered;
 			$this->layout->full = true;
 			
@@ -108,12 +112,6 @@ abstract class sqView extends component {
 		
 		// Variable for root path of website
 		$base = sq::base();
-		
-		// Name of the current controller
-		$controller = sq::get('controller');
-		
-		// Current action
-		$action = sq::get('action');
 		
 		// Set data explicity passed into the template to variables. Possibly 
 		// overwriting existing variables.
