@@ -7,7 +7,7 @@ $("document").ready(function() {
 	});
 	
 	$("textarea.richtext").tinymce({
-		script_url: "../../assets/admin/tinymce/tinymce.min.js",
+		script_url: tinymcePath + "/tinymce.min.js",
 		statusbar: false,
 		body_id: "mce-content",
 		content_css: "../../assets/admin/main.css?" + new Date().getTime(),
