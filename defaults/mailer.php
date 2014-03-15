@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Mailer configuration
+ * Mailer defaults
  */
 
 $defaults = array(

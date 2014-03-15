@@ -40,7 +40,7 @@ class sq {
 		set_error_handler('sqErrorHandler', -1);
 		
 		// Framework config defaults
-		sq::load('/config/defaults');
+		sq::load('/defaults/main');
 		
 		// Set the date timezone to avoid error on some systems
 		date_default_timezone_set(self::config('timezone'));

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Auth configuration
+ * Auth defaults
  */
 
 $defaults = array(
@@ -25,6 +25,32 @@ $defaults = array(
 		
 		// Field to use as username
 		'username-field' => 'email'
+	),
+	
+	// Users model
+	'users' => array(
+		'name' => 'users',
+		'fields' => array(
+			'list' => array(
+				'created' => 'date',
+				'first' => 'text',
+				'last' => 'text',
+				'email' => 'text',
+				'level' => 'text'
+			),
+			'form' => array(
+				'first' => 'text',
+				'last' => 'text',
+				'email' => 'text',
+				'level' => 'select|users/admin-types',
+				'notes' => 'blurb'
+			)
+		),
+		'inline-actions' => array('delete', 'password', 'update'),
+		'admin-types' => array(
+			'user' => 'User',
+			'admin' => 'Admin'
+		)
 	)
 );
 
