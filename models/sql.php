@@ -57,35 +57,7 @@ class sql extends model {
 		$query .= $this->parseOrder($this->order, $this->orderDirection);
 		$query .= $this->parseLimit($this->limit);
 		
-		$handle = $this->query($query);
-		$handle->setFetchMode(PDO::FETCH_ASSOC);
-		
-		$data = array();
-		if ($this->limit === true) {
-			$data = $handle->fetch();
-		} else {
-			$i = 0;
-			while ($row = $handle->fetch()) {
-				if ($this->limit > $i || $this->limit == false) {
-					$model = sq::model($this->options['table']);
-					$model->where($row['id']);
-					$model->set($row);
-					
-					if ($this->options['load-relations'] === true) {
-						$model->relate();
-					} else {
-						$model->options['load-relations'] = false;
-					}
-					
-					$data[] = $model;
-					$i++;
-				} else {
-					break;
-				}
-			}
-		}
-		
-		$this->set($data, false);
+		$this->query($query);
 		
 		if ($this->options['load-relations'] === true) {
 			$this->relate();
@@ -102,17 +74,7 @@ class sql extends model {
 	 * having null data is necessary.
 	 */
 	public function schema() {
-		$handle = $this->query('SHOW COLUMNS FROM '.$this->options['table']);
-		$handle->setFetchMode(PDO::FETCH_ASSOC);
-		
-		$columns = array();
-		while ($row = $handle->fetch()) {
-			$columns[$row['Field']] = null;
-		}
-		
-		$this->set($columns);
-		
-		return $this;
+		return $this->query('SHOW COLUMNS FROM '.$this->options['table']);
 	}
 	
 	public function create($data = false) {
@@ -185,12 +147,60 @@ class sql extends model {
 				$this->id = self::$conn->lastInsertId();
 			}
 			
-			return $handle;
+			if (strpos($query, 'SELECT') !== false) {
+				$handle->setFetchMode(PDO::FETCH_ASSOC);
+				
+				$data = array();
+				if ($this->limit === true) {
+					$data = $handle->fetch();
+				} else {
+					$i = 0;
+					while ($row = $handle->fetch()) {
+						if ($this->limit > $i || $this->limit == false) {
+							$model = sq::model($this->options['table']);
+							
+							if (isset($row['id'])) {
+								$model->where($row['id']);
+							}
+							
+							$model->set($row);
+							
+							if ($this->options['load-relations'] === true) {
+								$model->relate();
+							} else {
+								$model->options['load-relations'] = false;
+							}
+							
+							$data[] = $model;
+							$i++;
+						} else {
+							break;
+						}
+					}
+				}
+			} elseif (strpos($query, 'SHOW COLUMNS') !== false) {
+				$handle->setFetchMode(PDO::FETCH_ASSOC);
+				
+				$columns = array();
+				while ($row = $handle->fetch()) {
+					$columns[$row['Field']] = null;
+				}
+				
+				$this->set($columns);
+			}
+			
+			$this->set($data, false);
+			
+			return $this;
 		} catch (Exception $e) {
-			echo $e;
-			echo 'DIED!';
-			echo $query;
-			print_r($data);
+			if (sq::config('debug')) {
+				echo $e;
+				echo 'DIED!';
+				echo $query;
+				print_r($data);
+			} else {
+				sq::error('404');
+			}
 		}
 	}
 	
