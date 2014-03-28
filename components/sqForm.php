@@ -44,7 +44,7 @@ abstract class sqForm extends component {
 		
 		return '<input type="text" name="'.$name.'" value="'.$value.'"'.$append.'/>';
 	}
-
+	
 	// Password input
 	public static function password($name, $value = null, $attrs = array()) {
 		$append = self::parseAttrs($attrs);
@@ -181,7 +181,7 @@ abstract class sqForm extends component {
 		}
 		
 		$content .= '<input type="checkbox" name="'.$name.'" value="1" '.$checked.$append.'/>';
-	
+		
 		return $content;
 	}
 	
@@ -239,7 +239,7 @@ abstract class sqForm extends component {
 		$string = preg_replace('!\s+!', ' ', $string);
 		$string = str_replace(' ', '-', $string);
 		$string = strtolower($string);
-
+		
 		return $string;
 	}
 }

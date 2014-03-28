@@ -13,7 +13,7 @@ abstract class sqView extends component {
 	// If full is true the framework will generate header and footer sections.
 	// View is the path of the view going to be generated with the view data.
 	// Both of these values can be changed at any time.
-	public $full, $view;
+	public $full, $view, $parent;
 	
 	// FIFO stack of the list of current view clips
 	private $clips = array();
@@ -48,11 +48,17 @@ abstract class sqView extends component {
 	// Special overloaded setter that adds data from the layout view into views
 	// loaded included
 	public function __set($name, $value) {
-		$this->data[$name] = $value;
-		
 		if (is_object($value) && !is_subclass_of($value, 'model')) {
 			$value->data += $this->data;
+			
+			if (is_subclass_of($value, 'view')) {
+				$value->parent = &$this;
+			}
+			
+			$value = $value->render();
 		}
+		
+		$this->data[$name] = $value;
 	}
 	
 	// Renders the template view file. If full is specified the template will
@@ -79,6 +85,7 @@ abstract class sqView extends component {
 				$this->layout = sq::view($this->layout);
 			}
 			
+			$this->layout->set($this->data);
 			$this->layout->content = $rendered;
 			$this->layout->full = true;
 			
@@ -105,9 +112,6 @@ abstract class sqView extends component {
 		}
 		unset($key, $val);
 		
-		// Config variable is available in template
-		$config = sq::config();
-		
 		// Variable for root path of website
 		$base = sq::base();
 		
@@ -124,6 +128,11 @@ abstract class sqView extends component {
 		
 		ob_start();
 		include $this->getViewPath($view);
+		
+		if (isset($this->parent)) {
+			$this->parent->set($this->data);
+		}
+		
 		return ob_get_clean();
 	}
 	
@@ -234,7 +243,7 @@ abstract class sqView extends component {
 		$content = ob_get_clean();
 		
 		if (!empty($this->clips) && is_object($this->layout)) {
-			$this->layout->{array_pop($this->clips)} = $content;
+			$this->{array_pop($this->clips)} = $content;
 		}
 		
 		return $content;
