@@ -148,6 +148,8 @@ abstract class sqModel extends component {
 	public function order($order, $direction = 'DESC') {
 		$this->order = $order;
 		$this->orderDirection = $direction;
+
+		return $this;
 	}
 	
 	public function group($field, $field1 = false) {
