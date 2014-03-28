@@ -142,12 +142,6 @@ abstract class sqComponent implements iterator, countable, arrayaccess {
 	// Mass asignment method for class data. All the usual security warnings
 	// apply to mass asignment.
 	public function set($data, $overwrite = true) {
-		
-		// Only overwrite data if it exists
-		if ($overwrite) {
-			$this->data = array();
-		}
-		
 		if (is_object($data)) {
 			$data = $data->data;
 		}
@@ -155,7 +149,11 @@ abstract class sqComponent implements iterator, countable, arrayaccess {
 		// Sets new properties
 		if (is_array($data)) {
 			foreach ($data as $key => $val) {
-				$this->data[$key] = $val;
+				
+				// Only replace existing properties if overwrite is true
+				if ($overwrite || !isset($this->data[$key])) {
+					$this->data[$key] = $val;
+				}
 			}
 		}
 		

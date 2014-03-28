@@ -164,7 +164,6 @@ class sql extends model {
 							}
 							
 							$model->set($row);
-							
 							if ($this->options['load-relations'] === true) {
 								$model->relate();
 							} else {
@@ -189,7 +188,7 @@ class sql extends model {
 				$this->set($columns);
 			}
 			
-			$this->set($data, false);
+			$this->set($data);
 			
 			return $this;
 		} catch (Exception $e) {
