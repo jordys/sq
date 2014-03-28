@@ -322,9 +322,7 @@ class sq {
 			$config['default-controller'] = $config['name'];
 		}
 		
-		$module = new module($config);
-		
-		return $module;
+		return new module($config);
 	}
 	
 	/**
