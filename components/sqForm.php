@@ -44,6 +44,17 @@ abstract class sqForm extends component {
 		
 		return '<input type="text" name="'.$name.'" value="'.$value.'"'.$append.'/>';
 	}
+
+	// Password input
+	public static function password($name, $value = null, $attrs = array()) {
+		$append = self::parseAttrs($attrs);
+		
+		if (!isset($attrs['id'])) {
+			$append .= ' id="'.self::toId($name).'"';
+		}
+		
+		return '<input type="password" name="'.$name.'" value="'.$value.'"'.$append.'/>';
+	}
 	
 	public static function currency($name, $value = null, $attrs = array()) {
 		$append = self::parseAttrs($attrs);
@@ -124,18 +135,22 @@ abstract class sqForm extends component {
 	}
 	
 	// Choose from a list of related entries
-	public static function single($name, $value, $model, $id = false, $class = null) {
+	public static function single($name, $value, $model, $attrs = false) {
 		$model = sq::model($model);
 		$model->options['load-relations'] = false;
 		$model->read(array('name', 'id'));
 		
-		$items = array('' => '');
+		$emptyLabel = '';
+		if ($attrs['empty-label']) {
+			$emptyLabel = $attrs['empty-label'];
+		}
+		$items = array('' => $emptyLabel);
 		
 		foreach ($model as $item) {
 			$items[$item->id] = $item->name;
 		}
 		
-		return self::select($name, $value, $items, $id, $class);
+		return self::select($name, $value, $items, $attrs);
 	}
 	
 	// Prints a checkbox. Optionally checked
