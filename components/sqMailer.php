@@ -53,15 +53,21 @@ abstract class sqMailer extends component {
 		
 		$message = $this->makeBoundary();
 		
-		if ($this->options['format'] == 'both' || $this->options['format'] == 'text') {
+		if ($this->options['format'] == 'both') {
 			$message .= "Content-Type: text/plain; charset=utf-8\n\n";
+		}
+
+		if ($this->options['format'] == 'both' || $this->options['format'] == 'text') {
 			$message .= sq::view($this->textView, $this->data, false);
 		}
 		
 		$message .= $this->makeBoundary();
+
+		if ($this->options['format'] == 'both') {
+			$message .= "Content-Type: text/html; charset=utf-8\n\n";
+		}
 		
 		if ($this->options['format'] == 'both' || $this->options['format'] == 'html') {
-			$message .= "Content-Type: text/html; charset=utf-8\n\n";
 			$message .= sq::view($this->htmlView, $this->data, false);
 		}
 		
