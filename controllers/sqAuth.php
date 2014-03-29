@@ -48,7 +48,7 @@ abstract class sqAuth extends controller {
 			$user->options['load-relations'] = false;
 			$user->where(array(sq::config('auth/username-field') => $username));
 			$user->limit();
-			$user->read('password');
+			$user->read(array('id', 'password'));
 			
 			if (isset($user->password) && self::authenticate($password, $user->password)) {
 				self::login($username, $remember);
