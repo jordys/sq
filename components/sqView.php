@@ -223,16 +223,14 @@ abstract class sqView extends component {
 	public function clip($var = false) {
 		ob_start();
 		
-		if (is_object($this->layout) && $var) {
-			array_push($this->clips, $var);
-		}
+		array_push($this->clips, $var);
 	}
 	
 	// Ends clip and returns the content captured
 	public function end() {
 		$content = ob_get_clean();
 		
-		if (!empty($this->clips) && is_object($this->layout)) {
+		if (!empty($this->clips)) {
 			$this->{array_pop($this->clips)} = $content;
 		}
 		
