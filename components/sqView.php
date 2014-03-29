@@ -19,8 +19,8 @@ abstract class sqView extends component {
 	private $clips = array();
 	
 	// In template variables
-	public static $description, $doctype, $title, $language, $favicon, $base,
-		$meta, $id, $head, $foot,
+	public static $description, $doctype, $title, $language, $favicon, $id,
+		$head, $foot,
 		$keywords = array(),
 		$scripts  = array('foot' => array(), 'head' => array()), 
 		$styles   = array();
@@ -35,14 +35,12 @@ abstract class sqView extends component {
 		$this->view    = $view;
 		$this->full    = $full;
 		
-		// Setup base template variables from config
-		self::$description = $this->options['meta-description'];
-		self::$keywords    = $this->options['meta-keywords'];
-		self::$title       = $this->options['title'];
-		self::$doctype     = $this->options['doctype'];
-		self::$language    = $this->options['language'];
-		self::$favicon     = $this->options['favicon'];
-		self::$base        = $this->options['base'];
+		// Set defult options for description title doctype and such
+		foreach ($this->options as $key => $val) {
+			if (!self::$$key) {
+				self::$$key = $val;
+			}
+		}
 	}
 	
 	// Special overloaded setter that adds data from the layout view into views
@@ -51,7 +49,7 @@ abstract class sqView extends component {
 		if (is_object($value) && !is_subclass_of($value, 'model')) {
 			$value->data += $this->data;
 			
-			if (is_subclass_of($value, 'view')) {
+			if (get_class($value) == 'view' || is_subclass_of($value, 'view')) {
 				$value->parent = &$this;
 			}
 			
@@ -180,14 +178,6 @@ abstract class sqView extends component {
 		// Named meta tags
 		$head .= '<meta name="description" content="'.self::$description.'">';
 		$head .= '<meta name="keywords" content="'.implode(',', self::$keywords).'">';
-		
-		// Generic meta variable
-		$head .= self::$meta;
-		
-		// Base tag
-		if (self::$base !== false) {
-			$head .= '<base href="'.self::$base.'"/>';
-		}
 		
 		// External stylesheets
 		foreach (self::$styles as $style) {

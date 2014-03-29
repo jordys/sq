@@ -8,13 +8,10 @@ $defaults = array(
 	'view' => array(
 		
 		// Meta description string
-		'meta-description' => null,
+		'description' => null,
 		
 		// Array of meta keywords
-		'meta-keywords' => array(),
-		
-		// Base tag path. False for no base tag.
-		'base' => false,
+		'keywords' => array(),
 		
 		// Website default html title
 		'title' => null,
@@ -26,7 +23,7 @@ $defaults = array(
 		'language' => 'en',
 		
 		// Path to favicon
-		'favicon' => 'favicon.ico'
+		'favicon' => 'favicon.ico',
 	)
 );
 
