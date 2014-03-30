@@ -279,7 +279,6 @@ abstract class sqModel extends component {
 				
 				$model->read();
 				
-				$this->$name = $model;
 				$this->data[$name] = $model;
 			}
 		} else {
