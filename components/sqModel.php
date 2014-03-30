@@ -79,6 +79,17 @@ abstract class sqModel extends component {
 		
 	}
 	
+	// Makes a data store. For instance a folder to store files or a table to
+	// store mySQL data.
+	public function make($schema) {
+		
+	}
+	
+	// Returns true if the database record exists. Not implement at this level.
+	public function exists() {
+		
+	}
+	
 	// Searches through model list a returns an item
 	public function find($where) {
 		foreach ($this->data as $item) {
@@ -211,6 +222,22 @@ abstract class sqModel extends component {
 		return $this;
 	}
 	
+	public function manyMany($model, $match = false, $local = 'id', $params = array()) {
+		if (!$match) {
+			$match = $this->options['name'].'_id';
+		}
+		
+		$intersect = sq::model('sq_intersect_'.$this->options['name'].'_'.$model)
+			->make(array(
+				$model.'_'.$match => 'INT(11) NOT NULL',
+				$this->options['name'].'_'.$local => 'INT(11) NOT NULL'
+			))
+			->where(array($model.'_'.$match => $this->data[$local]))
+			->read();
+		
+		return $this;
+	}
+	
 	// Is called directly after a read to automatically create the relationships
 	// as defined in the model defaults.
 	public function relate() {
@@ -280,7 +307,6 @@ abstract class sqModel extends component {
 				$model->read();
 				
 				$this->$name = $model;
-				$this->data[$name] = $model;
 			}
 		} else {
 			foreach ($this->data as $item) {

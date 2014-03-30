@@ -77,6 +77,33 @@ class sql extends model {
 		return $this->query('SHOW COLUMNS FROM '.$this->options['table']);
 	}
 	
+	public function exists() {
+		try {
+			$result = self::$conn->query('SELECT 1 FROM '.$this->options['table'].' LIMIT 1');
+		} catch (Exception $e) {
+			return false;
+		}
+		
+		return $result !== false;
+	}
+	
+	public function make($schema) {
+		if (!$this->exists()) {
+			$query = 'CREATE TABLE '.$this->options['table'].' (id INT(11) NOT NULL AUTO_INCREMENT,';
+			
+			foreach ($schema as $key => $val) {
+				$schema[$key] = $key.' '.$val;
+			}
+			
+			$query .= implode(',', $schema);
+			$query .= ', PRIMARY KEY (id))';
+			
+			$this->query($query);
+		}
+		
+		return $this;
+	}
+	
 	public function create($data = false) {
 		if ($data) {
 			$this->set($data);
@@ -214,7 +241,7 @@ class sql extends model {
 				unset($data[$key]);
 			}
 		}
-				
+		
 		$query .= ' SET '.implode(',', $set);
 		
 		if (!empty($this->where)) {
