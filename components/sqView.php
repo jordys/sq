@@ -18,6 +18,10 @@ abstract class sqView extends component {
 	// FIFO stack of the list of current view clips
 	private $clips = array();
 	
+	// Static property to tell if render flow has jumped to new view
+	private static $currentStyle = array(),
+		$currentScripts = array('foot' => array(), 'head' => array());
+	
 	// In template variables
 	public static $description, $doctype, $title, $language, $favicon, $id,
 		$head, $foot,
@@ -66,6 +70,17 @@ abstract class sqView extends component {
 	public function render($view = null, $data = array(), $full = null) {
 		if ($view === null) {
 			$view = $this->view;
+			
+			// This gnarly logic controls the order of scripts and styles.
+			// currentScripts and currentStyles serve as a sort of cache to keep
+			// files in the logical order during complex rendering flow.
+			self::$scripts['foot'] = array_merge(self::$scripts['foot'], self::$currentScripts['foot']);
+			self::$scripts['head'] = array_merge(self::$scripts['head'], self::$currentScripts['head']);
+			self::$styles = array_merge(self::$styles, self::$currentStyle);
+			
+			self::$currentStyle = array();
+			self::$currentScripts['head'] = array();
+			self::$currentScripts['foot'] = array();
 		}
 		
 		if ($full === null) {
@@ -85,10 +100,23 @@ abstract class sqView extends component {
 			
 			$this->layout->set($this->data);
 			$this->layout->content = $rendered;
-			$this->layout->full = true;
 			
 			$rendered = $this->layout;
-		} elseif ($full) {
+		}
+		
+		if ($full) {
+			
+			// This gnarly logic controls the order of scripts and styles.
+			// currentScripts and currentStyles serve as a sort of cache to keep
+			// files in the logical order during complex rendering flow.
+			self::$scripts['foot'] = array_unique(array_merge(self::$currentScripts['foot'], self::$scripts['foot']));
+			self::$scripts['head'] = array_unique(array_merge(self::$currentScripts['head'], self::$scripts['head']));
+			self::$styles = array_unique(array_merge(self::$currentStyle, self::$styles));
+			
+			self::$currentStyle = array();
+			self::$currentScripts['head'] = array();
+			self::$currentScripts['foot'] = array();
+			
 			if (self::$head !== false) {
 				$rendered = $this->formatHead().$rendered;
 			}
@@ -239,12 +267,12 @@ abstract class sqView extends component {
 	
 	// Adds a script to template
 	public static function script($path, $location = 'foot') {
-		self::$scripts[$location][] = $path;
+		self::$currentScripts[$location][] = $path;
 	}
 	
 	// Adds a style to head
 	public static function style($path) {
-		self::$styles[] = $path;
+		self::$currentStyle[] = $path;
 	}
 	
 	// Returns a formatted date. If no date is passed to the function now will
