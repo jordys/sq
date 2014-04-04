@@ -97,10 +97,12 @@ abstract class sqView extends component {
 			$this->layout->set($this->data);
 			$this->layout->content = $rendered;
 			
+			if ($full) {
+				$this->layout->full = true;
+			}
+			
 			$rendered = $this->layout;
-		} 
-		
-		if ($full) {
+		} elseif ($full) {
 			if (self::$head !== false) {
 				$rendered = $this->formatHead().$rendered;
 			}
