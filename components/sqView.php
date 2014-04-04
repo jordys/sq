@@ -5,7 +5,9 @@
  *
  * Takes the path of a template file, puts the single passed content array into 
  * it and returns a fully formed html page for saving, displaying, etc...  Also
- * contains a few static helper methods to streamline formatting.
+ * contains a few static helper methods to streamline formatting. Views are 
+ * rendered inside to outside. Specficly called views first then layouts working
+ * outwards.
  */
 
 abstract class sqView extends component {
@@ -18,16 +20,20 @@ abstract class sqView extends component {
 	// FIFO stack of the list of current view clips
 	private $clips = array();
 	
-	// Static property to tell if render flow has jumped to new view
-	private static $currentStyle = array(),
-		$currentScripts = array('foot' => array(), 'head' => array());
+	// Static counter. Every time a new view object is created it goes up by 
+	// one. This counter allows the object to know the current position of the
+	// view in the overall render flow.
+	protected static $current;
+	
+	// Scripts and styles arrays use the current property to reverse the render
+	// flow. So scripts and styles included in the inner most view appear last;
+	// the reverse of the normal flow.
+	protected static $styles = array(),
+		$scripts = array('foot' => array(), 'head' => array());
 	
 	// In template variables
 	public static $description, $doctype, $title, $language, $favicon, $id,
-		$head, $foot,
-		$keywords = array(),
-		$scripts  = array('foot' => array(), 'head' => array()), 
-		$styles   = array();
+		$head, $foot, $keywords = array();
 	
 	public function __construct($options, $view, $data = array(), $full = null) {
 		
@@ -70,17 +76,7 @@ abstract class sqView extends component {
 	public function render($view = null, $data = array(), $full = null) {
 		if ($view === null) {
 			$view = $this->view;
-			
-			// This gnarly logic controls the order of scripts and styles.
-			// currentScripts and currentStyles serve as a sort of cache to keep
-			// files in the logical order during complex rendering flow.
-			self::$scripts['foot'] = array_merge(self::$scripts['foot'], self::$currentScripts['foot']);
-			self::$scripts['head'] = array_merge(self::$scripts['head'], self::$currentScripts['head']);
-			self::$styles = array_merge(self::$styles, self::$currentStyle);
-			
-			self::$currentStyle = array();
-			self::$currentScripts['head'] = array();
-			self::$currentScripts['foot'] = array();
+			self::$current++;
 		}
 		
 		if ($full === null) {
@@ -102,21 +98,9 @@ abstract class sqView extends component {
 			$this->layout->content = $rendered;
 			
 			$rendered = $this->layout;
-		}
+		} 
 		
 		if ($full) {
-			
-			// This gnarly logic controls the order of scripts and styles.
-			// currentScripts and currentStyles serve as a sort of cache to keep
-			// files in the logical order during complex rendering flow.
-			self::$scripts['foot'] = array_unique(array_merge(self::$currentScripts['foot'], self::$scripts['foot']));
-			self::$scripts['head'] = array_unique(array_merge(self::$currentScripts['head'], self::$scripts['head']));
-			self::$styles = array_unique(array_merge(self::$currentStyle, self::$styles));
-			
-			self::$currentStyle = array();
-			self::$currentScripts['head'] = array();
-			self::$currentScripts['foot'] = array();
-			
 			if (self::$head !== false) {
 				$rendered = $this->formatHead().$rendered;
 			}
@@ -208,13 +192,17 @@ abstract class sqView extends component {
 		$head .= '<meta name="keywords" content="'.implode(',', self::$keywords).'">';
 		
 		// External stylesheets
-		foreach (self::$styles as $style) {
-			$head .= '<link rel="stylesheet" type="text/css" href="'.$style.'"/>';
+		foreach (array_reverse(self::$styles) as $group) {
+			foreach ($group as $style) {
+				$head .= '<link rel="stylesheet" type="text/css" href="'.$style.'"/>';
+			}
 		}
 		
 		// Print head scripts
-		foreach (self::$scripts['head'] as $script) {
-			$head .= '<script type="text/javascript" src="'.$script.'"></script>';
+		foreach (array_reverse(self::$scripts['head']) as $group) {
+			foreach ($group as $script) {
+				$head .= '<script type="text/javascript" src="'.$script.'"></script>';
+			}
 		}
 		
 		// Generic dump from head variable
@@ -237,8 +225,10 @@ abstract class sqView extends component {
 		$foot = null;
 		
 		// Print foot scripts
-		foreach (self::$scripts['foot'] as $script) {
-			$foot .= '<script type="text/javascript" src="'.$script.'"></script>';
+		foreach (array_reverse(self::$scripts['foot']) as $group) {
+			foreach ($group as $script) {
+				$foot .= '<script type="text/javascript" src="'.$script.'"></script>';
+			}
 		}
 		
 		$foot .= self::$foot;      // Generic dump in foot variable
@@ -267,12 +257,24 @@ abstract class sqView extends component {
 	
 	// Adds a script to template
 	public static function script($path, $location = 'foot') {
-		self::$currentScripts[$location][] = $path;
+		$order = self::$current;
+		
+		if (!isset(self::$scripts[$location][$order])) {
+			self::$scripts[$location][$order] = array();
+		}
+		
+		self::$scripts[$location][$order][] = $path;
 	}
 	
 	// Adds a style to head
 	public static function style($path) {
-		self::$currentStyle[] = $path;
+		$order = self::$current;
+		
+		if (!isset(self::$styles[$order])) {
+			self::$styles[$order] = array();
+		}
+		
+		self::$styles[$order][] = $path;
 	}
 	
 	// Returns a formatted date. If no date is passed to the function now will
