@@ -38,7 +38,29 @@ $defaults = array(
 	// Revision marker coded into the asset md5 urls. Can be any format that
 	// interprets to a string. Changing the revision number changes the asset
 	// urls hard breaking the browser cache.
-	'asset-revision' => 0
+	'asset-revision' => 0,
+	
+	// Enable logging of errors
+	'log-errors' => true,
+	
+	// Friendly labels for php errors used for in the log instead of the
+	// useless numbers
+	'error-labels' => array(
+		1    => '## FATAL ERROR ##',
+		2    => 'WARNING',
+		4    => '## PARSE ERROR ##',
+		8    => 'NOTICE',
+		16   => '## CORE ERROR ##',
+		32   => 'CORE WARNING',
+		64   => 'COMPILE ERROR',
+		128  => 'COMPILE WARNING',
+		256  => '## USER ERROR ##',
+		512  => 'USER WARNING',
+		1024 => 'USER NOTICE',
+		6143 => 'ALL',
+		2048 => 'STRICT',
+		4096 => '## RECOVERABLE ERROR ##'
+	)
 );
 
 ?>

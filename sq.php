@@ -27,17 +27,26 @@ class sq {
 	public static function init() {
 		
 		// Error handling function for the entire framework
-		function sqErrorHandler($number, $string, $file, $line) {
-			sq::error('500', array(
-				'number' => $number,
-				'string' => $string,
-				'file'   => $file,
-				'line'   => $line,
-				'trace'  => debug_backtrace()
-			));
+		function sqErrorHandler($number, $string, $file, $line, $context) {
+			if (sq::config('debug') || $number == E_USER_ERROR) {
+				sq::error('500', array(
+					'number'  => $number,
+					'string'  => $string,
+					'file'    => $file,
+					'line'    => $line,
+					'context' => $context,
+					'trace'   => debug_backtrace()
+				));
+			}
+			
+			// Logging can be disabled
+			if (sq::config('log-errors')) {
+				error_log('PHP '.sq::config('error-labels/'.$number).':  '.$string.' in '.$file.' on line '.$line);
+			}
 		}
 		
-		set_error_handler('sqErrorHandler', -1);
+		// Define framework custom error handler
+		set_error_handler('sqErrorHandler');
 		
 		// Framework config defaults
 		sq::load('/defaults/main');
@@ -293,6 +302,8 @@ class sq {
 			}
 		}
 		
+		$rendered = $controller->render();
+		
 		// If errors exist the controller renders an error or debug screen and
 		// ends execution
 		if (self::$error) {
@@ -306,7 +317,7 @@ class sq {
 			die();
 		}
 		
-		return $controller;
+		return $rendered;
 	}
 	
 	/**
