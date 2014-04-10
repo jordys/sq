@@ -52,7 +52,11 @@ abstract class sqController extends component {
 			$this->layout->full = true;
 		}
 		
-		return $this->layout->render();
+		if (is_object($this->layout)) {
+			return $this->layout->render();
+		}
+		
+		return $this->layout;
 	}
 	
 	// Default filter action to be overridden in controller classes. Filter 
