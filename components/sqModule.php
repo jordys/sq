@@ -55,6 +55,10 @@ abstract class sqModule extends component {
 	// Renders and returns the current controller. Also called via the 
 	// __tostring method when the controller is echoed
 	public function render() {
+		if (is_object($this->controller)) {
+			return $this->controller->render();
+		}
+		
 		return $this->controller;
 	}
 	
