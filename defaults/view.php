@@ -24,6 +24,21 @@ $defaults = array(
 		
 		// Path to favicon
 		'favicon' => 'favicon.ico',
+		
+		// id attribute applied to the body tag
+		'id' => null,
+		
+		// Slots database config. Slots are chunks of content defined in code
+		// and editable via the Admin module or via a custom setup in your 
+		// app.
+		'slots-db' => array(
+			array(
+				'id'      => 'VARCHAR(100) NOT NULL',
+				'name'    => 'VARCHAR(100) NOT NULL',
+				'type'    => 'VARCHAR(100) NOT NULL',
+				'content' => 'TEXT'
+			)
+		)
 	)
 );
 

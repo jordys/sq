@@ -18,6 +18,9 @@ abstract class sqView extends component {
 	// FIFO stack of the list of current view clips
 	private $clips = array();
 	
+	// Cache of the slots model
+	private static $slots = false;
+	
 	// In template variables
 	public static $description, $doctype, $title, $language, $favicon, $id,
 		$head, $foot,
@@ -36,9 +39,9 @@ abstract class sqView extends component {
 		$this->full    = $full;
 		
 		// Set defult options for description title doctype and such
-		foreach ($this->options as $key => $val) {
-			if (!self::$$key) {
-				self::$$key = $val;
+		foreach (array('description', 'keywords', 'title', 'doctype', 'language', 'favicon', 'id') as $prop) {
+			if (!self::$$prop) {
+				self::$$prop = $this->options[$prop];
 			}
 		}
 	}
@@ -217,6 +220,43 @@ abstract class sqView extends component {
 		$foot .= '</body></html>'; // Close tags
 		
 		return $foot;
+	}
+	
+	// Creates / uses a content slot. Content slots are bits of content stored
+	// in a model that may be defined directly in code. Slots are editable in
+	// the Admin module or via a custom setup in your app.
+	public static function slot($id, $name, $type = 'markdown', $content = '') {
+		
+		// Create model object if one doesn't already exist and read slots and
+		// cache them to the view.
+		if (!self::$slots) {
+			self::$slots = sq::model('sq_slots')
+				->make(sq::config('view/slots-db'))
+				->read();
+		}
+		
+		// Find the requested slot and create if it doesn't exist
+		$slot = self::$slots->find($id);
+		if ($slot) {
+			$content = $slot->content;
+			$type = $slot->type;
+		} else {
+			self::$slots->create(array(
+				'id' => $id,
+				'name' => $name,
+				'type' => $type,
+				'content' => $content
+			));
+		}
+		
+		// If the slot type is markdown parse it
+		if ($type == 'markdown') {
+			sq::load('phpMarkdown');
+			
+			$content = markdown($content);	
+		}
+		
+		return $content;
 	}
 	
 	// Start a clip optionally saving the clip to a layout variable

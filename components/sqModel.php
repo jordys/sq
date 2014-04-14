@@ -85,16 +85,21 @@ abstract class sqModel extends component {
 		
 	}
 	
-	// Returns true if the database record exists. Not implement at this level.
+	// Returns true if the database record exists. Must be implemented in driver
+	// class such as sql.
 	public function exists() {
 		
 	}
 	
 	// Searches through model list a returns an item
 	public function find($where) {
+		if (is_string($where)) {
+			$where = array('id' => $where);
+		}
+		
 		foreach ($this->data as $item) {
 			foreach ($where as $key => $val) {
-				if ($item->$key == $val) {
+				if (is_object($item) && $item->$key == $val) {
 					return $item;
 				}
 			}

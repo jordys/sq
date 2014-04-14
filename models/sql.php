@@ -89,7 +89,11 @@ class sql extends model {
 	
 	public function make($schema) {
 		if (!$this->exists()) {
-			$query = 'CREATE TABLE '.$this->options['table'].' (id INT(11) NOT NULL AUTO_INCREMENT,';
+			$query = 'CREATE TABLE '.$this->options['table'].' (';
+			
+			if (!array_key_exists('id', $schema)) {	
+				$query .= 'id INT(11) NOT NULL AUTO_INCREMENT, ';
+			}
 			
 			foreach ($schema as $key => $val) {
 				$schema[$key] = $key.' '.$val;
@@ -105,27 +109,29 @@ class sql extends model {
 	}
 	
 	public function create($data = false) {
-		if ($data) {
-			$this->set($data);
+		if (!$data) {
+			$data = $this->toArray($data);
 		}
 		
 		$this->limit();
 		
-		unset($this->data['id']);
+		if (isset($data['id']) && is_numeric($data['id'])) {
+			unset($data['id']);
+		}
 		
 		$values = array();
-		foreach ($this->data as $key => $val) {
+		foreach ($data as $key => $val) {
 			$values[] = ":$key";
 		}
 		
-		$columns = implode(',', array_keys($this->data));
+		$columns = implode(',', array_keys($data));
 		$values = implode(',', $values);
 		
 		$query = 'INSERT INTO '.$this->options['table']." ($columns) 
 			VALUES ($values)";
 		
-		if ($this->checkDuplicate($this->data)) {
-			$this->query($query, $this->data);
+		if ($this->checkDuplicate($data)) {
+			$this->query($query, $data);
 		}
 		
 		return $this;
