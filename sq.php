@@ -20,7 +20,7 @@ class sq {
 	 * self::get() and self::set() methods. Kind of like a global key/value 
 	 * store. Config is the merged config.
 	 */
-	private static $data = array(), $error, $config;
+	private static $data = array(), $error = false, $config;
 	
 	// Startup static function for the entire app. Handles setup tasks and 
 	// starts the controller bootstrap.
@@ -103,7 +103,10 @@ class sq {
 	public static function error($code, $details = array()) {
 		$details['code'] = $code;
 		
-		self::$error = $details;
+		// Only set error if one doesn't already exist
+		if (!self::$error) {
+			self::$error = $details;
+		}
 	}
 	
 	// Autoloader. Can be called directly. Checks for class files in the app
