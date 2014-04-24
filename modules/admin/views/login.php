@@ -7,8 +7,8 @@ self::$head = '
 	<meta name ="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width"/>
 ';
 
-self::$favicon = $base.'assets/admin/favicon.ico';
-self::style($base.'assets/admin/login.css');
+self::$favicon = asset::load('admin/favicon.ico');
+self::style(asset::load('admin/login.css'));
 
 ?>
 <form action="<?php echo $base?>admin/pages" method="post">
