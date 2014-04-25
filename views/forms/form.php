@@ -65,7 +65,7 @@ endforeach ?>
 <?php if (!$model->options['inline-view']): ?>
 		<div class="actions global-actions form-actions">
 			<input type="submit" name="button" value="Save"/>
-			<a class="cancel form-cancel" href="<?php echo $base.$controller.'/'.$modelName?>">Cancel</a>
+			<a class="cancel form-cancel" href="<?php echo $base.url::request('controller').'/'.$modelName?>">Cancel</a>
 		</div>
 	</form>
 </section>
