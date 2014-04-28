@@ -291,6 +291,10 @@ abstract class sqModel extends component {
 				}
 			}
 			
+			if (isset($options['mount'])) {
+				$name = $options['mount'];
+			}
+			
 			$model->where($where);
 			
 			if (isset($options['limit'])) {
