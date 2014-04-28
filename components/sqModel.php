@@ -204,6 +204,8 @@ abstract class sqModel extends component {
 			$options['cascade'] = false;
 		}
 		
+		$options['limit'] = true;
+		
 		$this->relate($model, $options);
 		
 		return $this;
@@ -261,9 +263,9 @@ abstract class sqModel extends component {
 		return $this;
 	}
 	
-	// Is called directly after a read to automatically create the relationships
-	// as defined in the model defaults.
-	protected function relate($name, $options) {
+	// Creates a model relationship. Can be called directly or with the helper
+	// hasOne, hasMany, belongsTo and manyMany methods.
+	public function relate($name, $options) {
 		if (isset($this->data['id'])) {
 			$model = sq::model($name);
 			
@@ -305,7 +307,7 @@ abstract class sqModel extends component {
 		}
 	}
 	
-	// Utility function that creates model relationships
+	// Utility method that creates model relationships from config after a read
 	protected function relateModel() {
 		$data = $this->data;
 		
@@ -338,7 +340,7 @@ abstract class sqModel extends component {
 		}
 	}
 	
-	// Utility function that loops through related models after a delete is
+	// Utility method that loops through related models after a delete is
 	// performed and deletes on models where cascade is true
 	protected function deleteRelated() {
 		$this->read();
