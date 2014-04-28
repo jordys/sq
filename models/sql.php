@@ -60,7 +60,7 @@ class sql extends model {
 		$this->query($query);
 		
 		if ($this->options['load-relations'] === true) {
-			$this->relate();
+			$this->relateModel();
 		}
 		
 		return $this;
@@ -198,7 +198,7 @@ class sql extends model {
 							
 							$model->set($row);
 							if ($this->options['load-relations'] === true) {
-								$model->relate();
+								$model->relateModel();
 							} else {
 								$model->options['load-relations'] = false;
 							}

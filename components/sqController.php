@@ -20,30 +20,54 @@ abstract class sqController extends component {
 	 * into the action method with the arg parameter. Actions can return views
 	 * in which case the view replaces the existing layout.
 	 */
-	public function action($action, $arg = false) {
+	public function action($action = null) {
+		$data = null;
 		
-		// Check filter method to see if action should be called
-		$filter = $this->filter(strtolower($action));
+		$action = strtolower($action);
+		$action = str_replace('-', '', $action);
+		$action = str_replace('_', '', $action);
 		
+		$filter = $this->filter($action);
 		if ($filter === true || $action == 'error' || $action == 'debug') {
-			$action .= 'Action';
 			
-			// If arg is set add an argument to the action call
-			if ($arg === false) {
-				$data = $this->$action();
+			// Call the action method or the default / index action
+			if (!$action) {
+				$data = $this->indexAction();
+			} elseif (method_exists($this, $action.'Action')) {
+				$data = $this->{$action.'Action'}();
 			} else {
-				$data = $this->$action($arg);
-			}
-			
-			// If something was returned save it as a new layout
-			if ($data !== null) {
-				$this->layout = $data;
+				$data = $this->defaultAction($action);
 			}
 		
 		// Filter can return a view as well such as a login screen
 		} elseif ($filter) {
-			$this->layout = $filter;
+			$data = $filter;
 		}
+		
+		// If something was returned save it as a new layout
+		if ($data !== null) {
+			$this->layout = $data;
+		}
+		
+		// Render the controller to see if there are errors in it
+		$rendered = $this->render();
+		
+		if (sq::error()) {
+			if (sq::config('debug')) {
+				$data = $this->debugAction(sq::error());
+			} else {
+				$data = $this->errorAction(sq::error());
+			}
+			
+			if ($data !== null) {
+				$this->layout = $data;
+			}
+			
+			return $this;
+		}
+		
+		// Return the rendered layout
+		return $rendered;
 	}
 	
 	// Function that calls a render on the controller layout

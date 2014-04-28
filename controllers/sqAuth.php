@@ -37,18 +37,15 @@ abstract class sqAuth extends controller {
 	
 	// Checks login posted from form
 	public function loginAction() {
-		self::startSession();
-		
 		$username = url::post('username');
 		$password = url::post('password');
 		$remember = url::post('remember');
 		
 		if ($username && $password) {
-			$user = sq::model('users');
-			$user->options['load-relations'] = false;
-			$user->where(array(sq::config('auth/username-field') => $username));
-			$user->limit();
-			$user->read(array('id', 'password'));
+			$user = sq::model('users', array('load-relations' => false))
+				->where(array(sq::config('auth/username-field') => $username))
+				->limit()
+				->read(array('id', 'password'));
 			
 			if (isset($user->password) && self::authenticate($password, $user->password)) {
 				self::login($username, $remember);
@@ -200,6 +197,8 @@ abstract class sqAuth extends controller {
 	// This function is a special action for the admin module that handles the
 	// changing of passwords in the admin interface
 	public function passwordAction() {
+		$flash = null;
+		
 		if ($_SESSION['sq-level'] === 'admin') {
 			$users = sq::model(url::get('model'));
 			$users->options['load-relations'] = false;
@@ -213,7 +212,7 @@ abstract class sqAuth extends controller {
 					
 					sq::redirect(sq::base().'admin/'.url::get('model'));
 				} else {
-					sq::set('flash', 'Passwords don&rsquo;t match');
+					$flash = 'Passwords don&rsquo;t match';
 				}
 				
 				return sq::view('admin/forms/password', array(
@@ -225,7 +224,7 @@ abstract class sqAuth extends controller {
 				));
 			}
 		} else {
-			return sq::view('admin/login');
+			return sq::view('admin/login', $flash);
 		}
 	}
 }

@@ -38,7 +38,7 @@ abstract class sqView extends component {
 	public static $description, $doctype, $title, $language, $favicon, $id,
 		$head, $foot, $keywords = array();
 	
-	public function __construct($options, $view, $data = array(), $full = null) {
+	public function __construct($options, $view, $data = array()) {
 		
 		// Add static data from the passed in array
 		$this->data = $data + $this->data;
@@ -46,7 +46,6 @@ abstract class sqView extends component {
 		// Set object parameters
 		$this->options = $options;
 		$this->view    = $view;
-		$this->full    = $full;
 		
 		// Set defult options for description title doctype and such
 		foreach (array('description', 'keywords', 'title', 'doctype', 'language', 'favicon', 'id') as $prop) {

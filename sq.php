@@ -13,14 +13,9 @@
 
 class sq {
 	
-	/**
-	 * App wide static properties
-	 *
-	 * Data is an array of data for the entire framework used with the 
-	 * self::get() and self::set() methods. Kind of like a global key/value 
-	 * store. Config is the merged config.
-	 */
-	private static $data = array(), $error = false, $config;
+	// Global static properties. $config is the merged configuration of the app
+	// and error is the current application error (404, PHP warning, etc...).
+	private static $config, $error;
 	
 	// Startup static function for the entire app. Handles setup tasks and 
 	// starts the controller bootstrap.
@@ -55,8 +50,7 @@ class sq {
 		date_default_timezone_set(self::config('timezone'));
 		
 		// Set up the autoload function to automatically include class files. 
-		// The directories checked by the autoloader can be changed in the 
-		// config autoload setting.
+		// Directories checked by the autoloader are set in the global config.
 		spl_autoload_register('sq::load');
 		
 		// If module is url parameter exists call the module instead of the
@@ -66,57 +60,40 @@ class sq {
 		} else {
 			
 			// Get controller parameter from the url. If no controller parameter
-			// is set then we call the default-controller from config. If not 
-			// changed this will call the site controller.
+			// is set then we call the default-controller from config.
 			$controller = url::request('controller');
 			if (!$controller) {
 				$controller = self::config('default-controller');
 			}
 			
 			// Call the currently specified controller
-			echo self::controller($controller);
+			echo self::controller($controller)->action(url::request('action'));
 		}
-	}
-	
-	// get(), set() and remove() form a basic global key/value store for the 
-	// entire application
-	public static function get($value = false) {
-		if ($value === false) {
-			return self::$data;
-		} elseif (isset(self::$data[$value])) {
-			return self::$data[$value];
-		} else {
-			return false;
-		}
-	}
-	
-	public static function set($name, $value) {
-		self::$data[$name] = $value;
-	}
-	
-	public static function remove($name) {
-		unset(self::$data[$name]);
 	}
 	
 	// Adds error to the error array. Can be called anywhere in the app as 
 	// self::error().
-	public static function error($code, $details = array()) {
-		$details['code'] = $code;
-		
-		// Only set error if one doesn't already exist
-		if (!self::$error) {
-			self::$error = $details;
+	public static function error($code = null, $details = array()) {
+		if ($code) {
+			$details['code'] = $code;
+			
+			// Only set error if one doesn't already exist
+			if (!self::$error) {
+				self::$error = $details;
+			}
 		}
+		
+		return self::$error;
 	}
 	
 	// Autoloader. Can be called directly. Checks for class files in the app
 	// directories then in the framework directories. The paths checked are
 	// specified in the autoload config option.
-	public static function load($class, $type = false) {
+	public static function load($class, $type = null) {
 		$directories = array($type);
 		$direct = false;
 		
-		if ($type === false) {
+		if (!$type) {
 			if ($class[0] == '/') {
 				$directories = array(substr($class, 1));
 				
@@ -157,24 +134,22 @@ class sq {
 		}
 	}
 	
-	// Combines the config passed into a method with the type and component 
-	// configs.
-	private static function configure($config, $type, $component = false) {		
+	// Combines the global, module, and passed in options for use in a component
+	private static function configure($name, $options, $component = null) {
 		
-		// If config is a string get the configuration with the config function
-		if (is_string($config)) {
-			$config = explode('/', $config);
-			$name = end($config);
-			
-			// Load configuration
-			sq::load('/defaults/'.$name);
-			sq::load('/config/'.$name);
-			
-			if (isset($config[1])) {
-				$options = self::merge(self::config($config[0]), self::config($config[1]));
-			} else {
-				$options = self::config($config[0]);
-			}
+		// Explode pieces. Strings with a '/' are part of a module.
+		$pieces = explode('/', $name);
+		$name = end($pieces);
+		
+		// Load configuration
+		sq::load('/defaults/'.$name);
+		sq::load('/config/'.$name);
+		
+		// Merge direct config
+		if (isset($config[1])) {
+			$config = self::merge(self::config($pieces[0]), self::config($pieces[1]));
+		} else {
+			$config = self::config($pieces[0]);
 		}
 		
 		// Get component config
@@ -182,36 +157,32 @@ class sq {
 			$component = self::config($component);
 		}
 		
-		// Figure out how the type is defined. If it is in the options use that.
-		// Otherwise use the default type.
-		if ($type) {
-			// Use type as is
-		} elseif (isset($options['type'])) {
-			
-			// Use type from the options array
-			$type = $options['type'];
+		// Merge type options
+		$type = false;
+		if (isset($config['type'])) {
+			$type = $config['type'];
 		} elseif (isset($component['default-type'])) {
-			
-			// Get the default type from the component config
 			$type = $component['default-type'];
 		}
 		
 		if ($type) {
-			
-			// Merge the options with the type options
-			$options = self::merge(self::config($type), $options);
+			$config = self::merge(self::config($type), $config);
 		}
 		
-		// Merge the options with the component options
+		// Merge component config
 		if ($component) {
-			$options = self::merge($component, $options);
+			$config = self::merge($component, $config);
 		}
 		
-		// Set name and config if they don't exist in the options
+		// Merge passed in options
+		$options = self::merge($config, $options);
+		
+		// Set name to config if it doesn't exist
 		if (!isset($options['name'])) {
 			$options['name'] = $name;
 		}
 		
+		// Set type to config if it doesn't exist
 		if (!isset($options['type'])) {
 			$options['type'] = $type;
 		}
@@ -226,11 +197,10 @@ class sq {
 	 * instance calling sq::component('mailer') returns the mailer component
 	 * object fully configured.
 	 */
-	public static function component($config, $type = false) {		
-		$config = self::configure($config, $type, 'component');
-		$name = $config['name'];
+	public static function component($name, $options = array()) {		
+		$config = self::configure($name, $options, 'component');
 		
-		return new $name($config);
+		return new $config['name']($config);
 	}
 	
 	/**
@@ -239,11 +209,10 @@ class sq {
 	 * The type of model generated can be explicity passed in or specified in 
 	 * the config. If no type is determined the framework default is used.
 	 */
-	public static function model($config, $type = false) {		
-		$config = self::configure($config, $type, 'model');
-		$type = $config['type'];
+	public static function model($name, $options = array()) {		
+		$config = self::configure($name, $options, 'model');
 		
-		return new $type($config);
+		return new $config['type']($config);
 	}
 	
 	/**
@@ -253,15 +222,8 @@ class sq {
 	 * view causes it to render. Once the view is returned values can be added
 	 * to it.
 	 */
-	public static function view($file, $data = array(), $full = null) {
-		
-		// If ajax is request assume no autorendered header and footer  sections
-		// in view.
-		if (url::ajax()) {
-			$full = false;
-		}
-		
-		return new view(self::config('view'), $file, $data, $full);
+	public static function view($file, $data = array()) {
+		return new view(self::config('view'), $file, $data);
 	}
 	
 	/**
@@ -270,57 +232,10 @@ class sq {
 	 * Optionally a different action parameter may be included. If no action 
 	 * argument is given then the global action parameter will be used.
 	 */
-	public static function controller($config, $action = null) {
+	public static function controller($name, $options = array()) {
+		$config = self::configure($name, $options, 'component');
 		
-		// If no action argument use the action parameter
-		if ($action === null) {
-			$action = url::request('action');
-		}
-		
-		// Replace dashes and underscores in actions. Function calls are case 
-		// insensative so there is no need to mess with that here.
-		$action = str_replace('-', '', $action);
-		$action = str_replace('_', '', $action);
-		
-		// Configure the controller
-		$config = self::configure($config, false, 'component');
-		$name = $config['name'];
-		
-		// Create the controller action
-		$controller = new $name($config);
-		
-		// Don't execute controller if errors exist
-		if (!self::$error) {
-			
-			// Call the default action if the action isn't defined as a method.
-			// If no action is defined call the indexAction.
-			if ($action) {
-				if (method_exists($controller, $action.'Action')) {
-					$controller->action($action);
-				} else {
-					$controller->action('default', strtolower(url::request('action')));
-				}
-			} else {
-				$controller->action('index');
-			}
-		}
-		
-		$rendered = $controller->render();
-		
-		// If errors exist the controller renders an error or debug screen and
-		// ends execution
-		if (self::$error) {
-			if (self::config('debug')) {
-				$controller->action('debug', self::$error);
-			} else {
-				$controller->action('error', self::$error);
-			}
-			
-			echo $controller;
-			die();
-		}
-		
-		return $rendered;
+		return new $config['name']($config);
 	}
 	
 	/**
@@ -329,8 +244,8 @@ class sq {
 	 * Modules are like mini apps. They contain there own views, models and
 	 * controllers.
 	 */
-	public static function module($config, $type = false) {
-		$config = self::configure($config, $type, 'model');
+	public static function module($name, $options = array()) {
+		$config = self::configure($name, $options, 'model');
 		
 		if (!isset($config['default-controller'])) {
 			$config['default-controller'] = $config['name'];
@@ -396,8 +311,8 @@ class sq {
 		self::$config = self::merge($defaults, self::$config);
 	}
 	
-	// Redirect the page to another page
-	public static function redirect($url, $code = '302') {
+	// Redirect to another page
+	public static function redirect($url, $code = 302) {
 		if (!headers_sent()) {
 			header('location:'.$url);
 			die();

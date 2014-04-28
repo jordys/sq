@@ -191,45 +191,63 @@ abstract class sqModel extends component {
 	}
 	
 	// Creates a belongs to model relationship
-	public function belongsTo($model, $match = false, $local = 'id', $params = array()) {
-		if (!$match) {
-			$match = $model.'_id';
+	public function belongsTo($model, $options = array()) {
+		if (empty($options['from'])) {
+			$options['from'] = $model.'_id';
 		}
 		
-		if (!isset($params['cascade'])) {
-			$params['cascade'] = false;
+		if (empty($options['to'])) {
+			$options['to'] = 'id';
 		}
 		
-		$this->relateModel($model, $local, $match, $params, true);
+		if (empty($options['cascade'])) {
+			$options['cascade'] = false;
+		}
+		
+		$this->relate($model, $options);
 		
 		return $this;
 	}
 	
 	// Creates a has one model relationship
-	public function hasOne($model, $match = false, $local = 'id', $params = array()) {
-		if (!$match) {
+	public function hasOne($model, $options = array()) {
+		if (empty($options['from'])) {
+			$options['from'] = 'id';
+		}
+		
+		if (empty($options['to'])) {
 			$match = $this->options['name'].'_id';
 		}
 		
-		$this->relateModel($model, $match, $local, $params, true);
+		$options['limit'] = true;
+		
+		$this->relate($model, $options);
 		
 		return $this;
 	}
 	
 	// Creates a has many model relationship
-	public function hasMany($model, $match = false, $local = 'id', $params = array()) {
-		if (!$match) {
-			$match = $this->options['name'].'_id';
+	public function hasMany($model, $options = array()) {
+		if (empty($options['to'])) {
+			$options['to'] = $this->options['name'].'_id';
 		}
 		
-		$this->relateModel($model, $match, $local, $params, false);
+		if (empty($options['from'])) {
+			$options['from'] = 'id';
+		}
+		
+		$this->relate($model, $options);
 		
 		return $this;
 	}
 	
-	public function manyMany($model, $match = false, $local = 'id', $params = array()) {
-		if (!$match) {
-			$match = $this->options['name'].'_id';
+	public function manyMany($model, $options = array()) {
+		if (empty($options['to'])) {
+			$options['to'] = $this->options['name'].'_id';
+		}
+		
+		if (empty($options['from'])) {
+			$options['from'] = 'id';
 		}
 		
 		$intersect = sq::model('sq_intersect_'.$this->options['name'].'_'.$model)
@@ -245,7 +263,50 @@ abstract class sqModel extends component {
 	
 	// Is called directly after a read to automatically create the relationships
 	// as defined in the model defaults.
-	public function relate() {
+	protected function relate($name, $options) {
+		if (isset($this->data['id'])) {
+			$model = sq::model($name);
+			
+			$where = array($options['to'] => $this->data[$options['from']]);
+			
+			if (isset($options['where'])) {
+				$where += $options['where'];
+			}
+			
+			if (isset($options['cascade'])) {
+				$model->options['cascade'] = $options['cascade'];
+			}
+			
+			if (isset($options['load-relations'])) {
+				$model->options['load-relations'] = $options['load-relations'];
+			}
+			
+			if (isset($options['order'])) {
+				if (isset($optioins['order-direction'])) {
+					$model->order($options['order'], $options['order-direction']);
+				} else {
+					$model->order($options['order']);
+				}
+			}
+			
+			$model->where($where);
+			
+			if (isset($options['limit'])) {
+				$model->limit($options['limit']);
+			}
+			
+			$model->read();
+			
+			$this->data[$name] = $model;
+		} else {
+			foreach ($this->data as $item) {
+				$item->relate($name, $options);
+			}
+		}
+	}
+	
+	// Utility function that creates model relationships
+	protected function relateModel() {
 		$data = $this->data;
 		
 		foreach ($this->relationships as $relationship) {
@@ -267,55 +328,12 @@ abstract class sqModel extends component {
 						$limit = true;
 					}
 					
-					$this->relateModel($name, $match, $local, $params, $limit);
+					$this->relate($name, array(
+						'from' => $local,
+						'to' => $match,
+						'limit' => $limit
+					));
 				}
-			}
-		}
-	}
-	
-	// Utility function that creates model relationships
-	protected function relateModel($name, $match, $local, $params, $limit) {
-		if (isset($this->data['id'])) {
-			if (isset($this->data[$local])) {
-				$model = sq::model($name);
-				
-				$where = array($match => $this->data[$local]);
-				
-				if (!$this->options['ignore-params']) {
-					if (isset($params['where'])) {
-						$where += $params['where'];
-					}
-					
-					if (isset($params['cascade'])) {
-						$model->options['cascade'] = $params['cascade'];
-					}
-					
-					if (isset($params['load-relations'])) {
-						$model->options['load-relations'] = $params['load-relations'];
-					}
-					
-					if (isset($params['order'])) {
-						if (isset($params['order-direction'])) {
-							$model->order($params['order'], $params['order-direction']);
-						} else {
-							$model->order($params['order']);
-						}
-					}
-				}
-				
-				$model->where($where);
-				
-				if ($limit) {
-					$model->limit();
-				}
-				
-				$model->read();
-				
-				$this->data[$name] = $model;
-			}
-		} else {
-			foreach ($this->data as $item) {
-				$item->relateModel($name, $match, $local, $params, $limit);
 			}
 		}
 	}

@@ -11,10 +11,16 @@ class file extends model {
 	public function read($values = '*') {
 		$data = array();
 		
+		$path = $this->options['path'];
+		
+		if (isset($this->where['path'])) {
+			$path = $this->where['path'];
+		}
+		
 		if (is_dir($this->options['path'])) {
-			$data = $this->readDirectory($this->options['path']);
+			$data = $this->readDirectory($path);
 		} else {
-			$data = $this->readFile($this->options['path']);
+			$data = $this->readFile($path);
 		}
 		
 		if ($this->limit === true && isset($data[0])) {
@@ -22,7 +28,9 @@ class file extends model {
 		}
 		
 		$this->set($data);
-		$this->relate();
+		$this->relateModel();
+		
+		return $this;
 	}
 	
 	public function create($data = false) {
@@ -65,20 +73,25 @@ class file extends model {
 		$handle = opendir($dir);
 		while (false !== ($file = readdir($handle))) {
 			
-			if ($file != '..' && $file[0] != '.' && !is_dir($dir.$file)) {
+			if ($file != '..' && $file[0] != '.') {
 				$array = $this->readFile($dir.$file, $values);
 				
-				if ($this->checkMatch($array) 
-					&& (!$this->limit || $i < $this->limit || $this->limit == true)
-				) {
-					$model = sq::model($this->options['name']);
-					$model->where($array['id']);
-					$model->set($array);
+				$model = sq::model($this->options['name']);
+				$model->where($array['id']);
+				$model->limit();
+				
+				$model->set($array);
+				
+				if (is_dir($dir.$file) && $this->options['recursive']) {
+					$sub = sq::model($this->options['name']);
+					$sub->options['recursive'] = true;
+					$sub->where(array('path' => $dir.$file.'/'));
+					$sub->read();
 					
-					$data[] = $model;
+					$model->{$this->options['name']} = $sub;
 				}
 				
-				$i++;
+				$data[] = $model;
 			}
 		}
 		

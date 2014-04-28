@@ -28,9 +28,6 @@ $defaults = array(
 		// Use inline view in admin
 		'inline-view' => false,
 		
-		// When enabled relations ignore extra passed in where parameters
-		'ignore-params' => false,
-		
 		// Checks for form double submits and prevents them
 		'prevent-duplicates' => true,
 		
@@ -63,7 +60,7 @@ $defaults = array(
 		'path' => 'uploads/',
 		
 		// Read the content of files and add it to array in adition to metadata.
-		// Useful for text files or json stores.
+		// Useful for text files or JSON stores
 		'read-content' => false,
 		
 		// With of image to resize / crop to. False for none.
@@ -73,8 +70,11 @@ $defaults = array(
 		'resize-y' => false,
 		
 		// Amount of memory allowed to be used for the image transformation
-		// process.
-		'memory-limit' => '16M'
+		// process
+		'memory-limit' => '16M',
+		
+		// Look in sub directories when searching
+		'recursive' => false
 	),
 	
 	// Files model
