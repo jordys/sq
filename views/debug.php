@@ -12,7 +12,11 @@
 			$line['type'] = null;
 		endif;
 		
+		if (isset($line['args'])):
+			$line['args'] = '('.implode(', ', $line['args']).')';
+		endif;
+		
 		?>
-		<p><strong>Line #<?=$line['line']?></strong> <?=$line['file']?> <?=$line['class'],$line['type'],$line['function']?></p>
+		<p><strong>Line #<?=$line['line']?></strong> <?=$line['file']?> <?=$line['class'],$line['type'],$line['function'].$line['args'] ?></p>
 	<? endforeach ?>
 <? endif ?>

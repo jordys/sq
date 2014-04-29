@@ -23,6 +23,11 @@ class sq {
 		
 		// Error handling function for the entire framework
 		function sqErrorHandler($number, $string, $file, $line, $context) {
+			$trace = debug_backtrace();
+			
+			// Remove this function from the trace
+			array_shift($trace);
+			
 			if (sq::config('debug') || $number == E_USER_ERROR) {
 				sq::error('500', array(
 					'number'  => $number,
@@ -30,7 +35,7 @@ class sq {
 					'file'    => $file,
 					'line'    => $line,
 					'context' => $context,
-					'trace'   => debug_backtrace()
+					'trace'   => $trace
 				));
 			}
 			
