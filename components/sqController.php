@@ -23,17 +23,19 @@ abstract class sqController extends component {
 	public function action($action = null) {
 		$data = null;
 		
-		$action = strtolower($action);
-		$action = str_replace('-', '', $action);
-		$action = str_replace('_', '', $action);
+		if (empty($action)) {
+			$action = 'index';
+		} else {
+			$action = strtolower($action);
+			$action = str_replace('-', '', $action);
+			$action = str_replace('_', '', $action);
+		}
 		
 		$filter = $this->filter($action);
 		if ($filter === true || $action == 'error' || $action == 'debug') {
 			
 			// Call the action method or the default / index action
-			if (!$action) {
-				$data = $this->indexAction();
-			} elseif (method_exists($this, $action.'Action')) {
+			if (method_exists($this, $action.'Action')) {
 				$data = $this->{$action.'Action'}();
 			} else {
 				$data = $this->defaultAction($action);

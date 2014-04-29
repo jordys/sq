@@ -11,7 +11,7 @@
  * CRUD methods (create, read, update, delete).
  */
 
-abstract class sqModel extends component {	
+abstract class sqModel extends component {
 	
 	// Path to view file for the model. Defaults to form or listing depending on
 	// the number of results. Similar to how layout functions in a controller.
@@ -164,7 +164,7 @@ abstract class sqModel extends component {
 	public function order($order, $direction = 'DESC') {
 		$this->order = $order;
 		$this->orderDirection = $direction;
-
+		
 		return $this;
 	}
 	
