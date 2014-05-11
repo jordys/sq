@@ -63,7 +63,7 @@ abstract class sqController extends component {
 				$data = $this->errorAction(sq::error());
 			}
 			
-			if ($data !== null) {
+			if ($data) {
 				$this->layout = $data;
 			}
 		}
