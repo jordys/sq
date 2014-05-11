@@ -13,8 +13,21 @@ class sql extends model {
 	// Static pdo database connection
 	protected static $conn = false;
 	
+	public function __construct($options = false) {
+		$this->options = $options;
+		
+		// If a view is defined for layout generate it as a view
+		if ($this->layout) {
+			$this->layout = sq::view($this->layout);
+			$this->layout->layout = false;
+		}
+		
+		$this->connect();
+		$this->init();
+	}
+	
 	// Constructor that also database connection
-	public function init() {
+	public function connect() {
 		
 		// Assume the name of the table is the same as the name of the model 
 		// unless specified otherwise
@@ -172,7 +185,7 @@ class sql extends model {
 	}
 	
 	public function query($query, $data = array()) {
-		try {
+		try {			
 			$handle = self::$conn->prepare($query);
 			$handle->execute($data);
 			
