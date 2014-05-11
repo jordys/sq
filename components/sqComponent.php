@@ -11,7 +11,7 @@
  * a set() method for easy mass assignment.
  */
 
-abstract class sqComponent implements iterator, countable, arrayaccess {
+abstract class sqComponent implements iterator, countable, arrayAccess {
 	
 	// Array of component options
 	public $options = array();
