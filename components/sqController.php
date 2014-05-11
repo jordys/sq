@@ -51,9 +51,11 @@ abstract class sqController extends component {
 			$this->layout = $data;
 		}
 		
-		// Render the controller to see if there are errors in it
-		$rendered = $this->render();
-		
+		return $this;
+	}
+	
+	// Function that calls a render on the controller layout
+	public function render() {
 		if (sq::error()) {
 			if (sq::config('debug')) {
 				$data = $this->debugAction(sq::error());
@@ -64,16 +66,8 @@ abstract class sqController extends component {
 			if ($data !== null) {
 				$this->layout = $data;
 			}
-			
-			return $this;
 		}
 		
-		// Return the rendered layout
-		return $rendered;
-	}
-	
-	// Function that calls a render on the controller layout
-	public function render() {
 		if (is_object($this->layout) && !url::ajax()) {
 			$this->layout->full = true;
 		}
