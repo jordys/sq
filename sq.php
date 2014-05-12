@@ -95,6 +95,16 @@ class sq {
 	// directories then in the framework directories. The paths checked are
 	// specified in the autoload config option.
 	public static function load($class, $type = null) {
+		if (strpos($class, '\\')) {
+			$class = explode('\\', $class);
+			
+			if ($class[0]) {
+				$type = $class[0];
+			}
+			
+			$class = array_pop($class);
+		}
+		
 		$directories = array($type);
 		$direct = false;
 		
@@ -202,10 +212,12 @@ class sq {
 	 * instance calling sq::component('mailer') returns the mailer component
 	 * object fully configured.
 	 */
-	public static function component($name, $options = array()) {		
+	public static function component($name, $options = array()) {
 		$config = self::configure($name, $options, 'component');
 		
-		return new $config['name']($config);
+		if (class_exists($config['name']) && is_subclass_of($config['name'], 'component')) {
+			return new $config['name']($config);
+		}
 	}
 	
 	/**
@@ -214,8 +226,16 @@ class sq {
 	 * The type of model generated can be explicity passed in or specified in 
 	 * the config. If no type is determined the framework default is used.
 	 */
-	public static function model($name, $options = array()) {		
+	public static function model($name, $options = array()) {
 		$config = self::configure($name, $options, 'model');
+		
+		$class = 'models\\'.$config['name'];
+		
+		if (class_exists($class)) {
+			return new $class($config);
+		} elseif (class_exists($config['name']) && is_subclass_of($config['name'], 'model')) {
+			return new $config['name']($config);
+		}
 		
 		return new $config['type']($config);
 	}
@@ -240,7 +260,13 @@ class sq {
 	public static function controller($name, $options = array()) {
 		$config = self::configure($name, $options, 'component');
 		
-		return new $config['name']($config);
+		$class = 'controllers\\'.$config['name'];
+		
+		if (class_exists($class)) {
+			return new $class($config);
+		} elseif (class_exists($config['name']) && is_subclass_of($config['name'], 'controller')) {
+			return new $config['name']($config);
+		}
 	}
 	
 	/**
