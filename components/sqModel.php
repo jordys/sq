@@ -191,7 +191,7 @@ abstract class sqModel extends component {
 	}
 	
 	// Creates a belongs to model relationship
-	public function belongsTo($model, $options = array()) {
+	public function belongsTo($model, array $options = array()) {
 		if (empty($options['from'])) {
 			$options['from'] = $model.'_id';
 		}
@@ -212,7 +212,7 @@ abstract class sqModel extends component {
 	}
 	
 	// Creates a has one model relationship
-	public function hasOne($model, $options = array()) {
+	public function hasOne($model, array $options = array()) {
 		if (empty($options['from'])) {
 			$options['from'] = 'id';
 		}
@@ -229,7 +229,7 @@ abstract class sqModel extends component {
 	}
 	
 	// Creates a has many model relationship
-	public function hasMany($model, $options = array()) {
+	public function hasMany($model, array $options = array()) {
 		if (empty($options['to'])) {
 			$options['to'] = $this->options['name'].'_id';
 		}
@@ -243,7 +243,7 @@ abstract class sqModel extends component {
 		return $this;
 	}
 	
-	public function manyMany($model, $options = array()) {
+	public function manyMany($model, array $options = array()) {
 		if (empty($options['to'])) {
 			$options['to'] = $this->options['name'].'_id';
 		}
