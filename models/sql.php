@@ -163,7 +163,13 @@ class sql extends model {
 		
 		$this->updateDatabase($this->data);
 		$this->updateRelated();
+		
+		$loadRelations = $this->options['load-relations'];
+		$this->options['load-relations'] = false;
+		
 		$this->read('id');
+		
+		$this->options['load-relations'] = $loadRelations;
 		
 		return $this;
 	}
