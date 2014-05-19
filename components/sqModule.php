@@ -50,7 +50,7 @@ abstract class sqModule extends component {
 		
 		// Set controller to the module
 		$this->controller = sq::controller($this->options['name'].'/'.$controller)
-			->action();
+			->action(url::request('action'));
 	}
 	
 	// Renders and returns the current controller. Also called via the 
