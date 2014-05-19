@@ -344,7 +344,7 @@ class sq {
 	
 	// Redirect to another page
 	public static function redirect($url, $code = 302) {
-		if (!headers_sent()) {
+		if (!headers_sent() && !self::$error) {
 			header('location:'.$url);
 			die();
 		}
