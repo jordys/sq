@@ -131,16 +131,23 @@ abstract class sqComponent implements iterator, countable, arrayAccess {
 		return count($this->data);
 	}
 	
+	// Object setup code. Called by component constructor.
 	public function init() {
-		// Method for object setup code. Called by component constructor.
+		
 	}
 	
+	// Object cleanup code. Called by component destructor.
 	public function cleanup() {
-		// Method for object cleanup code. Called by component destructor.
+		
+	}
+		
+	// Returns content to screen. Called by component __tostring.
+	public function render() {
+		
 	}
 	
-	// Mass asignment method for class data. All the usual security warnings
-	// apply to mass asignment.
+	// Mass assignment method for class data. All the usual mass assignment 
+	// security warnings apply.
 	public function set($data, $overwrite = true) {
 		if (is_object($data)) {
 			$data = $data->data;
@@ -158,11 +165,6 @@ abstract class sqComponent implements iterator, countable, arrayAccess {
 		}
 		
 		return $this;
-	}
-	
-	// Function to turn the component data into a view 
-	public function render() {
-		
 	}
 	
 	// Returns component data as an array
@@ -232,7 +234,7 @@ abstract class sqComponent implements iterator, countable, arrayAccess {
 		foreach ($this->data as $item) {
 			$itemClean = array();
 			
-			foreach ($item as $key => $val) {				
+			foreach ($item as $key => $val) {
 				if (!is_array($val) && !is_object($val)) {
 					$itemClean[$key] = $val;
 				}
