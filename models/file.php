@@ -169,22 +169,20 @@ class file extends model {
 	}
 	
 	public function upload($file, $path = null, $name = false) {
-		if ($this->checkDuplicate($file['name']) || $this->options['prevent-duplicates'] == false) {
-			$path = $this->options['path'].$path;
-			
-			if ($name) {
-				$path .= $name;
-			} else {
-				$path .= basename($file['name']);
-			}
-			
-			if ($this->options['resize-x'] && $this->options['resize-y']) {				
-				$image = new ImageManipulator($file['tmp_name']);
-				$image->resample($this->options['resize-x'], $this->options['resize-y']); // resize to 640x480
-				$image->save($path, IMAGETYPE_JPEG);
-			} else {
-				move_uploaded_file($file['tmp_name'], $path);
-			}
+		$path = $this->options['path'].$path;
+		
+		if ($name) {
+			$path .= $name;
+		} else {
+			$path .= basename($file['name']);
+		}
+		
+		if ($this->options['resize-x'] && $this->options['resize-y']) {				
+			$image = new ImageManipulator($file['tmp_name']);
+			$image->resample($this->options['resize-x'], $this->options['resize-y']); // resize to 640x480
+			$image->save($path, IMAGETYPE_JPEG);
+		} else {
+			move_uploaded_file($file['tmp_name'], $path);
 		}
 		
 		return $path;
