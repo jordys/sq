@@ -25,20 +25,25 @@ abstract class sqController extends component {
 		
 		if (empty($action)) {
 			$action = 'index';
-		} else {
-			$action = strtolower($action);
-			$action = str_replace('-', '', $action);
-			$action = str_replace('_', '', $action);
 		}
 		
-		$filter = $this->filter($action);
+		$action = strtolower($action);
+		
+		// Action parameter passed into functions isn't stripped of dashes and
+		// underscores.
+		$raw = $action;
+		
+		$action = str_replace('-', '', $action);
+		$action = str_replace('_', '', $action);
+		
+		$filter = $this->filter($raw);
 		if ($filter === true || $action == 'error' || $action == 'debug') {
 			
 			// Call the action method or the default / index action
 			if (method_exists($this, $action.'Action')) {
 				$data = $this->{$action.'Action'}();
 			} else {
-				$data = $this->defaultAction($action);
+				$data = $this->defaultAction($raw);
 			}
 		
 		// Filter can return a view as well such as a login screen
