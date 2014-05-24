@@ -75,50 +75,18 @@ abstract class sqView extends component {
 	// include the auto generated header and footer sections. HTML templates 
 	// should only include content inside the body tag and omit the body tag and
 	// everything outside of it.
-	public function render($view = null, $data = array(), $full = null) {
-		if ($view === null) {
-			$view = $this->view;
-			self::$current++;
+	public function render($view = null, $data = array()) {
+		if ($view) {
+			return sq::view($view, $data)
+				->set($this->data)
+				->render();
+		} else {
+			return $this->renderTemplate($data);
 		}
-		
-		if ($full === null) {
-			$full = $this->full;
-		}
-		
-		if ($full) {
-			$this->full = false;
-		}
-		
-		$rendered = $this->renderTemplate($view, $data);
-		
-		if ($this->layout) {
-			if (is_string($this->layout)) {
-				$this->layout = sq::view($this->layout);
-			}
-			
-			$this->layout->set($this->data);
-			$this->layout->content = $rendered;
-			
-			if ($full) {
-				$this->layout->full = true;
-			}
-			
-			$rendered = $this->layout;
-		} elseif ($full) {
-			if (self::$head !== false) {
-				$rendered = $this->formatHead().$rendered;
-			}
-			
-			if (self::$foot !== false) {
-				$rendered = $rendered.$this->formatFoot();
-			}
-		}
-		
-		return $rendered;
 	}
 	
 	// Utility function to render a template
-	private function renderTemplate($view, $data = false) {
+	private function renderTemplate($data) {
 		
 		// Make variables base level items in the content array
 		foreach ($this->data as $key => $val) {
@@ -141,13 +109,42 @@ abstract class sqView extends component {
 		}
 		
 		ob_start();
-		include $this->getViewPath($view);
+		include $this->getViewPath($this->view);
 		
 		if (isset($this->parent)) {
+			self::$current++;
+			
 			$this->parent->set($this->data);
 		}
 		
-		return ob_get_clean();
+		$rendered = ob_get_clean();
+		
+		if ($this->layout) {
+			self::$current++;
+			
+			if (is_string($this->layout)) {
+				$this->layout = sq::view($this->layout);
+			}
+			
+			$this->layout->set($this->data);
+			$this->layout->content = $rendered;
+			
+			if ($this->full) {
+				$this->layout->full = true;
+			}
+			
+			$rendered = $this->layout;
+		} elseif ($this->full) {
+			if (self::$head !== false) {
+				$rendered = $this->formatHead().$rendered;
+			}
+			
+			if (self::$foot !== false) {
+				$rendered = $rendered.$this->formatFoot();
+			}
+		}
+		
+		return $rendered;
 	}
 	
 	/**
