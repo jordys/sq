@@ -78,7 +78,7 @@ abstract class sqView extends component {
 	public function render($view = null, $data = array()) {
 		if ($view) {
 			return sq::view($view, $data)
-				->set($this->data)
+				->set($data + $this->data)
 				->render();
 		} else {
 			return $this->renderTemplate($data);
