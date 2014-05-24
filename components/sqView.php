@@ -184,17 +184,6 @@ abstract class sqView extends component {
 		$head .= '<html lang="'.self::$language.'">'; // Open html tag
 		$head .= '<head>';                            // Open head tag
 		
-		// HTML title
-		$head .= '<title>'.self::$title.'</title>';
-		
-		self::$description = strip_tags(self::$description);
-		self::$description = str_replace("\n", " ", self::$description);
-		self::$description = str_replace("  ", " ", self::$description);
-		
-		// Named meta tags
-		$head .= '<meta name="description" content="'.self::$description.'">';
-		$head .= '<meta name="keywords" content="'.implode(',', self::$keywords).'">';
-		
 		// External stylesheets
 		foreach (array_reverse(self::$styles) as $group) {
 			foreach ($group as $style) {
@@ -209,11 +198,22 @@ abstract class sqView extends component {
 			}
 		}
 		
-		// Generic dump from head variable
-		$head .= self::$head;
+		// HTML title
+		$head .= '<title>'.self::$title.'</title>';
 		
 		// Favicon
 		$head .= '<link rel="icon" href="'.sq::base().self::$favicon.'"/>';
+		
+		self::$description = strip_tags(self::$description);
+		self::$description = str_replace("\n", " ", self::$description);
+		self::$description = str_replace("  ", " ", self::$description);
+		
+		// Named meta tags
+		$head .= '<meta name="description" content="'.self::$description.'">';
+		$head .= '<meta name="keywords" content="'.implode(',', self::$keywords).'">';
+		
+		// Generic dump from head variable
+		$head .= self::$head;
 		
 		// Close head tag
 		$head .= '</head>';
