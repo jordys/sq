@@ -198,14 +198,14 @@ abstract class sqView extends component {
 		// External stylesheets
 		foreach (array_reverse(self::$styles) as $group) {
 			foreach ($group as $style) {
-				$head .= '<link rel="stylesheet" type="text/css" href="'.$style.'"/>';
+				$head .= '<link rel="stylesheet" href="'.$style.'"/>';
 			}
 		}
 		
 		// Print head scripts
 		foreach (array_reverse(self::$scripts['head']) as $group) {
 			foreach ($group as $script) {
-				$head .= '<script type="text/javascript" src="'.$script.'"></script>';
+				$head .= '<script src="'.$script.'"></script>';
 			}
 		}
 		
@@ -213,7 +213,7 @@ abstract class sqView extends component {
 		$head .= self::$head;
 		
 		// Favicon
-		$head .= '<link rel="icon" type="image/x-icon" href="'.sq::base().self::$favicon.'"/>';
+		$head .= '<link rel="icon" href="'.sq::base().self::$favicon.'"/>';
 		
 		// Close head tag
 		$head .= '</head>';
@@ -231,7 +231,7 @@ abstract class sqView extends component {
 		// Print foot scripts
 		foreach (array_reverse(self::$scripts['foot']) as $group) {
 			foreach ($group as $script) {
-				$foot .= '<script type="text/javascript" src="'.$script.'"></script>';
+				$foot .= '<script src="'.$script.'"></script>';
 			}
 		}
 		
