@@ -315,31 +315,16 @@ abstract class sqModel extends component {
 	protected function relateModel() {
 		$data = $this->data;
 		
-		foreach ($this->relationships as $relationship) {
-			foreach ($this->options[$relationship] as $name => $relation) {
-				$params = array();
-				
-				if (isset($relation['params'])) {
-					$params = $relation['params'];
-					unset($relation['params']);
+		foreach ($this->relationships as $relation) {
+			foreach ($this->options[$relation] as $name => $options) {
+				if (is_numeric($name)) {
+					$name = $options;
+					$options = array();
 				}
 				
-				if ($relationship == 'belongs-to' && !isset($params['cascade'])) {
-					$params['cascade'] = false;
-				}
+				$method = str_replace('-', '', $relation);
 				
-				foreach ($relation as $local => $match) {
-					$limit = false;
-					if ($relationship == 'has-one' || $relationship == 'belongs-to') {
-						$limit = true;
-					}
-					
-					$this->relate($name, array(
-						'from' => $local,
-						'to' => $match,
-						'limit' => $limit
-					));
-				}
+				$this->$method($name, $options);
 			}
 		}
 	}
