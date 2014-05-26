@@ -244,21 +244,37 @@ abstract class sqModel extends component {
 	}
 	
 	public function manyMany($model, array $options = array()) {
-		if (empty($options['to'])) {
-			$options['to'] = $this->options['name'].'_id';
+		if (isset($this->data['id'])) {
+			
+			if (empty($options['to'])) {
+				$options['to'] = $this->options['name'].'_id';
+			}
+			
+			if (empty($options['from'])) {
+				$options['from'] = 'id';
+			}
+			
+			$bridge = sq::model($options['bridge'])
+				->where(array($options['to'] => $this->data[$options['from']]))
+				->read();
+			
+			foreach ($bridge as $key => $item) {
+				$relation = sq::model($model, array('load-relations' => false))
+					->where(array('id' => $item->{$model.'_id'}))
+					->limit()
+					->read();
+				
+				$item->set($relation->toArray());
+				
+				$bridge[$key] = $item;
+			}
+			
+			$this->$model = $bridge;
+		} else {
+			foreach ($this->data as $item) {
+				$item->manyMany($model, $options);
+			}
 		}
-		
-		if (empty($options['from'])) {
-			$options['from'] = 'id';
-		}
-		
-		$intersect = sq::model('sq_intersect_'.$this->options['name'].'_'.$model)
-			->make(array(
-				$model.'_'.$match => 'INT(11) NOT NULL',
-				$this->options['name'].'_'.$local => 'INT(11) NOT NULL'
-			))
-			->where(array($model.'_'.$match => $this->data[$local]))
-			->read();
 		
 		return $this;
 	}
