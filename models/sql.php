@@ -191,7 +191,7 @@ class sql extends model {
 	}
 	
 	public function query($query, $data = array()) {
-		try {			
+		try {
 			$handle = self::$conn->prepare($query);
 			$handle->execute($data);
 			
@@ -205,6 +205,10 @@ class sql extends model {
 				$data = array();
 				if ($this->limit === true) {
 					$data = $handle->fetch();
+					
+					if (!$data) {
+						unset($this->data['id']);
+					}
 				} else {
 					$i = 0;
 					while ($row = $handle->fetch()) {
@@ -216,6 +220,7 @@ class sql extends model {
 							}
 							
 							$model->set($row);
+							
 							if ($this->options['load-relations'] === true) {
 								$model->relateModel();
 							} else {
