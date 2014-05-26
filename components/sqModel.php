@@ -243,9 +243,17 @@ abstract class sqModel extends component {
 		return $this;
 	}
 	
-	public function manyMany($model, array $options = array()) {
+	public function manyMany($model, $options = array()) {
+		
+		// Allow a shorthand of just passing in string instead of options to set
+		// the bridge table.
+		if (is_string($options)) {
+			$options = array(
+				'bridge' => $options
+			);
+		}
+		
 		if (isset($this->data['id'])) {
-			
 			if (empty($options['to'])) {
 				$options['to'] = $this->options['name'].'_id';
 			}
@@ -264,6 +272,7 @@ abstract class sqModel extends component {
 					->limit()
 					->read();
 				
+				// Flatten bridge with the related model
 				$item->set($relation->toArray());
 				
 				$bridge[$key] = $item;
@@ -281,7 +290,7 @@ abstract class sqModel extends component {
 	
 	// Creates a model relationship. Can be called directly or with the helper
 	// hasOne, hasMany, belongsTo and manyMany methods.
-	public function relate($name, $options) {
+	protected function relate($name, $options) {
 		if (isset($this->data['id'])) {
 			$model = sq::model($name);
 			
@@ -319,7 +328,11 @@ abstract class sqModel extends component {
 			
 			$model->read();
 			
-			$this->data[$name] = $model;
+			if (isset($options['flatten']) && $options['flatten'] && isset($options['limit']) && $options['limit'] === true) {
+				$this->set($model->toArray());
+			} else {
+				$this->data[$name] = $model;
+			}
 		} else {
 			foreach ($this->data as $item) {
 				$item->relate($name, $options);
