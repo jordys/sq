@@ -28,6 +28,12 @@ $defaults = array(
 		// id attribute applied to the body tag
 		'id' => null,
 		
+		// Data passed directly to javascript as a json array. Accessed in js as
+		// the sq object.
+		'js-data' => array(
+			'base' => sq::base()	
+		),
+		
 		// Slots database config. Slots are chunks of content defined in code
 		// and editable via the Admin module or via a custom setup in your 
 		// app.

@@ -21,7 +21,11 @@ abstract class sqView extends component {
 	private $clips = array();
 	
 	// Cache of the slots model
-	private static $slots = false;
+	protected static $slots = false;
+	
+	// Variable to store data to be turned into a javascript JSON object in the
+	// footer.
+	protected static $jsData = array();
 	
 	// Static counter. Every time a new view object is created it goes up by 
 	// one. This counter allows the object to know the current position of the
@@ -175,7 +179,7 @@ abstract class sqView extends component {
 		return $path;
 	}
 	
-	// Renders the auto generated head section from the static view parameters.
+	// Renders the auto generated head section from the static view parameters
 	protected function formatHead() {
 		$head = self::$doctype;                       // Doctype
 		$head .= '<html lang="'.self::$language.'">'; // Open html tag
@@ -221,9 +225,29 @@ abstract class sqView extends component {
 		return $head;
 	}
 	
-	// Renders the footer.
+	// Renders the footer
 	protected function formatFoot() {
 		$foot = null;
+		
+		// Print a JSON object in the footer
+		self::$jsData += $this->options['js-data'];
+		if (self::$jsData) {
+			
+			// Pretty print JSON if debug is enabled. Formatting is funky so the
+			// source code looks good.
+			if (sq::config('debug')) {
+				$foot .= '
+<script>
+
+// Data passed from the sq framework
+var sq = '.str_replace('    ', "\t", json_encode(self::$jsData, JSON_PRETTY_PRINT)).'
+
+</script>
+';
+			} else {
+				$foot .= '<script>var sq = '.json_encode(self::$jsData).'</script>';
+			}
+		}
 		
 		// Print foot scripts
 		foreach (array_reverse(self::$scripts['foot']) as $group) {
@@ -313,6 +337,11 @@ abstract class sqView extends component {
 		}
 		
 		self::$styles[$order][] = $path;
+	}
+	
+	// Add data to the javascript sq object.
+	public static function jsData($data) {
+		view::$jsData += $data;
 	}
 	
 	// Returns a formatted date. If no date is passed to the function now will
