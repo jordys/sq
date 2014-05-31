@@ -289,7 +289,7 @@ class sql extends model {
 		$direction = strtoupper($direction);
 		
 		if ($this->order && $this->limit !== true) {
-			return " ORDER BY $order $direction, id";
+			return " ORDER BY $order $direction, id ASC";
 		}
 	}
 	
