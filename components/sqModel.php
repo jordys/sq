@@ -309,7 +309,7 @@ abstract class sqModel extends component {
 			}
 			
 			if (isset($options['order'])) {
-				if (isset($optioins['order-direction'])) {
+				if (isset($options['order-direction'])) {
 					$model->order($options['order'], $options['order-direction']);
 				} else {
 					$model->order($options['order']);
