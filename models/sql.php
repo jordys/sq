@@ -59,9 +59,11 @@ class sql extends model {
 		}
 	}
 	
-	public function read($values = '*') {
+	public function read($values = null) {
 		if (is_array($values)) {
 			$values = implode(',', $values);
+		} elseif (!$values) {
+			$values = '*';
 		}
 		
 		$query = "SELECT $values FROM ".$this->options['table'];

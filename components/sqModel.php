@@ -326,7 +326,12 @@ abstract class sqModel extends component {
 				$model->limit($options['limit']);
 			}
 			
-			$model->read();
+			$read = null;
+			if (isset($options['read'])) {
+				$read = $options['read'];
+			}
+			
+			$model->read($read);
 			
 			if (isset($options['flatten']) && $options['flatten'] && isset($options['limit']) && $options['limit'] === true) {
 				$this->set($model->toArray());
