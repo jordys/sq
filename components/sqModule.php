@@ -90,7 +90,7 @@ abstract class sqModule extends component {
 			
 			// Add any config and / or defaults to the application
 			if (is_array($returned)) {
-				self::config($returned);
+				sq::config($returned);
 			}
 			
 			if (isset($defaults)) {
