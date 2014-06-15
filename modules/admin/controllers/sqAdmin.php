@@ -85,13 +85,15 @@ abstract class sqAdmin extends controller {
 			
 			if (is_array(url::post('model'))) {
 				foreach (url::post('model') as $inline) {
-					$inlineModel = sq::model($inline);
-					$inlineModel->where($model->id);
-					$inlineModel->set(url::post($inline));
-					$inlineModel->update();
-					
-					if ($inlineModel->id) {
-						$model->$idField = $inlineModel->id;
+					if (isset($model->id)) {
+						$inlineModel = sq::model($inline);
+						$inlineModel->where($model->id);
+						$inlineModel->set(url::post($inline));
+						$inlineModel->update();
+						
+						if ($inlineModel->id) {
+							$model->$idField = $inlineModel->id;
+						}
 					}
 				}
 			}
