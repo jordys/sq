@@ -74,7 +74,10 @@ $defaults = array(
 		'memory-limit' => '16M',
 		
 		// Look in sub directories when searching
-		'recursive' => false
+		'recursive' => false,
+		
+		// Defines variants of images
+		'variations' => array()
 	),
 	
 	// Files model

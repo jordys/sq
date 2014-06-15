@@ -72,23 +72,24 @@ class file extends model {
 		
 		$handle = opendir($dir);
 		while (false !== ($file = readdir($handle))) {
-			
 			if ($file != '..' && $file[0] != '.') {
-				$array = $this->readFile($dir.$file, $values);
-				
-				$model = sq::model($this->options['name']);
-				$model->where($array['id']);
-				$model->limit();
-				
-				$model->set($array);
-				
-				if (is_dir($dir.$file) && $this->options['recursive']) {
-					$sub = sq::model($this->options['name']);
-					$sub->options['recursive'] = true;
-					$sub->where(array('path' => $dir.$file.'/'));
-					$sub->read();
+				if (is_dir($dir.$file)) {
+					if ($this->options['recursive']) {
+						$sub = sq::model($this->options['name']);
+						$sub->options['recursive'] = true;
+						$sub->where(array('path' => $dir.$file.'/'));
+						$sub->read();
+						
+						$model->{$this->options['name']} = $sub;
+					}
+				} else {
+					$array = $this->readFile($dir.$file, $values);
 					
-					$model->{$this->options['name']} = $sub;
+					$model = sq::model($this->options['name']);
+					$model->where($array['id']);
+					$model->limit();
+					
+					$model->set($array);
 				}
 				
 				$data[] = $model;
@@ -169,8 +170,6 @@ class file extends model {
 	}
 	
 	public function upload($file, $path = null, $name = false) {
-		$path = $this->options['path'].$path;
-		
 		if ($name) {
 			$path .= $name;
 		} else {
@@ -180,12 +179,26 @@ class file extends model {
 		if ($this->options['resize-x'] && $this->options['resize-y']) {				
 			$image = new ImageManipulator($file['tmp_name']);
 			$image->resample($this->options['resize-x'], $this->options['resize-y']);
-			$image->save($path, IMAGETYPE_JPEG);
+			$image->save($this->options['path'].$path, IMAGETYPE_JPEG);
 		} else {
-			move_uploaded_file($file['tmp_name'], $path);
+			move_uploaded_file($file['tmp_name'], $this->options['path'].$path);
 		}
 		
-		return $path;
+		foreach ($this->options['variations'] as $variant => $options) {
+			$image = new ImageManipulator($this->options['path'].$path);
+			$image->resample($options['width'], $options['height']);
+			$image->save($this->options['path'].$variant.'/'.$path, IMAGETYPE_JPEG);
+		}
+		
+		return $this->options['path'].$path;
+	}
+	
+	public function makeVariants() {
+		foreach ($this->options['variations'] as $variant => $options) {
+			$image = new ImageManipulator($this->id);
+			$image->resample($options['width'], $options['height']);
+			$image->save($this->options['path'].$variant.'/'.$this->name, IMAGETYPE_JPEG);
+		}
 	}
 	
 	public function delete($where = false) {
