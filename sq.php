@@ -383,30 +383,23 @@ class sq {
 	
 	// Recursively merge the config and defaults arrays
 	public static function merge($array1, $array2) {
-		$merged = $array1;
-		
 		if (is_array($array2)) {
 			foreach ($array2 as $key => $val) {
-				if (is_array($array2[$key])) {
-					if (isset($merged[$key]) && is_array($merged[$key])) {
-						
-						// Check is the array is associative. If it is the array
-						// is overwritten not merged.
-						if (array_keys($array2) === array_values($array2)) {
-							$merged[$key] = $val;
-						} else {
-							$merged[$key] = self::merge($merged[$key], $array2[$key]);
-						}
-					} else {
-						$merged[$key] = $val;
-					}
-				} else {
-					$merged[$key] = $val;
+				
+				// Merge sub arrays together only if the array exists in both
+				// arrays and is every key is a string
+				if (is_array($val) 
+					&& isset($array1[$key]) && is_array($array1[$key])
+					&& array_unique(array_map("is_string", array_keys($val))) === array(true)
+				) {
+					$val = self::merge($array1[$key], $val);
 				}
+				
+				$array1[$key] = $val;
 			}
 		}
 		
-		return $merged;
+		return $array1;
 	}
 }
 
