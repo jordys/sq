@@ -392,7 +392,7 @@ class sq {
 						
 						// Check is the array is associative. If it is the array
 						// is overwritten not merged.
-						if (array_keys($array2[$key]) === range(0, count($array2[$key]) - 1)) {
+						if (array_keys($array2) === array_values($array2)) {
 							$merged[$key] = $val;
 						} else {
 							$merged[$key] = self::merge($merged[$key], $array2[$key]);
