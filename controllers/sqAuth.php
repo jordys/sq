@@ -199,7 +199,7 @@ abstract class sqAuth extends controller {
 	public function passwordAction() {
 		$flash = null;
 		
-		if ($_SESSION['sq-level'] === 'admin') {
+		if (!sq::config('admin/require-login') || auth::check('admin')) {
 			$users = sq::model(url::get('model'));
 			$users->options['load-relations'] = false;
 			$users->where(url::get('id'));

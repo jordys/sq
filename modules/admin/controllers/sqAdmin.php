@@ -3,19 +3,19 @@
 abstract class sqAdmin extends controller {
 	public $layout = 'admin/layouts/main';
 	
-	public function filter($action) {
-		sq::controller('auth');
+	public function filter($action) {		
+		sq::controller('auth')->action($action);
 		
-		if (auth::check('admin')) {
+		if (!$this->options['require-login'] || auth::check('admin')) {
 			return true;
 		} else {
 			return sq::view('admin/login');
 		}
 	}
 	
-	public function defaultAction($action) {
-		if ($action == 'password') {
-			$this->layout->content = sq::controller('auth', 'password');
+	public function defaultAction($act) {
+		if ($act == 'password') {
+			$this->layout->content = sq::controller('auth')->action('password');
 		}
 	}
 	
