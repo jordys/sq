@@ -18,13 +18,13 @@ self::$head = '<meta name="viewport" content="initial-scale=1.0"/>';
 			</a>
 		</header>
 		<nav>
-	<?php foreach ($nav as $name => $link):
+	<?php foreach (sq::config('admin/nav') as $name => $link):
 		if (is_int($name)):
 			echo '<span>'.$link.'</span>';
 		else:
 			$active = 'inactive';
 			
-			if ($link == $modelName):
+			if ($link == $modelName || $link == url::request('controller')):
 				$active = 'active';
 			endif;
 			

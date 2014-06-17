@@ -20,17 +20,13 @@ abstract class sqAdmin extends controller {
 	}
 	
 	public function init() {
-		$this->layout->content = null;
-		$this->layout->nav = $this->options['nav'];
 		$this->layout->modelName = url::get('model');
 	}
 	
 	public function indexAction() {
 		if (url::get('model')) {
-			$model = sq::model(url::get('model'));
-			$model->read();
-			
-			$this->layout->content = $model;
+			$this->layout->content = sq::model(url::get('model'))
+				->read();
 		}
 	}
 	
