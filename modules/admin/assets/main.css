@@ -74,6 +74,11 @@ h4 {
 margin-top:.5em;
 }
 
+.secondary {
+color:#777;
+margin-top:-.5em;
+}
+
 .count {
 position:relative;
 top:-.1em;
@@ -327,6 +332,10 @@ padding:.2em;
 box-shadow:inset 0 0 5px #EEE;
 width:35em;
 margin-bottom:.5em;
+}
+
+input[type=file] {
+margin-bottom:1.5em;
 }
 
 input.currency {

@@ -8,6 +8,10 @@ self::script(asset::load('admin/tinymce').'/jquery.tinymce.min.js');
 self::script(asset::load('admin/main.js'));
 self::$head = '<meta name="viewport" content="initial-scale=1.0"/>';
 
+if (url::request('controller')):
+	$modelName = url::request('controller');
+endif;
+
 ?>
 <script>var tinymcePath = "<?php echo asset::path('admin/tinymce') ?>";</script>
 <div class="container">
@@ -24,7 +28,7 @@ self::$head = '<meta name="viewport" content="initial-scale=1.0"/>';
 		else:
 			$active = 'inactive';
 			
-			if ($link == $modelName || $link == url::request('controller')):
+			if ($link == $modelName):
 				$active = 'active';
 			endif;
 			

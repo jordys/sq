@@ -266,12 +266,13 @@ var sq = '.str_replace('    ', "\t", json_encode(self::$jsData, JSON_PRETTY_PRIN
 	// in a model that may be defined directly in code. Slots are editable in
 	// the Admin module or via a custom setup in your app.
 	public static function slot($id, $name, $type = 'markdown', $content = '') {
+		$altText = null;
 		
 		// Create model object if one doesn't already exist and read slots and
 		// cache them to the view.
 		if (!self::$slots) {
 			self::$slots = sq::model('sq_slots')
-				->make(sq::config('view/slots-db'))
+				->make(sq::config('sq_slots/schema'))
 				->read();
 		}
 		
@@ -280,6 +281,7 @@ var sq = '.str_replace('    ', "\t", json_encode(self::$jsData, JSON_PRETTY_PRIN
 		if ($slot) {
 			$content = $slot->content;
 			$type = $slot->type;
+			$altText = $slot->alt_text;
 		} else {
 			self::$slots->create(array(
 				'id' => $id,
@@ -289,14 +291,18 @@ var sq = '.str_replace('    ', "\t", json_encode(self::$jsData, JSON_PRETTY_PRIN
 			));
 		}
 		
-		// If the slot type is markdown parse it
-		if ($type == 'markdown') {
-			sq::load('phpMarkdown');
-			
-			$content = markdown($content);	
+		// Special rendering for slot types
+		if ($content) {
+			switch ($type) {
+				case 'markdown':
+					sq::load('phpMarkdown');
+					return markdown($content);	
+				case 'image':
+					return '<img src="'.sq::base().$content.'" alt="'.$altText.'"/>';
+				default:
+					return $content;
+			}
 		}
-		
-		return $content;
 	}
 	
 	// Start a clip optionally saving the clip to a layout variable

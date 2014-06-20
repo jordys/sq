@@ -4,6 +4,10 @@ $inlineActions = $model->options['inline-actions'];
 $actions = $model->options['actions'];
 $modelName = $model->options['name'];
 
+if (url::request('controller')):
+	$modelName = url::request('controller');
+endif;
+
 ?>
 <section class="form list-form">
 	<h2><?php echo ucwords($modelName)?></h2>
