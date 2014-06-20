@@ -13,12 +13,6 @@
 
 abstract class sqModel extends component {
 	
-	// Path to view file for the model. Defaults to form or listing depending on
-	// the number of results. Similar to how layout functions in a controller.
-	// The view will be rendered automatically when the model is echoed via the
-	// __tostring magic method.
-	public $view;
-	
 	// Parameters for the model
 	protected $where, $limit, $order, $orderDirection = 'DESC',
 		$whereOperation = 'AND';
@@ -31,34 +25,27 @@ abstract class sqModel extends component {
 	// multiple results. The default listing and form view can also be 
 	// overridden in the model options.
 	public function render() {
-		if ($this->view) {
-			$name = explode('/', $this->view);
+		if ($this->layout) {
+			$name = explode('/', $this->layout);
 			$name = array_pop($name);
 			
-			$rendered = sq::view($this->view, array(
-				'model' => $this,
-				'fields' => $this->options['fields'][$name]
-			));
+			$this->layout->model = $this;
+			if (isset($this->options['fields'][$name])) {
+				$this->layout->fields = $this->options['fields'][$name];
+			}
 			
+			return $this->layout;
 		} elseif ($this->limit) {
-			$rendered = sq::view('forms/form', array(
+			return sq::view('forms/form', array(
 				'model' => $this,
 				'fields' => $this->options['fields']['form']
 			));
-			
 		} else {
-			$rendered = sq::view('forms/list', array(
+			return sq::view('forms/list', array(
 				'model' => $this,
 				'fields' => $this->options['fields']['list']
 			));
 		}
-		
-		if (is_object($this->layout)) {
-			$this->layout->content = $rendered;
-			$rendered = $this->layout;
-		}
-		
-		return $rendered;
 	}
 	
 	// CRUD methods to be implemented. These four methods must be implemented by 
