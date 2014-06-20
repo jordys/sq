@@ -28,6 +28,11 @@ abstract class sqComponent implements iterator, countable, arrayAccess {
 	public function __construct($options = false) {
 		$this->options = $options;
 		
+		// Layout can be defined in options as well as in the class
+		if (isset($options['layout'])) {
+			$this->layout = $options['layout'];
+		}
+		
 		// If a view is defined for layout generate it as a view
 		if ($this->layout) {
 			$this->layout = sq::view($this->layout);
@@ -48,7 +53,7 @@ abstract class sqComponent implements iterator, countable, arrayAccess {
 	}
 	
 	// Getter and setter methods that add and remove properties from the data
-	// array behind the scenes	
+	// array behind the scenes
 	public function __set($name, $val) {
 		$this->data[$name] = $val;
 	}

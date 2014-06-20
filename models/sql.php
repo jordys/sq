@@ -16,6 +16,11 @@ class sql extends model {
 	public function __construct($options = false) {
 		$this->options = $options;
 		
+		// Layout can be defined in options as well as in the class
+		if (isset($options['layout'])) {
+			$this->layout = $options['layout'];
+		}
+		
 		// If a view is defined for layout generate it as a view
 		if ($this->layout) {
 			$this->layout = sq::view($this->layout);
