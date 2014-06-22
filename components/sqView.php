@@ -346,8 +346,12 @@ var sq = '.str_replace('    ', "\t", json_encode(self::$jsData, JSON_PRETTY_PRIN
 	}
 	
 	// Add data to the javascript sq object.
-	public static function jsData($data) {
-		view::$jsData += $data;
+	public static function jsData($data, $val = null) {
+		if (is_array($data)) {
+			view::$jsData += $data;
+		} elseif (is_string($data) && $val) {
+			view::$jsData[$data] = $val;
+		}
 	}
 	
 	// Returns a formatted date. If no date is passed to the function now will
