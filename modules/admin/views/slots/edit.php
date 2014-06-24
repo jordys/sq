@@ -1,4 +1,4 @@
-<section>
+<section class="form edit-form">
 	<h2><?php echo $model->name ?></h2>
 	<div class="secondary">id: <?php echo $model->id ?></div>
 	<form enctype="multipart/form-data" method="post">
