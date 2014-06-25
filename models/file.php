@@ -17,7 +17,11 @@ class file extends model {
 			$path = $this->where['path'];
 		}
 		
-		if (is_dir($this->options['path'])) {
+		if (isset($this->where['id'])) {
+			$path = $this->where['id'];
+		}
+		
+		if (is_dir($path)) {
 			$data = $this->readDirectory($path);
 		} else {
 			$data = $this->readFile($path);
