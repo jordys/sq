@@ -205,7 +205,7 @@ abstract class sqModel extends component {
 		}
 		
 		if (empty($options['to'])) {
-			$match = $this->options['name'].'_id';
+			$options['to'] = $this->options['name'].'_id';
 		}
 		
 		$options['limit'] = true;
