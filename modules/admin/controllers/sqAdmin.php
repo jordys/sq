@@ -86,7 +86,7 @@ abstract class sqAdmin extends controller {
 					$inlineModel->set(url::post($inline));
 					$inlineModel->update();
 					
-					if ($inlineModel->id) {
+					if (isset($inlineModel->id)) {
 						$model->$idField = $inlineModel->id;
 					}
 				}
