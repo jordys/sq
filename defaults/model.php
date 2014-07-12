@@ -82,6 +82,7 @@ $defaults = array(
 	
 	// Files model
 	'files' => array(
+		'type' => 'file',
 		'fields' => array(
 			'list' => array(
 				'path' => 'image',
@@ -92,8 +93,6 @@ $defaults = array(
 				'image' => 'file'
 			)
 		),
-		'name' => 'files',
-		'type' => 'file',
 		'prevent-duplicates' => false,
 	),
 	
