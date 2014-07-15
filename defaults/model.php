@@ -37,11 +37,15 @@ $defaults = array(
 			'form' => array()
 		),
 		
+		// Model manipulation defaults
+		'order' => false,
+		'order-direction' => 'DESC',
+		
 		// Actions for admin modules
 		'actions' => array('create'),
 		'inline-actions' => array('delete', 'update')
 	),
-
+	
 	// MySQL database connection information
 	'sql' => array(
 		

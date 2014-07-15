@@ -14,9 +14,8 @@
 abstract class sqModel extends component {
 	
 	// Parameters for the model
-	protected $where, $limit, $order, $orderDirection = 'DESC',
-		$whereOperation = 'AND';
-		
+	protected $where, $limit, $whereOperation = 'AND';
+	
 	// Relationships recognized by models
 	protected $relationships = array('belongs-to', 'has-one', 'has-many');
 	
@@ -149,8 +148,8 @@ abstract class sqModel extends component {
 	
 	// Sets the key and direction to order results by
 	public function order($order, $direction = 'DESC') {
-		$this->order = $order;
-		$this->orderDirection = $direction;
+		$this->options['order'] = $order;
+		$this->options['order-direction'] = strtoupper($direction);
 		
 		return $this;
 	}

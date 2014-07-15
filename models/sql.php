@@ -74,7 +74,7 @@ class sql extends model {
 		$query = "SELECT $values FROM ".$this->options['table'];
 		
 		$query .= $this->parseWhere($this->where);
-		$query .= $this->parseOrder($this->order, $this->orderDirection);
+		$query .= $this->parseOrder();
 		$query .= $this->parseLimit($this->limit);
 		
 		$this->query($query);
@@ -292,11 +292,9 @@ class sql extends model {
 		}
 	}
 	
-	private function parseOrder($order, $direction) {
-		$direction = strtoupper($direction);
-		
-		if ($this->order && $this->limit !== true) {
-			return " ORDER BY $order $direction, id ASC";
+	private function parseOrder() {
+		if ($this->options['order'] && $this->limit !== true) {
+			return " ORDER BY {$this->options['order']} {$this->options['order-direction']}, id ASC";
 		}
 	}
 	
