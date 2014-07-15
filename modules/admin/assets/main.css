@@ -347,6 +347,11 @@ width:85%;
 height:15em;
 }
 
+td .sort {
+width:42px;
+margin:0;
+}
+
 .blurb {
 height:7.5em;
 }

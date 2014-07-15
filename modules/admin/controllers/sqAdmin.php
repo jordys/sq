@@ -115,6 +115,22 @@ abstract class sqAdmin extends controller {
 			$this->layout->content = sq::view('admin/confirm', array('model' => $model));
 		}
 	}
+	
+	public function sortAction() {
+		$model = sq::model(url::get('model'));
+		
+		foreach (url::post('save') as $field => $data) {
+			foreach ($data as $id => $value) {
+				if ($value && is_numeric($value)) {
+					$model->where($id);
+					$model->$field = $value;
+					$model->update();
+				}
+			}
+		}
+		
+		sq::redirect(sq::base().'admin/'.url::get('model'));
+	}
 }
 
 ?>

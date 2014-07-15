@@ -12,7 +12,7 @@ endif;
 <section class="form list-form">
 	<h2><?php echo ucwords($modelName)?></h2>
 	<span class="count"><?php echo count($model)?> Results</span>
-	<form>
+	<form method="post" action="">
 		<div class="actions global-actions listing-actions">
 <?php
 if ($actions): 
@@ -37,7 +37,17 @@ endforeach ?>
 					<tr>
 	<?php foreach ($fields as $name => $type):
 		if (isset($item->$name)):
-			echo '<td class="'.url::make($type).'-list-item">'.listing::$type($item->$name).'</td>';
+			if ($type == 'sort'):
+				if (!$item->$name):
+					$item->$name = null;
+				endif;
+				echo '
+					<td class="'.url::make($type).'-list-item">
+						<input class="sort" name="save['.$type.']['.$item->id.']" type="text" autocomplete="off" inputmode="numeric" maxlength="3" value="'.$item->$name.'"/>
+					</td>';
+			else:
+				echo '<td class="'.url::make($type).'-list-item">'.listing::$type($item->$name).'</td>';
+			endif;
 		endif;
 	endforeach;
 	if (isset($item->$name)): ?>
@@ -57,5 +67,8 @@ endforeach ?>
 				</tbody>
 			</table>
 		</div>
+		<?php if (in_array('sort', $fields)): ?>
+			<button name="action" value="sort">Update</button>
+		<?php endif ?>
 	</form>
 </section>
