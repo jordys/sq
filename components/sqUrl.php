@@ -6,7 +6,7 @@
  * Handles get, request and post values for urls as well as basic sanitation.
  */
 
-abstract class sqUrl extends component {
+abstract class sqUrl {
 	
 	/**
 	 * Methods used to get url parameters in controllers

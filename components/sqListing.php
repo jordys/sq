@@ -1,6 +1,6 @@
 <?php
 
-abstract class sqListing extends component {
+abstract class sqListing {
 	public static function text($text) {
 		return $text;
 	}

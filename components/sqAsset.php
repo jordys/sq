@@ -8,7 +8,7 @@
  * folder.
  */
 
-abstract class sqAsset extends component {
+abstract class sqAsset {
 	
 	// Use asset in a project. Makes the asset if it does not exist and returns
 	// the url of the asset.	

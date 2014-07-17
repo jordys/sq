@@ -7,7 +7,7 @@
  * ones with default values.
  */
 
-abstract class sqForm extends component {
+abstract class sqForm {
 	
 	private static function parseAttrs($attrs) {
 		$string = '';;
