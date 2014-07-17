@@ -75,7 +75,7 @@ class sql extends model {
 		
 		$query .= $this->parseWhere($this->where);
 		$query .= $this->parseOrder();
-		$query .= $this->parseLimit($this->limit);
+		$query .= $this->parseLimit();
 		
 		$this->query($query);
 		
@@ -189,7 +189,7 @@ class sql extends model {
 		$query = 'DELETE FROM '.$this->options['table'];
 		
 		$query .= $this->parseWhere($this->where);
-		$query .= $this->parseLimit($this->limit);
+		$query .= $this->parseLimit();
 		
 		$this->deleteRelated();
 		$this->query($query);
@@ -202,7 +202,7 @@ class sql extends model {
 			$handle = self::$conn->prepare($query);
 			$handle->execute($data);
 			
-			if ($this->limit === true) {
+			if ($this->options['limit'] === true) {
 				$this->id = self::$conn->lastInsertId();
 			}
 			
@@ -210,7 +210,7 @@ class sql extends model {
 				$handle->setFetchMode(PDO::FETCH_ASSOC);
 				
 				$data = array();
-				if ($this->limit === true) {
+				if ($this->options['limit'] === true) {
 					$data = $handle->fetch();
 					
 					if (!$data) {
@@ -219,7 +219,7 @@ class sql extends model {
 				} else {
 					$i = 0;
 					while ($row = $handle->fetch()) {
-						if ($this->limit > $i || $this->limit == false) {
+						if ($this->options['limit'] > $i || $this->options['limit'] == false) {
 							$model = sq::model($this->options['table']);
 							
 							if (isset($row['id'])) {
@@ -293,7 +293,7 @@ class sql extends model {
 	}
 	
 	private function parseOrder() {
-		if ($this->options['order'] && $this->limit !== true) {
+		if ($this->options['order'] && $this->options['limit'] !== true) {
 			return " ORDER BY {$this->options['order']} {$this->options['order-direction']}, id ASC";
 		}
 	}
@@ -330,9 +330,9 @@ class sql extends model {
 		return $query;
 	}
 	
-	private function parseLimit($data) {
-		if ($data) {
-			return ' LIMIT '.$data;
+	private function parseLimit() {
+		if ($this->options['limit']) {
+			return ' LIMIT '.$this->options['limit'];
 		}
 	}
 }

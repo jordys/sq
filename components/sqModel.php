@@ -14,7 +14,7 @@
 abstract class sqModel extends component {
 	
 	// Parameters for the model
-	protected $where, $limit, $whereOperation = 'AND';
+	protected $where, $whereOperation = 'AND';
 	
 	// Relationships recognized by models
 	protected $relationships = array('belongs-to', 'has-one', 'has-many');
@@ -34,7 +34,7 @@ abstract class sqModel extends component {
 			}
 			
 			return $this->layout;
-		} elseif ($this->limit) {
+		} elseif ($this->options['limit']) {
 			return sq::view('forms/form', array(
 				'model' => $this,
 				'fields' => $this->options['fields']['form']
@@ -140,8 +140,8 @@ abstract class sqModel extends component {
 	// boolean true the model will only contain the model data. Limit 1 will 
 	// result in an array of models with only one entry. If limit() is called
 	// with no arguments then it will default to true.
-	public function limit($count = true) {
-		$this->limit = $count;
+	public function limit($limit = true) {
+		$this->options['limit'] = $limit;
 		
 		return $this;
 	}
@@ -354,7 +354,7 @@ abstract class sqModel extends component {
 	protected function deleteRelated() {
 		$this->read();
 		
-		if ($this->limit !== true) {
+		if ($this->options['limit'] !== true) {
 			foreach ($this->data as $row) {
 				foreach ($row as $val) {
 					if (is_object($val) && $val->options['cascade']) {
@@ -374,7 +374,7 @@ abstract class sqModel extends component {
 	// Utility function that loops through related records and calls an update 
 	// on each one of them after a main record is updated.
 	protected function updateRelated() {
-		if ($this->limit !== true) {
+		if ($this->options['limit'] !== true) {
 			foreach ($this->data as $row) {
 				foreach ($row as $val) {
 					if (is_object($val)) {

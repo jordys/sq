@@ -40,6 +40,7 @@ $defaults = array(
 		// Model manipulation defaults
 		'order' => false,
 		'order-direction' => 'DESC',
+		'limit' => false,
 		
 		// Actions for admin modules
 		'actions' => array('create'),
