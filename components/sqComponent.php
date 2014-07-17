@@ -17,8 +17,8 @@ abstract class sqComponent implements iterator, countable, arrayAccess {
 	public $options = array();
 	
 	// Optional layout view that is automatically used when the component is 
-	// rendered. Variables can be added to it by the controller and when the 
-	// controller is finished the layout is rendered.
+	// rendered. Variables can be added to it by the component and when the 
+	// component is echoed the layout is rendered.
 	public $layout;
 	
 	// Array all model data is stored in
@@ -36,7 +36,6 @@ abstract class sqComponent implements iterator, countable, arrayAccess {
 		// If a view is defined for layout generate it as a view
 		if ($this->layout) {
 			$this->layout = sq::view($this->layout);
-			$this->layout->layout = false;
 		}
 		
 		$this->init();
