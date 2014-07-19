@@ -259,9 +259,9 @@ abstract class sqModel extends component {
 					->read();
 				
 				// Flatten bridge with the related model
-				$item->set($relation->toArray());
+				$relation->set($item->toArray());
 				
-				$bridge[$key] = $item;
+				$bridge[$key] = $relation;
 			}
 			
 			$this->$model = $bridge;
