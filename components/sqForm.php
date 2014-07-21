@@ -9,24 +9,6 @@
 
 abstract class sqForm {
 	
-	private static function parseAttrs($attrs) {
-		$string = '';;
-		
-		if (is_array($attrs)) {
-			foreach ($attrs as $key => $val) {
-				if (is_int($key)) {
-					$string .= ' '.$val;
-				} else {
-					$string .= ' '.$key.'="'.$val.'"';
-				}
-			}
-		} else {
-			$string .= ' id="'.$attrs.'"';
-		}
-		
-		return $string;
-	}
-	
 	// Prints form label
 	public static function label($for, $value, $class = 'text') {
 		$for = self::toId($for);
@@ -239,6 +221,26 @@ abstract class sqForm {
 		$string = preg_replace('!\s+!', ' ', $string);
 		$string = str_replace(' ', '-', $string);
 		$string = strtolower($string);
+		
+		return $string;
+	}
+	
+	// Takes an array and turns them into html attributes or a string and
+	// applies it as an id
+	private static function parseAttrs($attrs) {
+		$string = '';
+		
+		if (is_array($attrs)) {
+			foreach ($attrs as $key => $val) {
+				if (is_int($key)) {
+					$string .= ' '.$val;
+				} else {
+					$string .= ' '.$key.'="'.$val.'"';
+				}
+			}
+		} else {
+			$string .= ' id="'.$attrs.'"';
+		}
 		
 		return $string;
 	}
