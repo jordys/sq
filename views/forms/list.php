@@ -17,7 +17,7 @@ endif;
 <?php
 if ($actions): 
 	foreach ($actions as $action):
-		echo '<a href="'.$base.url::get('module').'/'.$modelName.'/'.url::make($action).'" class="action global-action list-action">'.ucwords($action).'</a>';
+		echo '<a href="'.$base.url::get('module').'/'.$modelName.'/'.url::format($action).'" class="action global-action list-action">'.ucwords($action).'</a>';
 	endforeach;
 endif;
 ?>
@@ -42,11 +42,11 @@ endforeach ?>
 					$item->$name = null;
 				endif;
 				echo '
-					<td class="'.url::make($type).'-list-item">
+					<td class="'.url::format($type).'-list-item">
 						<input class="sort" name="save['.$type.']['.$item->id.']" type="text" autocomplete="off" inputmode="numeric" maxlength="3" value="'.$item->$name.'"/>
 					</td>';
 			else:
-				echo '<td class="'.url::make($type).'-list-item">'.listing::$type($item->$name).'</td>';
+				echo '<td class="'.url::format($type).'-list-item">'.listing::$type($item->$name).'</td>';
 			endif;
 		endif;
 	endforeach;
@@ -58,7 +58,7 @@ endforeach ?>
 			if (is_int($item->id)):
 				$id = '/'.$item->id;
 			endif;
-			echo '<a href="'.$base.url::get('module').'/'.$modelName.'/'.url::make($action).$id.'" class="action inline-action list-action '.url::make($action).'-action">'.ucwords($action).'</a>';
+			echo '<a href="'.$base.url::get('module').'/'.$modelName.'/'.url::format($action).$id.'" class="action inline-action list-action '.url::format($action).'-action">'.ucwords($action).'</a>';
 		endforeach ?>
 						</td>
 	<?php endif ?>

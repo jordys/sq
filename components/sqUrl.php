@@ -73,6 +73,19 @@ abstract class sqUrl {
 		return $data;
 	}
 	
+	// Makes a url out of an array of components
+	public static function make(array $fragments) {
+		$url = '';
+		
+		foreach ($fragments as $fragment) {
+			if ($fragment) {
+				$url .= '/'.$fragment;
+			}
+		}
+		
+		return sq::base().ltrim($url, '/');
+	}
+	
 	// Returns true if request is ajax
 	public static function ajax() {
 		if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) 
@@ -103,7 +116,7 @@ abstract class sqUrl {
 	}
 	
 	// Converts a string into a clean url
-	public static function make($url, $separator = '-') {
+	public static function format($url, $separator = '-') {
 		$url = str_replace('&', 'and', $url);
 		$url = preg_replace('/[^0-9a-zA-Z ]/', '', $url);
 		$url = preg_replace('!\s+!', ' ', $url);
