@@ -296,7 +296,7 @@ var sq = '.str_replace('    ', "\t", json_encode(self::$jsData, JSON_PRETTY_PRIN
 			switch ($type) {
 				case 'markdown':
 					sq::load('phpMarkdown');
-					return markdown($content);	
+					return markdown($content);
 				case 'image':
 					return '<img src="'.sq::base().$content.'" alt="'.$altText.'"/>';
 				default:
