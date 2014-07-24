@@ -3,6 +3,16 @@
 class slots extends controller {
 	public $layout = 'admin/layouts/main';
 	
+	public function filter($action) {
+		sq::controller('auth')->action($action);
+		
+		if (!$this->options['require-login'] || auth::check('admin')) {
+			return true;
+		} else {
+			return sq::view('admin/login');
+		}
+	}
+	
 	public function indexAction() {
 		$this->layout->content = sq::model('sq_slots')
 			->read();
