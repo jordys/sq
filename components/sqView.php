@@ -203,7 +203,7 @@ abstract class sqView extends component {
 		$head .= '<title>'.self::$title.'</title>';
 		
 		// Favicon
-		$head .= '<link rel="icon" href="'.sq::base().self::$favicon.'"/>';
+		$head .= '<link rel="icon" href="'.self::$favicon.'"/>';
 		
 		self::$description = strip_tags(self::$description);
 		self::$description = str_replace("\n", " ", self::$description);

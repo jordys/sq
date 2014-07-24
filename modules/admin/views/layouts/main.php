@@ -6,6 +6,8 @@ self::style(asset::load('admin/main.css'));
 self::script('//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js');
 self::script(asset::load('admin/tinymce').'/jquery.tinymce.min.js');
 self::script(asset::load('admin/main.js'));
+
+self::$favicon = asset::load('admin/favicon.ico');
 self::$head = '<meta name="viewport" content="initial-scale=1.0"/>';
 
 if (url::request('controller')):

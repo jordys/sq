@@ -23,7 +23,7 @@ $defaults = array(
 		'language' => 'en',
 		
 		// Path to favicon
-		'favicon' => 'favicon.ico',
+		'favicon' => sq::base().'favicon.ico',
 		
 		// id attribute applied to the body tag
 		'id' => null,
