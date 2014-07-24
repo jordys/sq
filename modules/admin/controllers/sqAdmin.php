@@ -3,7 +3,7 @@
 abstract class sqAdmin extends controller {
 	public $layout = 'admin/layouts/main';
 	
-	public function filter($action) {		
+	public function filter($action) {
 		sq::controller('auth')->action($action);
 		
 		if (!$this->options['require-login'] || auth::check('admin')) {
