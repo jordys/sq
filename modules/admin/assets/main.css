@@ -345,6 +345,13 @@ width:5em;
 textarea {
 width:85%;
 height:15em;
+padding:1em;
+}
+
+.markdown-field {
+width:100%;
+font-family:Monaco, monospace;
+min-height:550px;
 }
 
 td .sort {
