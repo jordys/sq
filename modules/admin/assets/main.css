@@ -351,7 +351,7 @@ padding:1em;
 .markdown-field {
 width:100%;
 font-family:Monaco, monospace;
-min-height:550px;
+min-height:450px;
 }
 
 td .sort {
