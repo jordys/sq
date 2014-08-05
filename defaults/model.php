@@ -4,7 +4,7 @@
  * Model defaults
  */
 
-$defaults = array(
+return array(
 	
 	// General configuration for all models
 	'model' => array(

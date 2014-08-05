@@ -4,7 +4,7 @@
  * Auth defaults
  */
 
-$defaults = array(
+return array(
 	'auth' => array(
 		
 		// Default group of user if none is set. This is whay all unreconized 

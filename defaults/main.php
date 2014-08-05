@@ -12,7 +12,7 @@
 sq::load('/defaults/view');
 sq::load('/defaults/model');
 
-$defaults = array(
+return array(
 	
 	// Debug mode
 	'debug' => false,

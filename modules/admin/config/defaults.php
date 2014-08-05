@@ -4,7 +4,7 @@
  * Admin module defaults
  */
 
-$defaults = array(
+return array(
 	'admin' => array(
 		
 		// Sidebar navigation in the form of title => url. Single entries format

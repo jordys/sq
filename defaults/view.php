@@ -4,7 +4,7 @@
  * View defaults
  */
 
-$defaults = array(
+return array(
 	'view' => array(
 		
 		// Meta description string

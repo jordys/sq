@@ -127,24 +127,16 @@ class sq {
 				$path = $dir.'/'.$class.'.php';
 			}
 			
-			$returned = false;
+			$returned = null;
 			if (file_exists($path)) {
 				$returned = require_once($path);
 			} elseif (file_exists(self::path().'/'.$path)) {
 				$returned = require_once(self::path().'/'.$path);
 			}
 			
-			// Add any config and / or defaults to the application
+			// Add configuration to the application
 			if (is_array($returned)) {
-				self::config($returned);
-			}
-			
-			if (isset($defaults)) {
-				self::defaults($defaults);
-			}
-			
-			if (isset($config)) {
-				self::config($config);
+				self::$config = self::merge($returned, self::$config);
 			}
 		}
 	}
@@ -157,8 +149,8 @@ class sq {
 		$name = end($pieces);
 		
 		// Load configuration
-		sq::load('/defaults/'.$name);
 		sq::load('/config/'.$name);
+		sq::load('/defaults/'.$name);
 		
 		// Merge direct config
 		if (isset($config[1])) {
@@ -335,11 +327,6 @@ class sq {
 		}
 		
 		return $config;
-	}
-	
-	// Adds default configuration options to the app
-	public static function defaults($defaults) {
-		self::$config = self::merge($defaults, self::$config);
 	}
 	
 	// Redirect to another page

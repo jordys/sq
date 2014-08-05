@@ -4,7 +4,7 @@
  * Mailer defaults
  */
 
-$defaults = array(
+return array(
 	'mailer' => array(
 		
 		// Boundary for multipart/alternative email content
