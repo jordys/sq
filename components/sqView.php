@@ -307,9 +307,11 @@ var sq = '.str_replace('    ', "\t", json_encode(self::$jsData, JSON_PRETTY_PRIN
 	
 	// Print out a php object or array to screen with readable formatting
 	public static function debug($content) {
-		echo '<pre>';
-		print_r($content);
-		echo '</pre>';
+		if (sq::config('debug')) {
+			echo '<pre>';
+			print_r($content);
+			echo '</pre>';
+		}
 	}
 	
 	// Start a clip optionally saving the clip to a layout variable
