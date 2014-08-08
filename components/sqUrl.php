@@ -74,8 +74,12 @@ abstract class sqUrl {
 	}
 	
 	// Makes a url out of an array of components
-	public static function make(array $fragments) {
+	public static function make($fragments) {
 		$url = '';
+		
+		if (!is_array($fragments)) {
+			$fragments = func_get_args();
+		}
 		
 		foreach ($fragments as $fragment) {
 			if ($fragment) {
