@@ -248,8 +248,14 @@ abstract class sqModel extends component {
 				$options['from'] = 'id';
 			}
 			
+			$where = array($options['to'] => $this->data[$options['from']]);
+			
+			if (isset($options['where'])) {
+				$where += $options['where'];
+			}
+			
 			$bridge = sq::model($options['bridge'])
-				->where(array($options['to'] => $this->data[$options['from']]))
+				->where($where)
 				->read();
 			
 			foreach ($bridge as $key => $item) {
@@ -259,6 +265,7 @@ abstract class sqModel extends component {
 					->read();
 				
 				// Flatten bridge with the related model
+				unset($item->id);
 				$relation->set($item->toArray());
 				
 				$bridge[$key] = $relation;
@@ -320,6 +327,7 @@ abstract class sqModel extends component {
 			$model->read($read);
 			
 			if (isset($options['flatten']) && $options['flatten'] && isset($options['limit']) && $options['limit'] === true) {
+				unset($model->id);
 				$this->set($model->toArray());
 			} else {
 				$this->data[$name] = $model;
