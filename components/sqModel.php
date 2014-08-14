@@ -114,7 +114,9 @@ abstract class sqModel extends component {
 		$data = array();
 		
 		foreach ($this->data as $item) {
-			$data[] = $item->$column;
+			if (isset($item->$column)) {
+				$data[] = $item->$column;
+			}
 		}
 		
 		return $data;
