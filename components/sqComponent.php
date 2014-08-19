@@ -168,6 +168,11 @@ abstract class sqComponent implements iterator, countable, arrayAccess {
 			}
 		}
 		
+		// Allow two value set use like set($key, $value)
+		if (is_string($data)) {
+			$this->data[$data] = $overwrite;
+		}
+		
 		return $this;
 	}
 	
