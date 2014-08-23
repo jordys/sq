@@ -27,6 +27,16 @@ abstract class sqForm {
 		return '<input type="text" name="'.$name.'" value="'.$value.'"'.$append.'/>';
 	}
 	
+	public static function date($name, $value = null, $attrs = array()) {
+		$append = self::parseAttrs($attrs);
+		
+		if (!isset($attrs['id'])) {
+			$append .= ' id="'.self::toId($name).'"';
+		}
+		
+		return '<input type="date" name="'.$name.'" placeholder="'.sq::config('admin/form/date-placeholder').'" value="'.view::date(sq::config('admin/form/date-format'), $value).'"'.$append.'/>';
+	}
+	
 	// Password input
 	public static function password($name, $value = null, $attrs = array()) {
 		$append = self::parseAttrs($attrs);

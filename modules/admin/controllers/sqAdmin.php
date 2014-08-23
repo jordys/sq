@@ -34,7 +34,7 @@ abstract class sqAdmin extends controller {
 		$model = sq::model(url::get('model'));
 		
 		if (url::post()) {
-			$save = url::post('save', false);
+			$save = $this->cleanInput(url::post('save', false));
 			
 			if (isset($save['id-field'])) {
 				$idField = $save['id-field'];
@@ -70,7 +70,7 @@ abstract class sqAdmin extends controller {
 		$model->where(url::request('id'));
 		
 		if (url::post()) {
-			$save = url::post('save', false);
+			$save = $this->cleanInput(url::post('save', false));
 			
 			if (isset($save['id-field'])) {
 				$idField = $save['id-field'];
@@ -130,6 +130,18 @@ abstract class sqAdmin extends controller {
 		}
 		
 		sq::redirect(sq::base().'admin/'.url::get('model'));
+	}
+	
+	private function cleanInput(array $input) {
+		foreach (sq::config(url::get('model').'/fields/form') as $field => $type) {
+			foreach ($input as $key => $val) {
+				if ($key == $field && $type == 'date') {
+					$input[$key] = date('Y-m-d', strtotime($val));
+				}
+			}
+		}
+		
+		return $input;
 	}
 }
 
