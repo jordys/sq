@@ -24,7 +24,7 @@ class slots extends controller {
 			->read();
 		
 		if (url::post()) {
-			$content = url::post('content');
+			$content = url::post('content', false);
 			
 			if ($slot->type == 'image') {
 				if (isset($_FILES['file']) && $_FILES['file']['size'] > 0) {
