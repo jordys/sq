@@ -320,12 +320,12 @@ input[type=checkbox],select {
 margin-bottom:1.8em;
 }
 
-input[type=text],input[type=submit],input[type=password],input[type=email],button,textarea {
+input[type=text],input[type=submit],input[type=password],input[type=email],input[type=date],button,textarea {
 -webkit-appearance:none;
 border-radius:0;
 }
 
-input[type=text],input[type=password],input[type=email],textarea {
+input[type=text],input[type=password],input[type=email],input[type=date],textarea {
 border:1px solid #DDD;
 font-size:1em;
 padding:.2em;
