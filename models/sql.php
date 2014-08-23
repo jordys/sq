@@ -64,6 +64,13 @@ class sql extends model {
 		}
 	}
 	
+	// Takes a raw mysql where query
+	public function whereRaw($query) {
+		$this->where = ' WHERE '.$query;
+		
+		return $this;
+	}
+	
 	public function read($values = null) {
 		if (is_array($values)) {
 			$values = implode(',', $values);
@@ -325,6 +332,8 @@ class sql extends model {
 					$query .= "$key = '$val'";
 				}
 			}
+		} else {
+			$query = $data;
 		}
 		
 		return $query;
