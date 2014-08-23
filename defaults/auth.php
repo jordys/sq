@@ -29,7 +29,6 @@ return array(
 	
 	// Users model
 	'users' => array(
-		'name' => 'users',
 		'fields' => array(
 			'list' => array(
 				'created' => 'date',
