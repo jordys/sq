@@ -34,7 +34,12 @@ endif;
 				$active = 'active';
 			endif;
 			
-			echo '<a class="'.$active.'" href="'.$base.'admin/'.$link.'">'.$name.'</a>';
+			$href = $base.'admin/'.$link;
+			if ($link[0] == '/'):
+				$href = $link;
+			endif;
+			
+			echo '<a class="'.$active.'" href="'.$href.'">'.$name.'</a>';
 		endif;
 	endforeach ?>
 		</nav>
