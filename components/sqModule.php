@@ -35,7 +35,7 @@ abstract class sqModule extends component {
 		spl_autoload_register($class.'::load');
 		
 		// Load the module configuration defaults
-		self::load('defaults');
+		self::load('main');
 		
 		// Setup config
 		$this->options = $options;
