@@ -15,7 +15,7 @@ return array(
 		'portable-hashes' => false,
 		
 		// Seconds until cookie experiation
-		'cookie-timeout' => 60 * 60 * 10,
+		'cookie-timeout' => 60 * 60 * 24 * 14,
 		
 		// Salt added to the cookie hash
 		'salt' => md5('What\'s up, Doc?'),
