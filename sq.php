@@ -284,7 +284,7 @@ class sq {
 	 * config() returns a config parameter using slash notation "sql/dbname" 
 	 * etc... Using two arguemnts the function sets a config value.
 	 */
-	public static function config($name = false, $change = -1) {
+	public static function config($name = null, $change = -1) {
 		
 		// Return the entire config array with no arguments
 		if (!$name) {
@@ -292,7 +292,11 @@ class sq {
 		
 		// If the first argument is an array add it to config
 		} elseif (is_array($name)) {
-			self::$config = self::merge(self::$config, $name);
+			if ($change === true) {
+				self::$config = self::merge($name, self::$config);
+			} else {
+				self::$config = self::merge(self::$config, $name);
+			}
 			
 			$config = self::$config;
 			

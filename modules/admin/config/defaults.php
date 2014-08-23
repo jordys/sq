@@ -12,7 +12,7 @@ return array(
 		'nav' => array(
 			'Manage',
 			'Users' => 'users',
-			'Logout' => 'users/logout',
+			'Logout' => 'users/logout'
 		),
 		
 		// Require login for access to admin section. False is useful for dev
