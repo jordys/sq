@@ -34,7 +34,11 @@ abstract class sqForm {
 			$append .= ' id="'.self::toId($name).'"';
 		}
 		
-		return '<input type="date" name="'.$name.'" placeholder="'.sq::config('admin/form/date-placeholder').'" value="'.view::date(sq::config('admin/form/date-format'), $value).'"'.$append.'/>';
+		if ($value) {
+			$value = view::date(sq::config('admin/form/date-format'), $value);
+		}
+		
+		return '<input type="date" name="'.$name.'" placeholder="'.sq::config('admin/form/date-placeholder').'" value="'.$value.'"'.$append.'/>';
 	}
 	
 	// Password input
