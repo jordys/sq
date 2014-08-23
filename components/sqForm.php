@@ -27,6 +27,7 @@ abstract class sqForm {
 		return '<input type="text" name="'.$name.'" value="'.$value.'"'.$append.'/>';
 	}
 	
+	// Date input fields with processing
 	public static function date($name, $value = null, $attrs = array()) {
 		$append = self::parseAttrs($attrs);
 		
