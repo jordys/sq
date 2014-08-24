@@ -3,7 +3,7 @@
 self::$id = 'admin';
 self::style('http://fonts.googleapis.com/css?family=Open+Sans:300italic,400,700');
 self::style(asset::load('admin/main.css'));
-self::script('//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js');
+self::script('//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js');
 self::script(asset::load('admin/tinymce').'/jquery.tinymce.min.js');
 self::script(asset::load('admin/main.js'));
 
