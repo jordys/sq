@@ -71,6 +71,8 @@ abstract class sqAuth extends controller {
 	// Log out action
 	public function logoutAction() {
 		self::logout();
+		
+		sq::redirect($_SERVER['HTTP_REFERER']);
 	}
 	
 	// Logs the current user out of the system
@@ -83,8 +85,6 @@ abstract class sqAuth extends controller {
 		
 		// Clear the cookie
 		setcookie('auth', null, time() - 10, '/');
-		
-		sq::redirect($_SERVER['HTTP_REFERER']);
 	}
 	
 	// Logs the user with the username passed in into the system and sets a 
