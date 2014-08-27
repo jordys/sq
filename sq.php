@@ -258,6 +258,14 @@ class sq {
 			return new $class($config);
 		} elseif (class_exists($config['name']) && is_subclass_of($config['name'], 'controller')) {
 			return new $config['name']($config);
+		} else {
+			
+			// Throw an error for unfound controller
+			self::error(404);
+			
+			// Return the default controller if none is found
+			$defaultController = self::config('default-controller');
+			return new $defaultController($config);
 		}
 	}
 	
