@@ -264,8 +264,7 @@ class sq {
 			self::error(404);
 			
 			// Return the default controller if none is found
-			$defaultController = self::config('default-controller');
-			return new $defaultController($config);
+			return self::controller(self::config('default-controller'), $options);
 		}
 	}
 	
