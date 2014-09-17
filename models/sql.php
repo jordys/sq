@@ -161,6 +161,10 @@ class sql extends model {
 			$this->query($query, $data);
 		}
 		
+		// Set the where statement to the id to allow an immediate read
+		// following the create
+		$this->where($this->id);
+		
 		return $this;
 	}
 	
