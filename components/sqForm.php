@@ -132,13 +132,13 @@ abstract class sqForm {
 	}
 	
 	// Choose from a list of related entries
-	public static function single($name, $value, $model, $attrs = false) {
+	public static function single($name, $value, $model, $attrs = array()) {
 		$model = sq::model($model);
 		$model->options['load-relations'] = false;
 		$model->read(array('name', 'id'));
 		
 		$emptyLabel = '';
-		if ($attrs['empty-label']) {
+		if (isset($attrs['empty-label'])) {
 			$emptyLabel = $attrs['empty-label'];
 		}
 		$items = array('' => $emptyLabel);
