@@ -386,9 +386,11 @@ abstract class sqModel extends component {
 	protected function updateRelated() {
 		if ($this->options['limit'] !== true) {
 			foreach ($this->data as $row) {
-				foreach ($row as $val) {
-					if (is_object($val)) {
-						$val->update();
+				if (is_array($row)) {
+					foreach ($row as $val) {
+						if (is_object($val)) {
+							$val->update();
+						}
 					}
 				}
 			}
