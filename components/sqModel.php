@@ -49,7 +49,7 @@ abstract class sqModel extends component {
 	
 	// CRUD methods to be implemented. These four methods must be implemented by 
 	// sq models with the optional arguments listed here.
-	public function create($data = false) {
+	public function create($data = null) {
 		
 	}
 	
@@ -57,11 +57,11 @@ abstract class sqModel extends component {
 		
 	}
 	
-	public function update($data = false, $where = false) {
+	public function update($data = null, $where = null) {
 		
 	}
 	
-	public function delete($where = false) {
+	public function delete($where = null) {
 		
 	}
 	
@@ -156,7 +156,7 @@ abstract class sqModel extends component {
 		return $this;
 	}
 	
-	public function group($field, $field1 = false) {
+	public function group($field, $field1 = null) {
 		if ($field1) {
 			foreach ($this->data as $row) {
 				$data[$row->$field][$row->$field1][] = $row;

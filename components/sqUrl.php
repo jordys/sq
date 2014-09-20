@@ -16,15 +16,15 @@ abstract class sqUrl {
 	 * is the same as calling $_GET['id'] just safer with better input 
 	 * validation and error checking.
 	 */
-	public static function get($url = false, $clean = true) {
+	public static function get($url = null, $clean = true) {
 		return url::getParam($url, $clean, 'get');
 	}
 	
-	public static function post($url = false, $clean = true) {
+	public static function post($url = null, $clean = true) {
 		return url::getParam($url, $clean, 'post');
 	}
 	
-	public static function request($url = false, $clean = true) {
+	public static function request($url = null, $clean = true) {
 		return url::getParam($url, $clean, 'request');
 	}
 	

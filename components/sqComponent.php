@@ -25,7 +25,7 @@ abstract class sqComponent implements iterator, countable, arrayAccess {
 	protected $data = array();
 	
 	// Constructor to set options
-	public function __construct($options = false) {
+	public function __construct($options = null) {
 		$this->options = $options;
 		
 		// Layout can be defined in options as well as in the class

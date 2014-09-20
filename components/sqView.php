@@ -21,7 +21,7 @@ abstract class sqView extends component {
 	private $clips = array();
 	
 	// Cache of the slots model
-	protected static $slots = false;
+	protected static $slots = null;
 	
 	// Variable to store data to be turned into a javascript JSON object in the
 	// footer.
@@ -265,7 +265,7 @@ var sq = '.str_replace('    ', "\t", json_encode(self::$jsData, JSON_PRETTY_PRIN
 	// Creates / uses a content slot. Content slots are bits of content stored
 	// in a model that may be defined directly in code. Slots are editable in
 	// the Admin module or via a custom setup in your app.
-	public static function slot($id, $name, $type = 'markdown', $content = '') {
+	public static function slot($id, $name, $type = 'markdown', $content = null) {
 		$altText = null;
 		
 		// Create model object if one doesn't already exist and read slots and
@@ -315,7 +315,7 @@ var sq = '.str_replace('    ', "\t", json_encode(self::$jsData, JSON_PRETTY_PRIN
 	}
 	
 	// Start a clip optionally saving the clip to a layout variable
-	public function clip($var = false) {
+	public function clip($var = null) {
 		ob_start();
 		
 		array_push($this->clips, $var);

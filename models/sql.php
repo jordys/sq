@@ -13,7 +13,7 @@ class sql extends model {
 	// Static pdo database connection
 	protected static $conn = false;
 	
-	public function __construct($options = false) {
+	public function __construct($options = null) {
 		$this->options = $options;
 		
 		// Layout can be defined in options as well as in the class
@@ -135,7 +135,7 @@ class sql extends model {
 		return $this;
 	}
 	
-	public function create($data = false) {
+	public function create($data = null) {
 		if (!$data) {
 			$data = $this->toArray($data);
 		}
@@ -168,7 +168,7 @@ class sql extends model {
 		return $this;
 	}
 	
-	public function update($data = false, $where = false) {
+	public function update($data = null, $where = null) {
 		if ($data) {
 			$this->set($data);
 		}
@@ -192,7 +192,7 @@ class sql extends model {
 		return $this;
 	}
 	
-	public function delete($where = false) {
+	public function delete($where = null) {
 		if ($where) {
 			$this->where($where);
 		}

@@ -91,7 +91,7 @@ abstract class sqForm {
 	
 	// Prints file upload button. If an image is set as value it is snown beside
 	// the upload button.
-	public static function file($name, $value = null, $id = false, $class = null) {
+	public static function file($name, $value = null, $id = null, $class = null) {
 		if (!$id) {
 			$id = self::toId($name);
 		}
@@ -212,7 +212,7 @@ abstract class sqForm {
 	
 	// Similar to textarea but with a richtext class presumably to use tinyMCE or
 	// suchlike
-	public static function richtext($name, $content = null, $id = false, $class = null) {
+	public static function richtext($name, $content = null, $id = null, $class = null) {
 		if (!$id) {
 			$id = self::toId($name);
 		}
@@ -221,7 +221,7 @@ abstract class sqForm {
 	}
 	
 	// Textarea
-	public static function blurb($name, $content = null, $id = false, $class = null) {
+	public static function blurb($name, $content = null, $id = null, $class = null) {
 		if (!$id) {
 			$id = self::toId($name);
 		}

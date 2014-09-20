@@ -67,9 +67,9 @@ abstract class sqModule extends component {
 	 * base path. Thus blog module views would be blog/posts. This is useful 
 	 * because module views can be overridden in the base views directory.
 	 */
-	public static function load($class, $type = false) {
+	public static function load($class, $type = null) {
 		$directories = array($type);
-		if ($type === false) {
+		if (!$type) {
 			$directories = sq::config('autoload');
 		}
 		
