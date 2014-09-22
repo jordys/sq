@@ -366,15 +366,15 @@ var sq = '.str_replace('    ', "\t", json_encode(self::$jsData, JSON_PRETTY_PRIN
 	// Returns a formatted date. If no date is passed to the function now will
 	// be assumed. Optionally a third argument can be passed in to specify the
 	// format of the date string given to the function.
-	public static function date($formatOut, $date = 'now', $formatIn = null) {
-		if ($date === null) {
-			return null;
-		}
-		
-		if ($formatIn) {
+	public static function date($formatOut, $date = null, $formatIn = null) {
+		if ($formatIn && $date) {
 			$date = DateTime::createFromFormat($formatIn, $date)
 				->format($formatOut);
 		} else {
+			if (!$date) {
+				$date = 'now';
+			}
+			
 			$date = strtotime($date);
 			$date = date($formatOut, $date);
 		}
