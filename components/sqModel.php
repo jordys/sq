@@ -219,7 +219,7 @@ abstract class sqModel extends component {
 		return $this;
 	}
 	
-	public function manyMany($model, $options = array()) {
+	public function manyMany($model, array $options = array()) {
 		
 		// Allow a shorthand of just passing in string instead of options to set
 		// the bridge table.
