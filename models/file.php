@@ -13,12 +13,12 @@ class file extends model {
 		
 		$path = $this->options['path'];
 		
-		if (isset($this->where['path'])) {
-			$path = $this->where['path'];
+		if (isset($this->options['where']['path'])) {
+			$path = $this->options['where']['path'];
 		}
 		
-		if (isset($this->where['id'])) {
-			$path = $this->where['id'];
+		if (isset($this->options['where']['id'])) {
+			$path = $this->options['where']['id'];
 		}
 		
 		if (is_dir($path)) {
@@ -211,8 +211,8 @@ class file extends model {
 			$this->where($where);
 		}
 		
-		if ($this->where['id'] != null && file_exists(sq::root().$this->where['id'])) {
-			unlink(sq::root().$this->where['id']);
+		if ($this->options['where']['id'] != null && file_exists(sq::root().$this->options['where']['id'])) {
+			unlink(sq::root().$this->options['where']['id']);
 		}
 	}
 	

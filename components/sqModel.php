@@ -13,12 +13,6 @@
 
 abstract class sqModel extends component {
 	
-	// Parameters for the model
-	protected $where, $whereOperation = 'AND';
-	
-	// Relationships recognized by models
-	protected $relationships = array('belongs-to', 'has-one', 'has-many');
-	
 	// Called by the __tostring method to render a view of the data in the 
 	// model. By default the view is a form for a single result and a listing 
 	// multiple results. The default listing and form view can also be 
@@ -126,14 +120,8 @@ abstract class sqModel extends component {
 	// argument is passed it is assumed to be an id and limit is automatically
 	// imposed.
 	public function where($argument, $operation = 'AND') {
-		if (is_array($argument)) {
-			$this->where = $argument;
-			$this->whereOperation = $operation;
-		} else {
-			$this->where = array('id' => $argument);
-			
-			$this->limit();
-		}
+		$this->options['where-operation'] = $operation;
+		$this->options['where'] = $argument;
 		
 		return $this;
 	}
@@ -345,7 +333,7 @@ abstract class sqModel extends component {
 	protected function relateModel() {
 		$data = $this->data;
 		
-		foreach ($this->relationships as $relation) {
+		foreach (array('belongs-to', 'has-one', 'has-many') as $relation) {
 			foreach ($this->options[$relation] as $name => $options) {
 				if (is_numeric($name)) {
 					$name = $options;

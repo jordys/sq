@@ -66,7 +66,7 @@ class sql extends model {
 	
 	// Takes a raw mysql where query
 	public function whereRaw($query) {
-		$this->where = ' WHERE '.$query;
+		$this->options['where'] = ' WHERE '.$query;
 		
 		return $this;
 	}
@@ -80,7 +80,7 @@ class sql extends model {
 		
 		$query = "SELECT $values FROM ".$this->options['table'];
 		
-		$query .= $this->parseWhere($this->where);
+		$query .= $this->parseWhere($this->options['where']);
 		$query .= $this->parseOrder();
 		$query .= $this->parseLimit();
 		
@@ -199,7 +199,7 @@ class sql extends model {
 		
 		$query = 'DELETE FROM '.$this->options['table'];
 		
-		$query .= $this->parseWhere($this->where);
+		$query .= $this->parseWhere($this->options['where']);
 		$query .= $this->parseLimit();
 		
 		$this->deleteRelated();
@@ -293,7 +293,7 @@ class sql extends model {
 		$query .= ' SET '.implode(',', $set);
 		
 		if (!empty($this->where)) {
-			$query .= $this->parseWhere($this->where);
+			$query .= $this->parseWhere($this->options['where']);
 		} elseif (isset($data['id'])) {
 			$query .= $this->parseWhere(array('id' => $data['id']));
 		}
@@ -310,10 +310,15 @@ class sql extends model {
 	}
 	
 	private function parseWhere($data) {
+		if (!is_array($data)) {
+			$data = array('id' => $data);
+			$this->limit();
+		}
+		
 		$query = null;
 		
 		if (is_array($data)) {
-			$operation = strtoupper($this->whereOperation);
+			$operation = strtoupper($this->options['where-operation']);
 			
 			$i = 0;
 			foreach ($data as $key => $val) {

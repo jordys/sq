@@ -41,6 +41,8 @@ return array(
 		'order' => false,
 		'order-direction' => 'DESC',
 		'limit' => false,
+		'where' => array(),
+		'where-operation' => 'AND',
 		
 		// Actions for admin modules
 		'actions' => array('create'),
