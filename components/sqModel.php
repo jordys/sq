@@ -151,14 +151,20 @@ abstract class sqModel extends component {
 		return $this;
 	}
 	
-	public function group($field, $field1 = null) {
-		if ($field1) {
+	/**
+	 * Groups entries by value
+	 *
+	 * Groups matching column values into arrays with entries for each value.
+	 * Optionally can group by two columns.
+	 */
+	public function group($col, $col2 = null) {
+		if ($col2) {
 			foreach ($this->data as $row) {
-				$data[$row->$field][$row->$field1][] = $row;
+				$data[$row->$col][$row->$col2][] = $row;
 			}
 		} else {
 			foreach ($this->data as $row) {
-				$data[$row->$field][] = $row;
+				$data[$row->$col][] = $row;
 			}
 		}
 		
