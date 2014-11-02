@@ -4,7 +4,7 @@
  * SQL model implementation
  *
  * Generic crud implementation of model to work with sql databases. The only
- * addition is the query method which allows arbitrary sql queries to be 
+ * addition is the query method which allows arbitrary sql queries to be
  * executed. Uses PDO for the database interaction.
  */
 
@@ -34,7 +34,7 @@ class sql extends model {
 	// Constructor that also database connection
 	public function connect() {
 		
-		// Assume the name of the table is the same as the name of the model 
+		// Assume the name of the table is the same as the name of the model
 		// unless specified otherwise
 		if (!isset($this->options['table'])) {
 			$this->options['table'] = $this->options['name'];
@@ -96,8 +96,8 @@ class sql extends model {
 	/**
 	 * Returns an empty model
 	 *
-	 * schema() sets the model to empty state. It sets all the values in the 
-	 * model to null. Useful for making create forms or other actions where 
+	 * schema() sets the model to empty state. It sets all the values in the
+	 * model to null. Useful for making create forms or other actions where
 	 * having null data is necessary.
 	 */
 	public function schema() {
@@ -276,6 +276,14 @@ class sql extends model {
 				sq::error('404');
 			}
 		}
+	}
+	
+	public function count() {
+		$query = "SELECT COUNT(*) FROM ".$this->options['table'];
+		$query .= $this->parseWhere($this->options['where']);
+		
+		$handle = self::$conn->query($query);
+		return $handle->fetchColumn();
 	}
 	
 	private function updateDatabase($data) {

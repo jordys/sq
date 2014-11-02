@@ -3,8 +3,9 @@
 /**
  * Base model class
  *
- * This class forms the base for all sq models. Model classes can be specific 
- * for a single data set or for broad for entire types of databases such as sql.
+ * This class forms the base for all sq models. Model classes can be specific
+ * for a single data set or for broad for entire types of databases such as
+ * sql.
  *
  * To make a new model extend the model class. To extend the base model, add a
  * class named model to your app's components folder. Models must implement the
@@ -13,9 +14,9 @@
 
 abstract class sqModel extends component {
 	
-	// Called by the __tostring method to render a view of the data in the 
-	// model. By default the view is a form for a single result and a listing 
-	// multiple results. The default listing and form view can also be 
+	// Called by the __tostring method to render a view of the data in the
+	// model. By default the view is a form for a single result and a listing
+	// multiple results. The default listing and form view can also be
 	// overridden in the model options.
 	public function render() {
 		if ($this->layout) {
@@ -41,8 +42,8 @@ abstract class sqModel extends component {
 		}
 	}
 	
-	// CRUD methods to be implemented. These four methods must be implemented by 
-	// sq models with the optional arguments listed here.
+	// CRUD methods to be implemented. These four methods must be implemented
+	// by sq models with the optional arguments listed here.
 	public function create($data = null) {
 		
 	}
@@ -65,9 +66,15 @@ abstract class sqModel extends component {
 		
 	}
 	
-	// Returns true if the database record exists. Must be implemented in driver
-	// class such as sql.
+	// Returns true if the database record exists. Must be implemented in
+	// driver class such as sql.
 	public function exists() {
+		
+	}
+	
+	// Returns row count ignoring limit statement. Implemented by the model
+	// driver class.
+	public function count() {
 		
 	}
 	
@@ -126,8 +133,8 @@ abstract class sqModel extends component {
 		return $this;
 	}
 	
-	// Sets the number of results that will be returned. If limit is set to 
-	// boolean true the model will only contain the model data. Limit 1 will 
+	// Sets the number of results that will be returned. If limit is set to
+	// boolean true the model will only contain the model data. Limit 1 will
 	// result in an array of models with only one entry. If limit() is called
 	// with no arguments then it will default to true.
 	public function limit($limit = true) {
@@ -169,7 +176,7 @@ abstract class sqModel extends component {
 	/**
 	 * Requests data in pages
 	 *
-	 * Chainable method that groups database entries into pages. Can explictly 
+	 * Chainable method that groups database entries into pages. Can explictly
 	 * read a certain page number or rely on the page get parameter.
 	 */
 	public function paginate($perPage = 10, $page = null) {
@@ -243,8 +250,8 @@ abstract class sqModel extends component {
 	
 	public function manyMany($model, array $options = array()) {
 		
-		// Allow a shorthand of just passing in string instead of options to set
-		// the bridge table.
+		// Allow a shorthand of just passing in string instead of options to
+		// set the bridge table.
 		if (is_string($options)) {
 			$options = array(
 				'bridge' => $options
@@ -391,7 +398,7 @@ abstract class sqModel extends component {
 		}
 	}
 	
-	// Utility function that loops through related records and calls an update 
+	// Utility function that loops through related records and calls an update
 	// on each one of them after a main record is updated.
 	protected function updateRelated() {
 		if ($this->options['limit'] !== true) {
