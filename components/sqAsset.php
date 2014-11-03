@@ -4,7 +4,7 @@
  * Asset management
  *
  * This class contains methods for asset management. It copies assets from the 
- * app module and framework asset folders and copies them to the app built 
+ * app module and framework asset folders and copies them to the app's built 
  * folder.
  */
 
@@ -30,12 +30,12 @@ abstract class sqAsset {
 		$fragments = explode('/', $path);
 		$module = $fragments[0];
 		array_shift($fragments);
-		$path = implode('/', $fragments);
-		$modulePath = 'modules/'.$module.'/assets/'.$path;
+		$modulePath = 'modules/'.$module.'/assets/'.implode('/', $fragments);
 		
-		// Create built directory if it does not exist.
-		if (!file_exists(sq::root().'built')) {
-			mkdir(sq::root().'built');
+		// Create built asset directory if it does not exist.
+		$dir = dirname($buildPath);
+		if (!is_dir($dir)) {
+			mkdir($dir, 0777, true);
 		}
 		
 		// Directories searched for the asset in order: app/assets,
@@ -62,13 +62,7 @@ abstract class sqAsset {
 	
 	// Returns the md5 path of an asset.
 	public static function path($path, $type = 'url') {
-		$ext = pathinfo($path, PATHINFO_EXTENSION);
-		
-		if ($ext) {
-			$ext = '.'.$ext;
-		}
-		
-		$path = 'built/'.md5($path.sq::config('asset-revision')).$ext;
+		$path = 'built/'.md5(sq::config('asset-revision')).'/'.$path;
 		
 		if ($type == 'file') {
 			return sq::root().$path;

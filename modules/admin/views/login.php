@@ -1,5 +1,8 @@
 <?php
 
+// Load checkmark image into assets folder
+asset::load('admin/checkmark.png');
+
 self::$title = 'Admin | Login';
 self::$head = '
 	<link rel="apple-touch-icon-precomposed" href="'.$base.'assets/admin/touch-icon.png"/>
