@@ -27,6 +27,8 @@ abstract class sqAdmin extends controller {
 		if (url::get('model')) {
 			$this->layout->content = sq::model(url::get('model'))
 				->read();
+		} else {
+			$this->layout->content = null;
 		}
 	}
 	
