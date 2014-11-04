@@ -42,8 +42,8 @@ abstract class sqModel extends component {
 		}
 	}
 	
-	// CRUD methods to be implemented. These four methods must be implemented
-	// by sq models with the optional arguments listed here.
+	// CRUD methods to be implemented. These four methods must be implemented by
+	// sq models with the optional arguments listed here.
 	public function create($data = null) {
 		
 	}
@@ -66,8 +66,8 @@ abstract class sqModel extends component {
 		
 	}
 	
-	// Returns true if the database record exists. Must be implemented in
-	// driver class such as sql.
+	// Returns true if the database record exists. Must be implemented in driver
+	// classes such as sql.
 	public function exists() {
 		
 	}
@@ -256,8 +256,8 @@ abstract class sqModel extends component {
 	
 	public function manyMany($model, array $options = array()) {
 		
-		// Allow a shorthand of just passing in string instead of options to
-		// set the bridge table.
+		// Allow a shorthand of just passing in string instead of options to set
+		// the bridge table.
 		if (is_string($options)) {
 			$options = array(
 				'bridge' => $options

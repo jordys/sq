@@ -53,6 +53,7 @@ abstract class sqForm {
 		return '<input type="password" name="'.$name.'" value="'.$value.'"'.$append.'/>';
 	}
 	
+	// Money input
 	public static function currency($name, $value = null, $attrs = array()) {
 		$append = self::parseAttrs($attrs);
 		
@@ -210,8 +211,8 @@ abstract class sqForm {
 		return $content;
 	}
 	
-	// Similar to textarea but with a richtext class presumably to use tinyMCE or
-	// suchlike
+	// Similar to textarea but with a richtext class presumably to use tinyMCE
+	// or suchlike
 	public static function richtext($name, $content = null, $id = null, $class = null) {
 		if (!$id) {
 			$id = self::toId($name);
@@ -229,8 +230,8 @@ abstract class sqForm {
 		return '<textarea name="'.$name.'" class="blurb '.$class.'" id="'.$id.'">'.htmlentities($content).'</textarea>';
 	}
 	
-	// Utility method to take a name parameter and convert it to a standard dashed
-	// id name
+	// Utility method to take a name parameter and convert it to a standard 
+	// dashed id name
 	private static function toId($string) {
 		$string = preg_replace('/[^0-9a-zA-Z -]/', '', $string);
 		$string = preg_replace('!\s+!', ' ', $string);

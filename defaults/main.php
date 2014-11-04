@@ -43,8 +43,8 @@ return array(
 	// Enable logging of errors
 	'log-errors' => true,
 	
-	// Friendly labels for php errors used for in the log instead of the
-	// useless numbers
+	// Friendly labels for php errors used for in the log instead of the useless
+	// numbers
 	'error-labels' => array(
 		1    => '## FATAL ERROR ##',
 		2    => 'WARNING',

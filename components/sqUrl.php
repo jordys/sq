@@ -48,10 +48,10 @@ abstract class sqUrl {
 					break;
 			}
 			
-			// Check if the value is set, not null and not undefined. Checking for 
-			// undefined makes a lot of javascript ajax requests a lot easier 
-			// because if a field is empty and submitted with ajax the post will 
-			// contain undefined instead of null.
+			// Check if the value is set, not null and not undefined. Checking 
+			// for undefined makes a lot of javascript ajax requests a lot
+			// easier because if a field is empty and submitted with ajax the 
+			// post will contain undefined instead of null.
 			if (isset($type[$url])
 				&& $type[$url] != '' 
 				&& $type[$url] != 'undefined'

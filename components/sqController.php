@@ -93,7 +93,7 @@ abstract class sqController extends component {
 	
 	// Default index action is none is defined. Index action is called when no
 	// other action is defined. By default the action will generate the default
-	// -view file.
+	// view file.
 	public function indexAction() {
 		$class = get_class($this);
 		

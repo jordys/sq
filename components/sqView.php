@@ -24,7 +24,7 @@ abstract class sqView extends component {
 	protected static $slots = null;
 	
 	// Variable to store data to be turned into a javascript JSON object in the
-	// footer.
+	// footer
 	protected static $jsData = array();
 	
 	// Static counter. Every time a new view object is created it goes up by 
@@ -60,7 +60,7 @@ abstract class sqView extends component {
 	}
 	
 	// Special overloaded setter that adds data from the layout view into views
-	// loaded included
+	// included
 	public function __set($name, $value) {
 		if (is_object($value) && !is_subclass_of($value, 'model')) {
 			$value->data += $this->data;
@@ -269,7 +269,7 @@ var sq = '.str_replace('    ', "\t", json_encode(self::$jsData, JSON_PRETTY_PRIN
 		$altText = null;
 		
 		// Create model object if one doesn't already exist and read slots and
-		// cache them to the view.
+		// cache them to the view
 		if (!self::$slots) {
 			self::$slots = sq::model('sq_slots')
 				->make(sq::config('sq_slots/schema'))
@@ -354,7 +354,7 @@ var sq = '.str_replace('    ', "\t", json_encode(self::$jsData, JSON_PRETTY_PRIN
 		self::$styles[$order][] = $path;
 	}
 	
-	// Add data to the javascript sq object.
+	// Add data to the javascript sq object
 	public static function jsData($data, $val = null) {
 		if (is_array($data)) {
 			view::$jsData += $data;
@@ -382,7 +382,7 @@ var sq = '.str_replace('    ', "\t", json_encode(self::$jsData, JSON_PRETTY_PRIN
 		return $date;
 	}
 	
-	// Shortens text and appends ...
+	// Shortens text and appends a passed in ending or elipsis as default
 	public static function blurb($string, $length = 100, $closing = '&hellip;') {
 		$string = strip_tags($string);
 		$string = substr($string, 0, $length);

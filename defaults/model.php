@@ -22,7 +22,7 @@ return array(
 		'has-many' => array(),
 		
 		// When cascade is true when models are deleted their related models
-		// will be deleted as well.
+		// will be deleted as well
 		'cascade' => true,
 		
 		// Use inline view in admin
@@ -67,7 +67,7 @@ return array(
 		'path' => 'uploads/',
 		
 		// Read the content of files and add it to array in adition to metadata.
-		// Useful for text files or JSON stores
+		// Useful for text files or JSON stores.
 		'read-content' => false,
 		
 		// With of image to resize / crop to. False for none.
