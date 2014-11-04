@@ -11,7 +11,7 @@
 abstract class sqAsset {
 	
 	// Use asset in a project. Makes the asset if it does not exist and returns
-	// the url of the asset
+	// the url of the asset.
 	public static function load($path) {
 		if (!self::check($path) || sq::config('debug')) {
 			self::make($path);
