@@ -40,7 +40,9 @@ abstract class sqController extends component {
 		if ($filter === true || $action == 'error' || $action == 'debug') {
 			
 			// Call the action method or the default / index action
-			if (method_exists($this, $action.'Action')) {
+			if (method_exists($this, $action.$_SERVER['REQUEST_METHOD'].'Action')) {
+				$data = $this->{$action.$_SERVER['REQUEST_METHOD'].'Action'}();	
+			} elseif (method_exists($this, $action.'Action')) {
 				$data = $this->{$action.'Action'}();
 			} else {
 				$data = $this->defaultAction($raw);
