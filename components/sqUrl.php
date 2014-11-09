@@ -35,7 +35,6 @@ abstract class sqUrl {
 		
 		// Check for truthy urls
 		if ($url) {
-			
 			switch($type) {
 				case 'get':
 					$type = $_GET;
