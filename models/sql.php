@@ -300,12 +300,12 @@ class sql extends model {
 		
 		$query .= ' SET '.implode(',', $set);
 		
-		if (!empty($this->where)) {
+		if (!empty($this->options['where'])) {
 			$query .= $this->parseWhere($this->options['where']);
 		} elseif (isset($data['id'])) {
 			$query .= $this->parseWhere(array('id' => $data['id']));
 		}
-		
+		echo $query;
 		if (!empty($set)) {
 			$this->query($query, $data);
 		}
