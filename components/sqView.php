@@ -366,20 +366,13 @@ var sq = '.str_replace('    ', "\t", json_encode(self::$jsData, JSON_PRETTY_PRIN
 	// Returns a formatted date. If no date is passed to the function now will
 	// be assumed. Optionally a third argument can be passed in to specify the
 	// format of the date string given to the function.
-	public static function date($formatOut, $date = null, $formatIn = null) {
-		if ($formatIn && $date) {
-			$date = DateTime::createFromFormat($formatIn, $date)
-				->format($formatOut);
-		} else {
-			if (!$date) {
-				$date = 'now';
-			}
-			
-			$date = strtotime($date);
-			$date = date($formatOut, $date);
+	public static function date($formatOut, $date = 'now', $formatIn = null) {
+		if ($formatIn) {
+			return DateTime::createFromFormat($formatIn, $date)->format($formatOut);
 		}
 		
-		return $date;
+		$date = new DateTime($date);
+		return $date->format($formatOut);
 	}
 	
 	// Shortens text and appends a passed in ending or elipsis as default
@@ -388,7 +381,7 @@ var sq = '.str_replace('    ', "\t", json_encode(self::$jsData, JSON_PRETTY_PRIN
 		$string = substr($string, 0, $length);
 		
 		if (strlen($string) > $length - 1) {
-			$string = $string.$closing;
+			$string .= $closing;
 		}
 		
 		return $string;
