@@ -66,7 +66,7 @@ class sql extends model {
 	
 	// Takes a raw mysql where query
 	public function whereRaw($query) {
-		$this->options['where'] = ' WHERE '.$query;
+		$this->options['where-raw'] = ' WHERE '.$query;
 		
 		return $this;
 	}
@@ -305,7 +305,7 @@ class sql extends model {
 		} elseif (isset($data['id'])) {
 			$query .= $this->parseWhere(array('id' => $data['id']));
 		}
-		echo $query;
+		
 		if (!empty($set)) {
 			$this->query($query, $data);
 		}
@@ -318,39 +318,49 @@ class sql extends model {
 	}
 	
 	private function parseWhere($data) {
-		if (!is_array($data)) {
-			$data = array('id' => $data);
-			$this->limit();
-		}
+		$operation = strtoupper($this->options['where-operation']);
 		
 		$query = null;
 		
-		if (is_array($data)) {
-			$operation = strtoupper($this->options['where-operation']);
-			
-			$i = 0;
-			foreach ($data as $key => $val) {
-				if ($i++ === 0) {
-					$query .= ' WHERE ';
-				} else {
-					$query .= " $operation ";
-				}
-				
-				if (is_array($val)) {
-					$j = 0;
-					foreach ($val as $item) {
-						if ($j++ !== 0) {
-							$query .= " $operation ";
-						}
-						
-						$query .= "$key = '$item'";
-					}
-				} else {
-					$query .= "$key = '$val'";
-				}
+		if ($this->options['where']) {	
+			if (!is_array($data)) {
+				$data = array('id' => $data);
+				$this->limit();
 			}
-		} else {
-			$query = $data;
+			
+			if (is_array($data)) {
+				$i = 0;
+				foreach ($data as $key => $val) {
+					if ($i++ === 0) {
+						$query .= ' WHERE ';
+					} else {
+						$query .= " $operation ";
+					}
+					
+					if (is_array($val)) {
+						$j = 0;
+						foreach ($val as $item) {
+							if ($j++ !== 0) {
+								$query .= " $operation ";
+							}
+							
+							$query .= "$key = '$item'";
+						}
+					} else {
+						$query .= "$key = '$val'";
+					}
+				}
+			} else {
+				$query = $data;
+			}
+		}
+		
+		if ($this->options['where-raw']) {
+			if ($query) {
+				$query .= $operation.' ';
+			}
+			
+			$query .= $this->options['where-raw'];
 		}
 		
 		return $query;

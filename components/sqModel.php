@@ -318,6 +318,10 @@ abstract class sqModel extends component {
 				$where += $options['where'];
 			}
 			
+			if (isset($options['where-raw'])) {
+				$model->options['where-raw'] = $options['where-raw'];
+			}
+			
 			if (isset($options['cascade'])) {
 				$model->options['cascade'] = $options['cascade'];
 			}

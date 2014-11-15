@@ -42,6 +42,7 @@ return array(
 		'order-direction' => 'DESC',
 		'limit' => false,
 		'where' => array(),
+		'where-raw' => false,
 		'where-operation' => 'AND',
 		
 		// Actions for admin modules
