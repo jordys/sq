@@ -127,6 +127,13 @@ abstract class sqModel extends component {
 	// argument is passed it is assumed to be an id and limit is automatically
 	// imposed.
 	public function where($argument, $operation = 'AND') {
+		
+		// Allow shorthand for searching by id
+		if (!is_array($argument)) {
+			$this->limit();
+			$argument = array('id' => $argument);
+		}
+		
 		$this->options['where-operation'] = $operation;
 		$this->options['where'] = $argument;
 		
@@ -255,16 +262,16 @@ abstract class sqModel extends component {
 	}
 	
 	public function manyMany($model, $options = array()) {
-		
-		// Allow a shorthand of just passing in string instead of options to set
-		// the bridge table.
-		if (is_string($options)) {
-			$options = array(
-				'bridge' => $options
-			);
-		}
-		
 		if (isset($this->data['id'])) {
+			
+			// Allow a shorthand of just passing in string instead of options to
+			// set the bridge table.
+			if (is_string($options)) {
+				$options = array(
+					'bridge' => $options
+				);
+			}
+			
 			if (empty($options['to'])) {
 				$options['to'] = $this->options['name'].'_id';
 			}
@@ -348,7 +355,7 @@ abstract class sqModel extends component {
 				$model->limit($options['limit']);
 			}
 			
-			$read = null;
+			$read = '*';
 			if (isset($options['read'])) {
 				$read = $options['read'];
 			}

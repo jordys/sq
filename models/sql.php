@@ -43,7 +43,7 @@ class sql extends model {
 		// Set up new pdo connection if it doesn't already exist
 		if (!self::$conn) {
 			self::$conn = new PDO(
-				$this->options['dbtype'].':host='.$this->options['host'].';dbname='.$this->options['dbname'],
+				$this->options['dbtype'].':host='.$this->options['host'].';dbname='.$this->options['dbname'].';port='.$this->options['port'],
 				$this->options['username'],
 				$this->options['password']);
 			
@@ -54,16 +54,6 @@ class sql extends model {
 		}
 	}
 	
-	// Overrides the standard __get() method in sqComponent to stripslashes on
-	// string properties before returning them.
-	public function __get($name) {
-		if (is_string($this->data[$name])) {
-			return stripslashes($this->data[$name]);
-		} else {
-			return $this->data[$name];
-		}
-	}
-	
 	// Takes a raw mysql where query
 	public function whereRaw($query) {
 		$this->options['where-raw'] = ' WHERE '.$query;
@@ -71,16 +61,14 @@ class sql extends model {
 		return $this;
 	}
 	
-	public function read($values = null) {
+	public function read($values = '*') {
 		if (is_array($values)) {
 			$values = implode(',', $values);
-		} elseif (!$values) {
-			$values = '*';
 		}
 		
 		$query = "SELECT $values FROM ".$this->options['table'];
 		
-		$query .= $this->parseWhere($this->options['where']);
+		$query .= $this->parseWhere();
 		$query .= $this->parseOrder();
 		$query .= $this->parseLimit();
 		
@@ -136,8 +124,8 @@ class sql extends model {
 	}
 	
 	public function create($data = null) {
-		if (!$data) {
-			$data = $this->toArray($data);
+		if (is_array($data)) {
+			$this->set($data);
 		}
 		
 		$this->limit();
@@ -147,7 +135,7 @@ class sql extends model {
 		}
 		
 		$values = array();
-		foreach ($data as $key => $val) {
+		foreach ($this->data as $key => $val) {
 			$values[] = ":$key";
 		}
 		
@@ -171,10 +159,14 @@ class sql extends model {
 	public function update($data = null, $where = null) {
 		if ($data) {
 			$this->set($data);
+		
+			if ($where) {
+				$this->where($where);
+			}
 		}
 		
-		if ($where) {
-			$this->where($where);
+		if (empty($this->options['where']) && $data['id']) {
+			$this->where($data['id']);
 		}
 		
 		unset($this->data['id']);
@@ -199,7 +191,7 @@ class sql extends model {
 		
 		$query = 'DELETE FROM '.$this->options['table'];
 		
-		$query .= $this->parseWhere($this->options['where']);
+		$query .= $this->parseWhere();
 		$query .= $this->parseLimit();
 		
 		$this->deleteRelated();
@@ -209,8 +201,13 @@ class sql extends model {
 	}
 	
 	public function query($query, $data = array()) {
+		if ($this->options['debug']) {
+			echo $query;
+		}
+		
 		try {
 			$handle = self::$conn->prepare($query);
+			$handle->setFetchMode(PDO::FETCH_ASSOC);
 			$handle->execute($data);
 			
 			if ($this->options['limit'] === true) {
@@ -218,43 +215,34 @@ class sql extends model {
 			}
 			
 			if (strpos($query, 'SELECT') !== false) {
-				$handle->setFetchMode(PDO::FETCH_ASSOC);
-				
 				$data = array();
 				if ($this->options['limit'] === true) {
 					$data = $handle->fetch();
 					
-					if (!$data) {
-						unset($this->data['id']);
-					}
+					array_map('stripslashes', $data);
+					$this->set($data);
 				} else {
 					$i = 0;
 					while ($row = $handle->fetch()) {
-						if ($this->options['limit'] > $i || $this->options['limit'] == false) {
+						if ($this->options['limit'] > $i++ || $this->options['limit'] == false) {
 							$model = sq::model($this->options['table']);
 							
-							if (isset($row['id'])) {
-								$model->where($row['id']);
-							}
-							
+							array_map('stripslashes', $row);
 							$model->set($row);
 							
-							if ($this->options['load-relations'] === true) {
+							if ($this->options['load-relations']) {
 								$model->relateModel();
 							} else {
 								$model->options['load-relations'] = false;
 							}
 							
-							$data[] = $model;
-							$i++;
+							$this->data[] = $model;
 						} else {
 							break;
 						}
 					}
 				}
 			} elseif (strpos($query, 'SHOW COLUMNS') !== false) {
-				$handle->setFetchMode(PDO::FETCH_ASSOC);
-				
 				$columns = array();
 				while ($row = $handle->fetch()) {
 					$columns[$row['Field']] = null;
@@ -262,8 +250,6 @@ class sql extends model {
 				
 				$this->set($columns);
 			}
-			
-			$this->set($data);
 			
 			return $this;
 		} catch (Exception $e) {
@@ -280,7 +266,7 @@ class sql extends model {
 	
 	public function count() {
 		$query = "SELECT COUNT(*) FROM ".$this->options['table'];
-		$query .= $this->parseWhere($this->options['where']);
+		$query .= $this->parseWhere();
 		
 		$handle = self::$conn->query($query);
 		return $handle->fetchColumn();
@@ -299,12 +285,7 @@ class sql extends model {
 		}
 		
 		$query .= ' SET '.implode(',', $set);
-		
-		if (!empty($this->options['where'])) {
-			$query .= $this->parseWhere($this->options['where']);
-		} elseif (isset($data['id'])) {
-			$query .= $this->parseWhere(array('id' => $data['id']));
-		}
+		$query .= $this->parseWhere();
 		
 		if (!empty($set)) {
 			$this->query($query, $data);
@@ -317,47 +298,36 @@ class sql extends model {
 		}
 	}
 	
-	private function parseWhere($data) {
-		$operation = strtoupper($this->options['where-operation']);
-		
+	private function parseWhere() {
 		$query = null;
 		
-		if ($this->options['where']) {	
-			if (!is_array($data)) {
-				$data = array('id' => $data);
-				$this->limit();
-			}
+		if ($this->options['where']) {
 			
-			if (is_array($data)) {
-				$i = 0;
-				foreach ($data as $key => $val) {
-					if ($i++ === 0) {
-						$query .= ' WHERE ';
-					} else {
-						$query .= " $operation ";
-					}
-					
-					if (is_array($val)) {
-						$j = 0;
-						foreach ($val as $item) {
-							if ($j++ !== 0) {
-								$query .= " $operation ";
-							}
-							
-							$query .= "$key = '$item'";
-						}
-					} else {
-						$query .= "$key = '$val'";
-					}
+			$i = 0;
+			foreach ($this->options['where'] as $key => $val) {
+				if ($i++) {
+					$query .= " {$this->options['where-operation']} ";
+				} else {
+					$query .= ' WHERE ';
 				}
-			} else {
-				$query = $data;
+				
+				$query .= "$key = '$val'";
 			}
 		}
 		
+		$query .= $this->parseWhereRaw();
+		
+		return $query;
+	}
+	
+	private function parseWhereRaw() {
+		$query = null;
+		
 		if ($this->options['where-raw']) {
-			if ($query) {
-				$query .= $operation.' ';
+			if ($this->options['where']) {
+				$query .= " {$this->options['where-operation']} ";
+			} else {
+				$query .= ' WHERE ';
 			}
 			
 			$query .= $this->options['where-raw'];

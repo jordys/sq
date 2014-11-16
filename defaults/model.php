@@ -9,6 +9,9 @@ return array(
 	// General configuration for all models
 	'model' => array(
 		
+		// Debug mode is used to print querries on the screen
+		'debug' => false,
+		
 		// Default type for models. Can be overridden by setting ['type'] in the 
 		// model config.
 		'default-type' => 'sql',
@@ -56,9 +59,10 @@ return array(
 		// PDO database credentials
 		'dbtype' => 'mysql',
 		'host' => 'localhost',
+		'port' => 13306,
 		'username' => 'root',
 		'password' => 'root',
-		'dbname' => 'database',
+		'dbname' => 'database'
 	),
 	
 	// File model type configuration
