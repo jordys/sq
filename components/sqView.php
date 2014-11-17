@@ -91,6 +91,7 @@ abstract class sqView extends component {
 	
 	// Utility function to render a template
 	private function renderTemplate($data) {
+		$this->set($data);
 		
 		// Make variables base level items in the content array
 		foreach ($this->data as $key => $val) {
@@ -101,23 +102,13 @@ abstract class sqView extends component {
 		// Variable for root path of website
 		$base = sq::base();
 		
-		// Set data explicity passed into the template to variables. Possibly 
-		// overwriting existing variables.
-		if (is_array($data)) {
-			$params = $data;
-			
-			foreach ($data as $key => $val) {
-				$$key = $val;
-			}
-			unset($key,$val);
-		}
-		
 		ob_start();
 		include $this->getViewPath($this->view);
 		
 		if (isset($this->parent)) {
 			self::$current++;
 			
+			// Set local data to the parent view
 			$this->parent->set($this->data);
 		}
 		
