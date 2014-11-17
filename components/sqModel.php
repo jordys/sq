@@ -61,7 +61,7 @@ abstract class sqModel extends component {
 	}
 	
 	// Makes a data store. For instance a folder to store files or a table to
-	// store mySQL data.
+	// store sql data.
 	public function make($schema) {
 		
 	}

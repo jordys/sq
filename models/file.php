@@ -37,9 +37,9 @@ class file extends model {
 		return $this;
 	}
 	
-	public function create($data = false) {
-		if (!$data) {
-			$data = $this->data;
+	public function create($data = null) {
+		if (is_array($data)) {
+			$this->set($data);
 		}
 		
 		$dir = null;
@@ -50,13 +50,13 @@ class file extends model {
 		$this->id = $this->upload($_FILES['file'], $dir);
 	}
 	
-	public function update($data = false, $where = false) {
-		if ($where) {
-			$this->where($where);
-		}
-		
-		if (!$data) {
-			$data = $this->data;
+	public function update($data = null, $where = null) {
+		if (is_array($data)) {
+			$this->set($data);
+			
+			if ($where) {
+				$this->where($where);
+			}
 		}
 		
 		$dir = null;
