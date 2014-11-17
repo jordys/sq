@@ -56,7 +56,7 @@ class sql extends model {
 	
 	// Takes a raw mysql where query
 	public function whereRaw($query) {
-		$this->options['where-raw'] = ' WHERE '.$query;
+		$this->options['where-raw'] = $query;
 		
 		return $this;
 	}
