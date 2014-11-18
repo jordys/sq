@@ -219,7 +219,10 @@ class sql extends model {
 				if ($this->options['limit'] === true) {
 					$data = $handle->fetch();
 					
-					array_map('stripslashes', $data);
+					if (is_array($data)) {
+						array_map('stripslashes', $data);
+					}
+					
 					$this->set($data);
 				} else {
 					$i = 0;
