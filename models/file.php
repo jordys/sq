@@ -205,8 +205,7 @@ class file extends model {
 		}
 	}
 	
-	public function delete($where = false) {
-		echo $where;
+	public function delete($where = null) {
 		if ($where) {
 			$this->where($where);
 		}
