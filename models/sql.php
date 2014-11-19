@@ -210,48 +210,15 @@ class sql extends model {
 			$handle->setFetchMode(PDO::FETCH_ASSOC);
 			$handle->execute($data);
 			
-			if ($this->options['limit'] === true) {
-				$this->id = self::$conn->lastInsertId();
-			}
-			
 			if (strpos($query, 'SELECT') !== false) {
-				$data = array();
-				if ($this->options['limit'] === true) {
-					$data = $handle->fetch();
-					
-					if (is_array($data)) {
-						array_map('stripslashes', $data);
-					}
-					
-					$this->set($data);
-				} else {
-					$i = 0;
-					while ($row = $handle->fetch()) {
-						if ($this->options['limit'] > $i++ || $this->options['limit'] == false) {
-							$model = sq::model($this->options['table']);
-							
-							array_map('stripslashes', $row);
-							$model->set($row);
-							
-							if ($this->options['load-relations']) {
-								$model->relateModel();
-							} else {
-								$model->options['load-relations'] = false;
-							}
-							
-							$this->data[] = $model;
-						} else {
-							break;
-						}
-					}
-				}
-			} elseif (strpos($query, 'SHOW COLUMNS') !== false) {
-				$columns = array();
-				while ($row = $handle->fetch()) {
-					$columns[$row['Field']] = null;
-				}
+				$this->selectQuery($handle);
+			} elseif(strpos($query, 'INSERT') && $this->options['limit'] === true) {
 				
-				$this->set($columns);
+				// When inserting always stick the last inserted id into the 
+				// model
+				$this->id = self::$conn->lastInsertId();
+			} elseif (strpos($query, 'SHOW COLUMNS') !== false) {
+				$this->showColumnsQuery($handle);
 			}
 			
 			return $this;
@@ -265,6 +232,41 @@ class sql extends model {
 				sq::error('404');
 			}
 		}
+	}
+	
+	private function selectQuery($handle) {
+		if ($this->options['limit'] === true) {
+			$row = $handle->fetch();
+			
+			if ($row) {
+				array_map('stripslashes', $row);
+				$this->set($row);
+			}
+		} else {
+			while ($row = $handle->fetch()) {
+				$model = sq::model($this->options['table']);
+				
+				array_map('stripslashes', $row);
+				$model->set($row);
+				
+				if ($this->options['load-relations']) {
+					$model->relateModel();
+				} else {
+					$model->options['load-relations'] = false;
+				}
+				
+				$this->data[] = $model;
+			}
+		}
+	}
+	
+	private function showColumnsQuery($handle) {
+		$columns = array();
+		while ($row = $handle->fetch()) {
+			$columns[$row['Field']] = null;
+		}
+		
+		$this->set($columns);
 	}
 	
 	public function count() {
