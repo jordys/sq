@@ -129,10 +129,7 @@ class sql extends model {
 		}
 		
 		$this->limit();
-		
-		if (isset($data['id']) && is_numeric($data['id'])) {
-			unset($data['id']);
-		}
+		unset($this->data['id']);
 		
 		$values = array();
 		foreach ($this->data as $key => $val) {
@@ -149,10 +146,6 @@ class sql extends model {
 			$this->query($query, $data);
 		}
 		
-		// Set the where statement to the id to allow an immediate read
-		// following the create
-		$this->where($this->id);
-		
 		return $this;
 	}
 	
@@ -165,21 +158,16 @@ class sql extends model {
 			}
 		}
 		
-		if (empty($this->options['where']) && $data['id']) {
-			$this->where($data['id']);
+		// If no where statement is applied assume the record being updated is
+		// the current one
+		if (empty($this->options['where']) && $this->data['id']) {
+			$this->where($this->data['id']);
 		}
 		
 		unset($this->data['id']);
 		
 		$this->updateDatabase($this->data);
 		$this->updateRelated();
-		
-		$loadRelations = $this->options['load-relations'];
-		$this->options['load-relations'] = false;
-		
-		$this->read('id');
-		
-		$this->options['load-relations'] = $loadRelations;
 		
 		return $this;
 	}
@@ -212,11 +200,15 @@ class sql extends model {
 			
 			if (strpos($query, 'SELECT') !== false) {
 				$this->selectQuery($handle);
-			} elseif(strpos($query, 'INSERT') && $this->options['limit'] === true) {
+			} elseif (strpos($query, 'INSERT')) {
 				
 				// When inserting always stick the last inserted id into the 
 				// model
 				$this->id = self::$conn->lastInsertId();
+				
+				// Set the where statement to the id to allow an immediate read
+				// following the create
+				$this->where($this->id);
 			} elseif (strpos($query, 'SHOW COLUMNS') !== false) {
 				$this->showColumnsQuery($handle);
 			}
