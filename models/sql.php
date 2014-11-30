@@ -219,7 +219,7 @@ class sql extends model {
 			
 			if (strpos($query, 'SELECT') !== false) {
 				$this->selectQuery($handle);
-			} elseif (strpos($query, 'INSERT')) {
+			} elseif (strpos($query, 'INSERT') !== false) {
 				$this->insertQuery($handle);
 			} elseif (strpos($query, 'SHOW COLUMNS') !== false) {
 				$this->showColumnsQuery($handle);
