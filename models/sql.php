@@ -155,14 +155,14 @@ class sql extends model {
 			$values[] = ":$key";
 		}
 		
-		$columns = implode(',', array_keys($data));
+		$columns = implode(',', array_keys($this->data));
 		$values = implode(',', $values);
 		
 		$query = 'INSERT INTO '.$this->options['table']." ($columns) 
 			VALUES ($values)";
 		
-		if ($this->checkDuplicate($data)) {
-			$this->query($query, $data);
+		if ($this->checkDuplicate()) {
+			$this->query($query, $this->data);
 		}
 		
 		return $this;
@@ -177,13 +177,15 @@ class sql extends model {
 			}
 		}
 		
+		$this->limit();
+		
 		// If no where statement is applied assume the record being updated is
 		// the current one
 		if (empty($this->options['where']) && $this->data['id']) {
 			$this->where($this->data['id']);
 		}
 		
-		unset($this->data['id']);
+		$this->read(array('id'));
 		
 		$this->updateDatabase($this->data);
 		$this->updateRelated();
