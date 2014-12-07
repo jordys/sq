@@ -13,6 +13,7 @@ class sql extends model {
 	// Static pdo database connection
 	protected static $conn = false;
 	
+	// Override component constructor to add connect method
 	public function __construct($options = null) {
 		$this->options = $options;
 		
@@ -24,14 +25,13 @@ class sql extends model {
 		// If a view is defined for layout generate it as a view
 		if ($this->layout) {
 			$this->layout = sq::view($this->layout);
-			$this->layout->layout = false;
 		}
 		
 		$this->connect();
 		$this->init();
 	}
 	
-	// Constructor that also database connection
+	// Creates database connection. Called by constructor.
 	public function connect() {
 		
 		// Assume the name of the table is the same as the name of the model
@@ -54,13 +54,26 @@ class sql extends model {
 		}
 	}
 	
-	// Takes a raw mysql where query
+	/**
+	 * Add a straight sql where query
+	 * 
+	 * Chainable method that allows a straight sql where query to be used for
+	 * advanced searches that are too much for the where method.
+	 */
 	public function whereRaw($query) {
 		$this->options['where-raw'] = $query;
 		
 		return $this;
 	}
 	
+	/**
+	 * Reads values from database and sets them to the model
+	 *
+	 * Accepts an optional array of columns to read from the database. Reads
+	 * records matching the where statement from the database. Results are set
+	 * directly to the model if limit is true or set as a list of model objects
+	 * if limit is false.
+	 */
 	public function read($values = '*') {
 		if (is_array($values)) {
 			$values = implode(',', $values);
@@ -92,6 +105,12 @@ class sql extends model {
 		return $this->query('SHOW COLUMNS FROM '.$this->options['table']);
 	}
 	
+	/**
+	 * Checks if table exists
+	 *
+	 * exists() checks to see of the referenced table exists for the model and 
+	 * returns a boolean.
+	 */
 	public function exists() {
 		try {
 			$result = self::$conn->query('SELECT 1 FROM '.$this->options['table'].' LIMIT 1');
@@ -129,29 +148,22 @@ class sql extends model {
 		}
 		
 		$this->limit();
-		
-		if (isset($data['id']) && is_numeric($data['id'])) {
-			unset($data['id']);
-		}
+		unset($this->data['id']);
 		
 		$values = array();
 		foreach ($this->data as $key => $val) {
 			$values[] = ":$key";
 		}
 		
-		$columns = implode(',', array_keys($data));
+		$columns = implode(',', array_keys($this->data));
 		$values = implode(',', $values);
 		
 		$query = 'INSERT INTO '.$this->options['table']." ($columns) 
 			VALUES ($values)";
 		
-		if ($this->checkDuplicate($data)) {
-			$this->query($query, $data);
+		if ($this->checkDuplicate()) {
+			$this->query($query, $this->data);
 		}
-		
-		// Set the where statement to the id to allow an immediate read
-		// following the create
-		$this->where($this->id);
 		
 		return $this;
 	}
@@ -165,21 +177,18 @@ class sql extends model {
 			}
 		}
 		
-		if (empty($this->options['where']) && $data['id']) {
-			$this->where($data['id']);
+		$this->limit();
+		
+		// If no where statement is applied assume the record being updated is
+		// the current one
+		if (empty($this->options['where']) && $this->data['id']) {
+			$this->where($this->data['id']);
 		}
 		
-		unset($this->data['id']);
+		$this->read(array('id'));
 		
 		$this->updateDatabase($this->data);
 		$this->updateRelated();
-		
-		$loadRelations = $this->options['load-relations'];
-		$this->options['load-relations'] = false;
-		
-		$this->read('id');
-		
-		$this->options['load-relations'] = $loadRelations;
 		
 		return $this;
 	}
@@ -212,11 +221,8 @@ class sql extends model {
 			
 			if (strpos($query, 'SELECT') !== false) {
 				$this->selectQuery($handle);
-			} elseif(strpos($query, 'INSERT') && $this->options['limit'] === true) {
-				
-				// When inserting always stick the last inserted id into the 
-				// model
-				$this->id = self::$conn->lastInsertId();
+			} elseif (strpos($query, 'INSERT') !== false) {
+				$this->insertQuery($handle);
 			} elseif (strpos($query, 'SHOW COLUMNS') !== false) {
 				$this->showColumnsQuery($handle);
 			}
@@ -232,6 +238,16 @@ class sql extends model {
 				sq::error('404');
 			}
 		}
+	}
+	
+	private function insertQuery($handle) {
+		
+		// When inserting always stick the last inserted id into the model
+		$this->id = self::$conn->lastInsertId();
+		
+		// Set the where statement to the id to allow an immediate read
+		// following the create
+		$this->where($this->id);
 	}
 	
 	private function selectQuery($handle) {
