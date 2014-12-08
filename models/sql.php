@@ -178,13 +178,6 @@ class sql extends model {
 		}
 		
 		$this->limit();
-		
-		// If no where statement is applied assume the record being updated is
-		// the current one
-		if (empty($this->options['where']) && $this->data['id']) {
-			$this->where($this->data['id']);
-		}
-		
 		$this->read(array('id'));
 		
 		$this->updateDatabase($this->data);
@@ -245,10 +238,6 @@ class sql extends model {
 		
 		// When inserting always stick the last inserted id into the model
 		$this->id = self::$conn->lastInsertId();
-		
-		// Set the where statement to the id to allow an immediate read
-		// following the create
-		$this->where($this->id);
 	}
 	
 	private function selectQuery($handle) {
@@ -322,6 +311,12 @@ class sql extends model {
 	
 	private function parseWhere() {
 		$query = null;
+		
+		// If no where statement is applied assume the record being updated is
+		// the current one
+		if (empty($this->options['where']) && isset($this->data['id'])) {
+			$this->where($this->data['id']);
+		}
 		
 		if ($this->options['where']) {
 			

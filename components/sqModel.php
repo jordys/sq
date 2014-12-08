@@ -370,6 +370,8 @@ abstract class sqModel extends component {
 		
 		foreach (array('belongs-to', 'has-one', 'has-many') as $relation) {
 			foreach ($this->options[$relation] as $name => $options) {
+				
+				// Allows the shorthand has-many with just the name of the model
 				if (is_numeric($name)) {
 					$name = $options;
 					$options = array();
@@ -405,8 +407,6 @@ abstract class sqModel extends component {
 	// Utility function that uses a session to prevent duplicate data from being
 	// created. Prevents form double submits.
 	protected function checkDuplicate() {
-		$status = false;
-		
 		if (!isset($_SESSION)) {
 			session_start();
 		}
@@ -415,12 +415,12 @@ abstract class sqModel extends component {
 			|| !isset($_SESSION['sq-last-'.$this->options['name']])
 			|| $_SESSION['sq-last-'.$this->options['name']] !== md5(implode(',', $this->data))
 		) {
-			$status = true;
+			return true;
 		}
 		
 		$_SESSION['sq-last-'.$this->options['name']] = md5(implode(',', $this->data));
 		
-		return $status;
+		return false;
 	}
 }
 
