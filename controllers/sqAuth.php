@@ -20,6 +20,7 @@ abstract class sqAuth extends controller {
 		self::session();
 	}
 	
+	// Utility function to start session if it doesn't exist
 	private static function session() {
 		if (!isset($_SESSION)) {
 			session_start();
