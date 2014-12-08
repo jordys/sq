@@ -48,7 +48,7 @@ abstract class sqView extends component {
 		$this->data = $data + $this->data;
 		
 		// Set object parameters
-		$this->options = $options;
+		$this->options = sq::merge($options, $this->options);
 		$this->view    = $view;
 		
 		// Set defult options for description title doctype and such

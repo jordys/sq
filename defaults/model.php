@@ -34,6 +34,10 @@ return array(
 		// Checks for form double submits and prevents them
 		'prevent-duplicates' => true,
 		
+		// Tie model content to the currently authenticated user by the users_id
+		// field
+		'user-specific' => false,
+		
 		// Fields for admin module
 		'fields' => array(
 			'list' => array(),

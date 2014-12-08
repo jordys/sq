@@ -96,9 +96,9 @@ abstract class sqAuth extends controller {
 			
 			// A hashkey is saved to the user and into a cookie. If these two
 			// parameters match the user will be allowed to log in.
-			$hash = $user->{sq::config('auth/username-field')}.$user->password;
+			$hash = self::hash($user->{sq::config('auth/username-field')}.$user->password);
 			
-			setcookie('auth', self::hash($hash), $timeout, '/');
+			setcookie('auth', $hash, $timeout, '/');
 			
 			$user->hashkey = $hash;
 			$user->update();
@@ -137,7 +137,7 @@ abstract class sqAuth extends controller {
 	
 	// Logs the current user out of the system
 	public static function logout() {
-		self::startSession();
+		self::session();
 		
 		$_SESSION['sq-level'] = null;
 		$_SESSION['sq-username'] = null;

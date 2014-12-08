@@ -38,7 +38,7 @@ abstract class sqModule extends component {
 		self::load('main');
 		
 		// Setup config
-		$this->options = $options;
+		$this->options = sq::merge($options, $this->options);
 		
 		// Call the specified controller or the default if none is specified
 		$controller = url::request('controller');

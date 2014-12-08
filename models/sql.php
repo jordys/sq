@@ -14,8 +14,8 @@ class sql extends model {
 	protected static $conn = false;
 	
 	// Override component constructor to add connect method
-	public function __construct($options = null) {
-		$this->options = $options;
+	public function __construct($options = array()) {
+		$this->options = sq::merge($options, $this->options);
 		
 		// Layout can be defined in options as well as in the class
 		if (isset($options['layout'])) {
@@ -150,6 +150,10 @@ class sql extends model {
 		$this->limit();
 		unset($this->data['id']);
 		
+		if ($this->options['user-specific'] && !isset($this->data['users_id'])) {
+			$this->data['users_id'] = auth::user()->id;
+		}
+		
 		$values = array();
 		foreach ($this->data as $key => $val) {
 			$values[] = ":$key";
@@ -161,7 +165,7 @@ class sql extends model {
 		$query = 'INSERT INTO '.$this->options['table']." ($columns) 
 			VALUES ($values)";
 		
-		if ($this->checkDuplicate()) {
+		if ($this->checkDuplicate($this->data)) {
 			$this->query($query, $this->data);
 		}
 		
@@ -178,6 +182,13 @@ class sql extends model {
 		}
 		
 		$this->limit();
+		
+		// If no where statement is applied assume the record being updated is
+		// the current one
+		if (empty($this->options['where']) && $this->data['id']) {
+			$this->where($this->data['id']);
+		}
+		
 		$this->read(array('id'));
 		
 		$this->updateDatabase($this->data);
@@ -196,7 +207,6 @@ class sql extends model {
 		$query .= $this->parseWhere();
 		$query .= $this->parseLimit();
 		
-		$this->read();
 		$this->onRelated('delete');
 		$this->query($query);
 		
@@ -238,6 +248,10 @@ class sql extends model {
 		
 		// When inserting always stick the last inserted id into the model
 		$this->id = self::$conn->lastInsertId();
+		
+		// Set the where statement to the id to allow an immediate read
+		// following the create
+		$this->where($this->id);
 	}
 	
 	private function selectQuery($handle) {
@@ -311,11 +325,9 @@ class sql extends model {
 	
 	private function parseWhere() {
 		$query = null;
-		
-		// If no where statement is applied assume the record being updated is
-		// the current one
-		if (empty($this->options['where']) && isset($this->data['id'])) {
-			$this->where($this->data['id']);
+				
+		if ($this->options['user-specific']) {
+			$this->options['where'] += array('users_id' => auth::user()->id);
 		}
 		
 		if ($this->options['where']) {
