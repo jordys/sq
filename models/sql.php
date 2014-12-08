@@ -188,7 +188,7 @@ class sql extends model {
 		$this->read(array('id'));
 		
 		$this->updateDatabase($this->data);
-		$this->updateRelated();
+		$this->onRelated('update');
 		
 		return $this;
 	}
@@ -203,7 +203,8 @@ class sql extends model {
 		$query .= $this->parseWhere();
 		$query .= $this->parseLimit();
 		
-		$this->deleteRelated();
+		$this->read();
+		$this->onRelated('delete');
 		$this->query($query);
 		
 		return $this;

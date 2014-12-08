@@ -382,45 +382,21 @@ abstract class sqModel extends component {
 		}
 	}
 	
-	// Utility method that loops through related models after a delete is
-	// performed and deletes on models where cascade is true
-	protected function deleteRelated() {
-		$this->read();
-		
+	// Utility method that loops through related models after an action is
+	// performed and performs the same action on models where cascade is true
+	protected function onRelated($method) {
 		if ($this->options['limit'] !== true) {
 			foreach ($this->data as $row) {
 				foreach ($row as $val) {
 					if (is_object($val) && $val->options['cascade']) {
-						$val->delete();
+						$val->$method();
 					}
 				}
 			}
 		} else {
 			foreach ($this->data as $val) {
 				if (is_object($val) && $val->options['cascade']) {
-					$val->delete();
-				}
-			}
-		}
-	}
-	
-	// Utility function that loops through related records and calls an update
-	// on each one of them after a main record is updated.
-	protected function updateRelated() {
-		if ($this->options['limit'] !== true) {
-			foreach ($this->data as $row) {
-				if (is_array($row)) {
-					foreach ($row as $val) {
-						if (is_object($val)) {
-							$val->update();
-						}
-					}
-				}
-			}
-		} else {
-			foreach ($this->data as $val) {
-				if (is_object($val)) {
-					$val->update();
+					$val->$method();
 				}
 			}
 		}
