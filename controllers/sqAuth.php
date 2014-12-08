@@ -176,6 +176,8 @@ abstract class sqAuth extends controller {
 			}
 		}
 		
+		self::$user = $user;
+		
 		return $user;
 	}
 		
