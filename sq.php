@@ -331,8 +331,7 @@ class sq {
 				if (isset($config[$val])) {
 					$config = $config[$val];
 				} else {
-					$config = false;
-					break;
+					return null;
 				}
 			}
 		}
@@ -379,7 +378,9 @@ class sq {
 		return $base;
 	}
 	
-	// Recursively merge the config and defaults arrays
+	// Recursively merge the config and defaults arrays. array1 will be
+	// overwritten by array2 where named keys match. Otherwise arrays will be
+	// merged.
 	public static function merge($array1, $array2) {
 		if (is_array($array2)) {
 			foreach ($array2 as $key => $val) {
