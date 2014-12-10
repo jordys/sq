@@ -159,26 +159,24 @@ class sq {
 			$config = self::config($pieces[0]);
 		}
 		
+		$type = false;
+		
 		// Get component config
 		if ($component) {
 			$component = self::config($component);
-		}
-		
-		// Merge type options
-		$type = false;
-		if (isset($config['type'])) {
-			$type = $config['type'];
-		} elseif (isset($component['default-type'])) {
+			$config = self::merge($component, $config);
+			
 			$type = $component['default-type'];
 		}
 		
-		if ($type) {
-			$config = self::merge(self::config($type), $config);
+		// Merge type options
+		if (isset($config['type'])) {
+			$type = $config['type'];
 		}
 		
-		// Merge component config
-		if ($component) {
-			$config = self::merge($component, $config);
+		// Merge type options
+		if ($type) {
+			$config = self::merge(self::config($type), $config);
 		}
 		
 		// Merge passed in options
@@ -189,6 +187,7 @@ class sq {
 			$options['name'] = $name;
 		}
 		
+		// Set class to name if it doesn't exist
 		if (!isset($options['class'])) {
 			$options['class'] = $name;
 		}
