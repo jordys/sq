@@ -189,6 +189,10 @@ class sq {
 			$options['name'] = $name;
 		}
 		
+		if (!isset($options['class'])) {
+			$options['class'] = $name;
+		}
+		
 		// Set type to config if it doesn't exist
 		if (!isset($options['type'])) {
 			$options['type'] = $type;
@@ -221,12 +225,12 @@ class sq {
 	public static function model($name, $options = array()) {
 		$config = self::configure($name, $options, 'model');
 		
-		$class = 'models\\'.$config['name'];
+		$class = 'models\\'.$config['class'];
 		
 		if (class_exists($class)) {
 			return new $class($config);
-		} elseif (class_exists($config['name']) && is_subclass_of($config['name'], 'model')) {
-			return new $config['name']($config);
+		} elseif (class_exists($config['class']) && is_subclass_of($config['class'], 'model')) {
+			return new $config['class']($config);
 		}
 		
 		return new $config['type']($config);
@@ -252,12 +256,12 @@ class sq {
 	public static function controller($name, $options = array()) {
 		$config = self::configure($name, $options, 'component');
 		
-		$class = 'controllers\\'.$config['name'];
+		$class = 'controllers\\'.$config['class'];
 		
 		if (class_exists($class)) {
 			return new $class($config);
-		} elseif (class_exists($config['name']) && is_subclass_of($config['name'], 'controller')) {
-			return new $config['name']($config);
+		} elseif (class_exists($config['class']) && is_subclass_of($config['class'], 'controller')) {
+			return new $config['class']($config);
 		} else {
 			
 			// Throw an error for unfound controller
