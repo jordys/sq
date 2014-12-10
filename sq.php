@@ -49,7 +49,7 @@ class sq {
 		set_error_handler('sqErrorHandler');
 		
 		// Framework config defaults
-		sq::load('/defaults/main');
+		self::load('/defaults/main');
 		
 		// Set the date timezone to avoid error on some systems
 		date_default_timezone_set(self::config('timezone'));
@@ -149,8 +149,8 @@ class sq {
 		$name = end($pieces);
 		
 		// Load configuration
-		sq::load('/config/'.$name);
-		sq::load('/defaults/'.$name);
+		self::load('/config/'.$name);
+		self::load('/defaults/'.$name);
 		
 		// Merge direct config
 		if (isset($config[1])) {
@@ -211,8 +211,13 @@ class sq {
 		$config = self::configure($name, $options, 'component');
 		
 		if (class_exists($config['name']) && is_subclass_of($config['name'], 'component')) {
-			return new $config['name']($config);
+			$component = new $config['name']($config);
 		}
+		
+		// Force override with passed in options
+		$component->options = self::merge($component->options, $options);
+				
+		return $component;
 	}
 	
 	/**
@@ -224,15 +229,19 @@ class sq {
 	public static function model($name, $options = array()) {
 		$config = self::configure($name, $options, 'model');
 		
-		$class = 'models\\'.$config['class'];
-		
-		if (class_exists($class)) {
-			return new $class($config);
+		$class = $config['type'];
+		if (class_exists('models\\'.$config['class'])) {
+			$class = 'models\\'.$config['class'];
 		} elseif (class_exists($config['class']) && is_subclass_of($config['class'], 'model')) {
-			return new $config['class']($config);
+			$class = new $config['class'];
 		}
 		
-		return new $config['type']($config);
+		$model = new $class($config);
+		
+		// Force override with passed in options
+		$model->options = self::merge($model->options, $options);
+		
+		return $model;
 	}
 	
 	/**
@@ -256,11 +265,10 @@ class sq {
 		$config = self::configure($name, $options, 'component');
 		
 		$class = 'controllers\\'.$config['class'];
-		
 		if (class_exists($class)) {
-			return new $class($config);
+			$controller = new $class($config);
 		} elseif (class_exists($config['class']) && is_subclass_of($config['class'], 'controller')) {
-			return new $config['class']($config);
+			$controller = new $config['class']($config);
 		} else {
 			
 			// Throw an error for unfound controller
@@ -269,6 +277,11 @@ class sq {
 			// Return the default controller if none is found
 			return self::controller(self::config('default-controller'), $options);
 		}
+		
+		// Force override with passed in options
+		$controller->options = self::merge($controller->options, $options);
+		
+		return $controller;
 	}
 	
 	/**
@@ -284,7 +297,12 @@ class sq {
 			$config['default-controller'] = $config['name'];
 		}
 		
-		return new module($config);
+		$module = new module($config);
+		
+		// Force override with passed in options
+		$module->options = self::merge($module->options, $options);
+		
+		return $module;
 	}
 	
 	/**
@@ -362,7 +380,7 @@ class sq {
 	
 	// Returns the document root of the application
 	public static function base() {
-		$base = sq::config('base');
+		$base = self::config('base');
 		
 		// If no root path is set then determine from php
 		if (!$base) {
