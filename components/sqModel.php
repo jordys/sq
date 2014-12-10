@@ -276,8 +276,10 @@ abstract class sqModel extends component {
 			}
 			
 			$bridge = sq::model($options['bridge'], array('class' => $model))
-				->where($where)
-				->read();
+				->where($where);
+			
+			$bridge->options['user-specific'] = false;
+			$bridge->read();
 			
 			foreach ($bridge as $key => $item) {
 				$relation = sq::model($model, array('load-relations' => false))
