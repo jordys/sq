@@ -27,14 +27,6 @@ abstract class sqAuth extends controller {
 		}
 	}
 	
-	public function defaultAction($action) {
-		// Do nothing
-	}
-	
-	public function indexAction() {
-		// Do nothing
-	}
-	
 	// Checks login posted from form
 	public function loginAction() {
 		$username = url::post('username');
