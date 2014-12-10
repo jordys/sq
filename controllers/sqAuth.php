@@ -28,7 +28,7 @@ abstract class sqAuth extends controller {
 	}
 	
 	// Checks login posted from form
-	public function loginAction() {
+	public function loginPostAction() {
 		$username = url::post('username');
 		$password = url::post('password');
 		$remember = url::post('remember');
