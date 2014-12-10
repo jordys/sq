@@ -150,6 +150,17 @@ abstract class sqComponent implements iterator, countable, arrayAccess {
 		
 	}
 	
+	// Replaces the data in a component
+	public function reset($data) {
+		if (is_object($data)) {
+			$data = $data->data;
+		}
+		
+		$this->data = $data;
+		
+		return $this;
+	}
+	
 	// Mass assignment method for class data. All the usual mass assignment 
 	// security warnings apply.
 	public function set($data, $overwrite = true) {
