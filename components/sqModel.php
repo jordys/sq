@@ -275,7 +275,7 @@ abstract class sqModel extends component {
 				$where += $options['where'];
 			}
 			
-			$bridge = sq::model($options['bridge'])
+			$bridge = sq::model($options['bridge'], array('class' => $model))
 				->where($where)
 				->read();
 			
