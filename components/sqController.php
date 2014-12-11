@@ -44,6 +44,8 @@ abstract class sqController extends component {
 				$data = $this->{$action.$_SERVER['REQUEST_METHOD'].'Action'}();	
 			} elseif (method_exists($this, $action.'Action')) {
 				$data = $this->{$action.'Action'}();
+			} elseif (method_exists($this, 'default'.$_SERVER['REQUEST_METHOD'].'Action')) {
+				$data = $this->{'default'.$_SERVER['REQUEST_METHOD'].'Action'}($raw);
 			} else {
 				$data = $this->defaultAction($raw);
 			}
