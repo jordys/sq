@@ -93,11 +93,8 @@ abstract class sqView extends component {
 	private function renderTemplate($data) {
 		$this->set($data);
 		
-		// Make variables base level items in the content array
-		foreach ($this->data as $key => $val) {
-			$$key = $val;
-		}
-		unset($key, $val);
+		// Set variables
+		extract($this->data);
 		
 		// Variable for root path of website
 		$base = sq::base();
