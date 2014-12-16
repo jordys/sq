@@ -47,9 +47,10 @@ abstract class sqView extends component {
 		// Add static data from the passed in array
 		$this->data = $data + $this->data;
 		
-		// Set object parameters
-		$this->options = sq::merge($options, $this->options);
-		$this->view    = $view;
+		// Set view
+		$this->view = $view;
+		
+		parent::__construct($options);
 		
 		// Set defult options for description title doctype and such
 		foreach (array('description', 'keywords', 'title', 'doctype', 'language', 'favicon', 'id') as $prop) {

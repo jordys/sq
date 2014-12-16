@@ -13,26 +13,9 @@ class sql extends model {
 	// Static pdo database connection
 	protected static $conn = false;
 	
-	// Override component constructor to add connect method
+	// Override component constructor to add database connection code
 	public function __construct($options = array()) {
-		$this->options = sq::merge($options, $this->options);
-		
-		// Layout can be defined in options as well as in the class
-		if (isset($options['layout'])) {
-			$this->layout = $options['layout'];
-		}
-		
-		// If a view is defined for layout generate it as a view
-		if ($this->layout) {
-			$this->layout = sq::view($this->layout);
-		}
-		
-		$this->connect();
-		$this->init();
-	}
-	
-	// Creates database connection. Called by constructor.
-	public function connect() {
+		parent::__construct($options);
 		
 		// Assume the name of the table is the same as the name of the model
 		// unless specified otherwise

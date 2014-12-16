@@ -37,16 +37,14 @@ abstract class sqModule extends component {
 		// Load the module configuration defaults
 		self::load('main');
 		
-		// Setup config
-		$this->options = sq::merge($options, $this->options);
+		// Call component constructor
+		parent::__construct($options);
 		
 		// Call the specified controller or the default if none is specified
 		$controller = url::request('controller');
 		if (!$controller) {
 			$controller = $this->options['default-controller'];
 		}
-		
-		$this->init();
 		
 		// Set controller to the module
 		$this->controller = sq::controller($this->options['name'].'/'.$controller)
