@@ -1,5 +1,8 @@
 <? self::$title = $error['code'].' | '.self::$title ?>
 <h2>Error <?=$error['code']?></h2>
+<? if (isset($error['debug'])): ?>
+	<p><?=$error['debug'] ?></p>
+<? endif; ?>
 <? if (isset($error['line'])): ?>
 	<p><strong>Line #<?=$error['line']?></strong> <?=$error['string']?> in <?=$error['file']?></p>
 	<h2>Trace</h2>
