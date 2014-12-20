@@ -63,10 +63,10 @@ abstract class sqView extends component {
 	// Special overloaded setter that adds data from the layout view into views
 	// included
 	public function __set($name, $value) {
-		if (is_object($value) && !is_subclass_of($value, 'model')) {
+		if (is_object($value) && !is_a($value, 'model')) {
 			$value->data += $this->data;
 			
-			if (get_class($value) == 'view' || is_subclass_of($value, 'view')) {
+			if (is_a($value, 'view')) {
 				$value->parent = &$this;
 			}
 			
