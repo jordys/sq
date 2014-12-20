@@ -21,42 +21,58 @@ abstract class sqController extends component {
 	 * in which case the view replaces the existing layout.
 	 */
 	public function action($action = null) {
-		$data = null;
-		
-		if (empty($action)) {
+		if (!$action) {
 			$action = 'index';
 		}
 		
 		$action = strtolower($action);
 		
 		// Action parameter passed into functions isn't stripped of dashes and
-		// underscores.
+		// underscores
 		$raw = $action;
 		
 		$action = str_replace('-', '', $action);
 		$action = str_replace('_', '', $action);
 		
-		$filter = $this->filter($raw);
-		if ($filter === true || $action == 'error' || $action == 'debug') {
+		// Filter can return a view such as a login screen or true indicating
+		// it's ok to proceed calling an action
+		$data = $this->filter($raw);
+		if ($data === true || $action == 'error' || $action == 'debug') {
+			$args = array();
 			
 			// Call the action method or the default action
 			if (method_exists($this, $action.$_SERVER['REQUEST_METHOD'].'Action')) {
-				$data = $this->{$action.$_SERVER['REQUEST_METHOD'].'Action'}();	
+				$method = $action.$_SERVER['REQUEST_METHOD'].'Action';
 			} elseif (method_exists($this, $action.'Action')) {
-				$data = $this->{$action.'Action'}();
+				$method = $action.'Action';
 			} elseif (method_exists($this, 'default'.$_SERVER['REQUEST_METHOD'].'Action')) {
-				$data = $this->{'default'.$_SERVER['REQUEST_METHOD'].'Action'}($raw);
+				$method = 'default'.$_SERVER['REQUEST_METHOD'].'Action';
+				$args[] = $raw;
 			} else {
-				$data = $this->defaultAction($raw);
+				$method = 'defaultAction';
+				$args[] = $raw;
 			}
-		
-		// Filter can return a view as well such as a login screen
-		} elseif ($filter) {
-			$data = $filter;
+			
+			// Reflection allows http params to be injected as method arguments
+			// to actions
+			$reflection = new ReflectionMethod(get_called_class(), $method);
+			foreach ($reflection->getParameters() as $param) {
+				if (url::request($param->getName())) {
+					$args[] = url::request($param->getName());
+				} elseif ($param->isOptional()) {
+					break;
+				} else {
+					sq::error('404', array(
+						'debug' => "Query parameter &lsquo;{$param->getName()}&rsquo; required for $raw action."
+					));
+				}
+			}
+			
+			$data = call_user_func_array(array($this, $method), $args);
 		}
 		
-		// If something was returned save it as a new layout
-		if ($data !== null) {
+		// If something was returned set it as a new layout
+		if (is_a($data, 'view')) {
 			$this->layout = $data;
 		}
 		
@@ -95,31 +111,11 @@ abstract class sqController extends component {
 		return true;
 	}
 	
-	// Default index action is none is defined. Index action is called when no
-	// other action is defined. By default the action will generate the default
-	// view file.
-	public function indexAction() {
-		$class = get_class($this);
-		
-		// Check if the home view exists
-		if (file_exists(sq::root().'views/'.$class.'/index.php')) {
-			
-			// If a layout exists use the view as content
-			if (is_object($this->layout)) {
-				$this->layout->content = sq::view($class.'/index');
-			} else {
-				return sq::view($class.'/index');
-			}
-		} else {
-			sq::error('404');
-		}
-	}
-	
 	// Default action is called when the specific action method doesn't exist.
 	// The action argument is the name of the called action that could not be
 	// found. The default action calls the view controller/action by default.
 	public function defaultAction($action) {
-		$class = get_class($this);
+		$class = get_called_class();
 		
 		// Check if the file exists. If it doesn't throw a 404 error
 		if (file_exists(sq::root().'views/'.$class.'/'.$action.'.php')) {
