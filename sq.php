@@ -60,7 +60,7 @@ class sq {
 		spl_autoload_register('sq::load');
 		
 		// If module is url parameter exists call the module instead of the
-		// controller.
+		// controller
 		if (url::request('module')) {
 			echo self::module(url::request('module'));
 		} else {

@@ -2,23 +2,18 @@
 
 /**
  * Controller base class
- *
- * Individual controllers extend controller which in turn extends this class. To
- * extend the base controller in your app add a class named controller to your 
- * project.
  * 
- * Contains base methods to deal with taint checking reading url parameters and
- * some basic actions to deal with errors and debuging.
+ * Contains method to deal with calling and filtering actions and a few 
+ * default actions. Actions are methods ending in Action.
  */
 
 abstract class sqController extends component {
 	
 	/**
-	 * Calls actions within the controller. Actions calls an action method after
-	 * checking if the method  is valid. It is called by the sq::controller 
-	 * global and can also be called directly. A single argument can be passed
-	 * into the action method with the arg parameter. Actions can return views
-	 * in which case the view replaces the existing layout.
+	 * Call actions within controller
+	 * 
+	 * Calls the action passed in. A null argument will result in the index 
+	 * action being called.
 	 */
 	public function action($action = null) {
 		if (!$action) {
@@ -79,7 +74,7 @@ abstract class sqController extends component {
 		return $this;
 	}
 	
-	// Function that calls a render on the controller layout
+	// Renders the controller layout
 	public function render() {
 		if (sq::error()) {
 			if (sq::config('debug')) {
