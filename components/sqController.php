@@ -107,8 +107,8 @@ abstract class sqController extends component {
 	}
 	
 	// Default action is called when the specific action method doesn't exist.
-	// The action argument is the name of the called action that could not be
-	// found. The default action calls the view controller/action by default.
+	// The action argument is the name of the unfound action. This default
+	// implementation calls renders the view in views/<controller>/<action>.
 	public function defaultAction($action) {
 		$class = get_called_class();
 		
