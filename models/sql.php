@@ -30,6 +30,8 @@ class sql extends model {
 				$this->options['username'],
 				$this->options['password']);
 			
+			self::$conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+			
 			// Turn on error reporting for pdo if framework debug is enabled
 			if (sq::config('debug')) {
 				self::$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -204,7 +206,16 @@ class sql extends model {
 		try {
 			$handle = self::$conn->prepare($query);
 			$handle->setFetchMode(PDO::FETCH_ASSOC);
-			$handle->execute($data);
+			
+			foreach ($data as $key => $val) {
+				if ($val === null || $val === '') {
+					$handle->bindValue(":$key", null, PDO::PARAM_NULL);
+				} else {
+					$handle->bindValue(":$key", $val);
+				}
+			}
+			
+			$handle->execute();
 			
 			if (strpos($query, 'SELECT') !== false) {
 				$this->selectQuery($handle);
