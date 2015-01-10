@@ -67,7 +67,7 @@ abstract class sqController extends component {
 		}
 		
 		// If something was returned set it as a new layout
-		if (is_a($data, 'component')) {
+		if ($data) {
 			$this->layout = $data;
 		}
 		
