@@ -208,7 +208,7 @@ class sql extends model {
 			$handle->setFetchMode(PDO::FETCH_ASSOC);
 			
 			foreach ($data as $key => $val) {
-				if ($val === null || $val === '') {
+				if ($val === null) {
 					$handle->bindValue(":$key", null, PDO::PARAM_NULL);
 				} else {
 					$handle->bindValue(":$key", $val);

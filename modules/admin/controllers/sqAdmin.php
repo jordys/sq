@@ -32,38 +32,35 @@ abstract class sqAdmin extends controller {
 		}
 	}
 	
-	public function createAction() {
+	public function createGetAction() {
+		$this->layout->content = sq::model(url::get('model'))->schema();
+	}
+	
+	public function createPostAction() {
 		$model = sq::model(url::get('model'));
 		
-		if (url::post()) {
-			$save = $this->cleanInput(url::post('save', false));
-			
-			if (isset($save['id-field'])) {
-				$idField = $save['id-field'];
-				unset($save['id-field']);
-			}
-			
-			$model->set($save);
-			
-			if (is_array(url::post('model'))) {
-				foreach (url::post('model') as $inline) {
-					$inlineModel = sq::model($inline);
-					$inlineModel->set(url::post($inline));
-					$inlineModel->create();
-					
-					$model->$idField = $inlineModel->id;
-				}
-			}
-			
-			$model->create();
-			
-			sq::redirect(sq::base().'admin/'.url::get('model'));
-		} else {
-			$model->schema();
-			$model->limit();
-			
-			$this->layout->content = $model;
+		$save = $this->cleanInput(url::post('save', false));
+		
+		if (isset($save['id-field'])) {
+			$idField = $save['id-field'];
+			unset($save['id-field']);
 		}
+		
+		$model->set($save);
+		
+		if (is_array(url::post('model'))) {
+			foreach (url::post('model') as $inline) {
+				$inlineModel = sq::model($inline)
+					->set(url::post($inline))
+					->create();
+				
+				$model->$idField = $inlineModel->id;
+			}
+		}
+		
+		$model->create();
+		
+		sq::redirect(sq::base().'admin/'.url::get('model'));
 	}
 	
 	public function updateAction() {
