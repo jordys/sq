@@ -17,17 +17,12 @@ abstract class sqForm {
 		}
 		
 		if (is_string($attrs)) {
-			$attrs = array(
-				'action' => $attrs
-			);
+			$attrs2['action'] = $attrs;
+			$attrs = $attrs2;
 		}
 		
 		if (empty($attrs['method'])) {
 			$attrs['method'] = 'post';
-		}
-		
-		if (empty($attrs['action'])) {
-			$attrs['action'] = null;
 		}
 		
 		$form = '<form '.self::parseAttrs($attrs).'>';
@@ -49,21 +44,17 @@ abstract class sqForm {
 	
 	// Prints form label
 	public static function label($for, $value, $class = 'text') {
-		return '<label class="'.$class.'" for="sq-form-'.self::$i.'-'.$for.'">'.$value.'</label>';
+		return '<label class="'.$class.'" for="'.self::parseId($for).'">'.$value.'</label>';
 	}
 	
 	public static function element($name, $value = null, $attrs = array()) {
-		if (empty($attrs['type'])) {
-			$attrs['type'] = 'text';
-		}
-		
-		$attrs = self::buildAttrs($name, $value, $attrs);
-		
-		return '<input '.$attrs.'/>';
+		return '<input '.self::buildAttrs($name, $value, $attrs).'/>';
 	}
 	
 	// Basic text input
 	public static function text($name, $value = null, $attrs = array()) {
+		$attrs['type'] = 'text';
+		
 		return self::element($name, $value, $attrs);
 	}
 	
@@ -103,9 +94,7 @@ abstract class sqForm {
 		$value = $attrs['value'];
 		unset($attrs['value']);
 		
-		$attrs = self::parseAttrs($attrs);
-		
-		return '<textarea '.$attrs.'>'.htmlentities($value).'</textarea>';
+		return '<textarea '.self::parseAttrs($attrs).'>'.htmlentities($value).'</textarea>';
 	}
 	
 	// Similar to textarea but with a richtext class presumably to use tinyMCE
@@ -138,12 +127,10 @@ abstract class sqForm {
 			';
 		}
 		
-		$content .= '
+		return $content.'
 				<input '.$attrs.'/>
 			</div>
 		';
-		
-		return $content;
 	}
 	
 	// Desplays a related model inline as a form within the form
@@ -194,26 +181,19 @@ abstract class sqForm {
 		
 		$content = '<input type="hidden" name="'.$attrs['name'].'" value="0"/>';
 		
-		$attrs = self::parseAttrs($attrs);
-		
-		return $content.'<input '.$attrs.'/>';
+		return $content.'<input '.self::parseAttrs($attrs).'/>';
 	}
 	
 	// Prints a select box with an array of data
 	public static function select($name, $default, $data, $attrs = array()) {
-		$append = self::parseAttrs($attrs);
-		
-		if (!isset($attrs['id'])) {
-			$append .= ' id="'.self::toId($name).'"';
-		}
-		
 		if (is_string($data)) {
 			$data = sq::config($data);
 		}
 		
-		$content = '<select name="'.$name.'"'.$append.'>';
+		$attrs = self::buildAttrs($name, $default, $attrs);
+		
+		$content = '<select '.$attrs.'>';
 		foreach ($data as $value => $label) {
-			
 			$selected = null;
 			if ($default == $value && $default !== false) {
 				$selected = 'selected';
@@ -222,20 +202,15 @@ abstract class sqForm {
 			$content .= '<option '.$selected.' value="'.$value.'">'.$label.'</option>';
 		}
 		
-		$content .= '</select>';
-		
-		return $content;
+		return $content.'</select>';
 	}
 	
 	// Utility method to take a name parameter and convert it to a standard 
 	// dashed id name
-	private static function toId($string) {
-		$string = preg_replace('/[^0-9a-zA-Z -]/', '', $string);
-		$string = preg_replace('!\s+!', ' ', $string);
-		$string = str_replace(' ', '-', $string);
-		$string = strtolower($string);
+	private static function parseId($string) {
+		$string = preg_replace('/[^a-zA-Z0-9]/', '-', $string);
 		
-		return $string;
+		return 'sq-form-'.self::$i.'-'.strtolower(trim($string, '-'));
 	}
 	
 	private static function getAttrs($name, $value, $attrs) {
@@ -248,7 +223,7 @@ abstract class sqForm {
 		$attrs['name'] = $name;
 		
 		if (empty($attrs['id'])) {
-			$attrs['id'] = 'sq-form-'.self::$i.'-'.$name;
+			$attrs['id'] = self::parseId($name);
 		}
 		
 		if (!$value && self::$model) {
@@ -269,6 +244,10 @@ abstract class sqForm {
 	// applies it as an id
 	private static function parseAttrs($attrs) {
 		$string = '';
+		
+		if (is_string($attrs)) {
+			$attrs = array('class' => $attrs);
+		}
 		
 		foreach ($attrs as $key => $val) {
 			if (is_int($key)) {
