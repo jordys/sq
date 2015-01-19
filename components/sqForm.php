@@ -184,35 +184,19 @@ abstract class sqForm {
 	}
 	
 	// Prints a checkbox. Optionally checked
-	public static function checkbox($name, $checked = null, $attrs = array()) {		
-		$zeroFill = true;
-		
-		if (is_array($attrs)) {
-			if (isset($attrs['zeroFill'])) {
-				$zeroFill = $attrs['zeroFill'];
-				unset($attrs['zeroFill']);
-			}
-		}
-		
-		$append = self::parseAttrs($attrs);
-		
-		if (!isset($attrs['id'])) {
-			$append .= ' id="'.self::toId($name).'"';
-		}
-			
+	public static function checkbox($name, $checked = null, $attrs = array()) {
 		if ($checked) {
-			$checked = 'checked';
+			$attrs[] = 'checked';
 		}
 		
-		$content = '';
+		$attrs['type'] = 'checkbox';
+		$attrs = self::getAttrs($name, true, $attrs);
 		
-		if ($zeroFill) {
-			$content .= '<input type="hidden" name="'.$name.'" value="0"/>';
-		}
+		$content = '<input type="hidden" name="'.$attrs['name'].'" value="0"/>';
 		
-		$content .= '<input type="checkbox" name="'.$name.'" value="1" '.$checked.$append.'/>';
+		$attrs = self::parseAttrs($attrs);
 		
-		return $content;
+		return $content.'<input '.$attrs.'/>';
 	}
 	
 	// Prints a select box with an array of data
