@@ -8,106 +8,138 @@
  */
 
 abstract class sqForm {
+	protected static $model, $i = 1;
+	
+	public static function open($attrs = array(), $attrs2 = array()) {
+		if (is_object($attrs)) {
+			self::$model = $attrs;
+			$attrs = $attrs2;
+		}
+		
+		if (is_string($attrs)) {
+			$attrs = array(
+				'action' => $attrs
+			);
+		}
+		
+		if (empty($attrs['method'])) {
+			$attrs['method'] = 'post';
+		}
+		
+		if (empty($attrs['action'])) {
+			$attrs['action'] = null;
+		}
+		
+		$form = '<form '.self::parseAttrs($attrs).'>';
+		
+		if (self::$model) {
+			$form .= self::hidden('sq-model[]', self::$model->options['name']);
+			$form .= self::hidden('id');
+		}
+		
+		return $form;
+	}
+	
+	public static function close() {
+		self::$model = null;
+		self::$i++;
+		
+		return '</form>';
+	}
 	
 	// Prints form label
 	public static function label($for, $value, $class = 'text') {
-		$for = self::toId($for);
+		return '<label class="'.$class.'" for="sq-form-'.self::$i.'-'.$for.'">'.$value.'</label>';
+	}
+	
+	public static function element($name, $value = null, $attrs = array()) {
+		if (empty($attrs['type'])) {
+			$attrs['type'] = 'text';
+		}
 		
-		return '<label class="'.$class.'" for="'.$for.'">'.$value.'</label>';
+		$attrs = self::buildAttrs($name, $value, $attrs);
+		
+		return '<input '.$attrs.'/>';
 	}
 	
 	// Basic text input
 	public static function text($name, $value = null, $attrs = array()) {
-		$append = self::parseAttrs($attrs);
-		
-		if (!isset($attrs['id'])) {
-			$append .= ' id="'.self::toId($name).'"';
-		}
-		
-		return '<input type="text" name="'.$name.'" value="'.$value.'"'.$append.'/>';
+		return self::element($name, $value, $attrs);
 	}
 	
 	// Date input fields with processing
 	public static function date($name, $value = null, $attrs = array()) {
-		$append = self::parseAttrs($attrs);
+		$attrs['type'] = 'date';
+		$attrs['placeholder'] = sq::config('form/date-placeholder');
 		
-		if (!isset($attrs['id'])) {
-			$append .= ' id="'.self::toId($name).'"';
-		}
-		
-		if ($value) {
-			$value = view::date(sq::config('admin/form/date-format'), $value);
-		}
-		
-		return '<input type="date" name="'.$name.'" placeholder="'.sq::config('admin/form/date-placeholder').'" value="'.$value.'"'.$append.'/>';
+		return self::element($name, $value, $attrs);
 	}
 	
 	// Password input
 	public static function password($name, $value = null, $attrs = array()) {
-		$append = self::parseAttrs($attrs);
+		$attrs['type'] = 'password';
 		
-		if (!isset($attrs['id'])) {
-			$append .= ' id="'.self::toId($name).'"';
-		}
+		return self::element($name, $value, $attrs);
+	}
 		
-		return '<input type="password" name="'.$name.'" value="'.$value.'"'.$append.'/>';
+	// Hidden filed
+	public static function hidden($name, $value = null, $attrs = array()) {
+		$attrs['type'] = 'hidden';
+		
+		return self::element($name, $value, $attrs);
 	}
 	
 	// Money input
 	public static function currency($name, $value = null, $attrs = array()) {
-		$append = self::parseAttrs($attrs);
+		$attrs['class'] = 'currency';
 		
-		if (!isset($attrs['id'])) {
-			$append .= ' id="'.self::toId($name).'"';
-		}
-		
-		if (!isset($attrs['class'])) {
-			$append .= ' class="currency"';
-		}
-		
-		return '&#36; <input type="text" name="'.$name.'" value="'.$value.'"'.$append.'/>';
+		return '&#36; '.self::element($name, $value, $attrs);
 	}
 	
 	// Textarea
 	public static function textarea($name, $value = null, $attrs = array()) {
-		$append = self::parseAttrs($attrs);
+		$attrs = self::getAttrs($name, $value, $attrs);
 		
-		if (!isset($attrs['id'])) {
-			$append .= ' id="'.self::toId($name).'"';
-		}
+		$value = $attrs['value'];
+		unset($attrs['value']);
 		
-		return '<textarea type="text" name="'.$name.'"'.$append.'>'.htmlentities($value).'</textarea>';
+		$attrs = self::parseAttrs($attrs);
+		
+		return '<textarea '.$attrs.'>'.htmlentities($value).'</textarea>';
 	}
 	
-	// Hidden filed
-	public static function hidden($name, $value = null, $attrs = array()) {
-		$append = self::parseAttrs($attrs);
+	// Similar to textarea but with a richtext class presumably to use tinyMCE
+	// or suchlike
+	public static function richtext($name, $value = null, $attrs = array()) {
+		$attrs['class'] = 'richtext';
 		
-		if (!isset($attrs['id'])) {
-			$append .= ' id="'.self::toId($name).'"';
-		}
+		return self::textarea($name, $value, $attrs);
+	}
+	
+	// Textarea
+	public static function blurb($name, $value = null, $attrs = array()) {
+		$attrs['class'] = 'blurb';
 		
-		return '<input type="hidden" name="'.$name.'" value="'.$value.'"'.$append.'/>';
+		return self::textarea($name, $value, $attrs);
 	}
 	
 	// Prints file upload button. If an image is set as value it is snown beside
 	// the upload button.
-	public static function file($name, $value = null, $id = null, $class = null) {
-		if (!$id) {
-			$id = self::toId($name);
-		}
+	public static function file($name, $value = null, $attrs = array()) {
+		$attrs['type'] = 'file';
+		$attrs = self::buildAttrs('file', null, $attrs);
 		
 		$content = '<div class="field-block">';
 		
 		if ($value) {
 			$content .= '
 				<img class="file-image" src="'.sq::base().$value.'"/>
-				<label class="replace-image" for="'.$id.'">Replace image: </label>
+				<label class="replace-image" for="'.$attrs['id'].'">Replace image: </label>
 			';
 		}
 		
 		$content .= '
-				<input id="'.$id.'" type="file" name="file" value=""/>
+				<input '.$attrs.'/>
 			</div>
 		';
 		
@@ -211,25 +243,6 @@ abstract class sqForm {
 		return $content;
 	}
 	
-	// Similar to textarea but with a richtext class presumably to use tinyMCE
-	// or suchlike
-	public static function richtext($name, $content = null, $id = null, $class = null) {
-		if (!$id) {
-			$id = self::toId($name);
-		}
-		
-		return '<textarea name="'.$name.'" class="richtext '.$class.'" id="'.$id.'">'.htmlentities($content).'</textarea>';
-	}
-	
-	// Textarea
-	public static function blurb($name, $content = null, $id = null, $class = null) {
-		if (!$id) {
-			$id = self::toId($name);
-		}
-		
-		return '<textarea name="'.$name.'" class="blurb '.$class.'" id="'.$id.'">'.htmlentities($content).'</textarea>';
-	}
-	
 	// Utility method to take a name parameter and convert it to a standard 
 	// dashed id name
 	private static function toId($string) {
@@ -241,21 +254,44 @@ abstract class sqForm {
 		return $string;
 	}
 	
+	private static function getAttrs($name, $value, $attrs) {
+		if (is_array($value)) {
+			$attrs = $value;
+			$value = null;
+		}
+		
+		$attrs['value'] = $value;
+		$attrs['name'] = $name;
+		
+		if (empty($attrs['id'])) {
+			$attrs['id'] = 'sq-form-'.self::$i.'-'.$name;
+		}
+		
+		if (!$value && self::$model) {
+			$attrs['value'] = self::$model->$name;
+			$attrs['name'] = self::$model->options['name'].'['.$name.']';
+		} elseif (isset($attrs['type']) && $attrs['type'] == 'date') {
+			$attrs['value'] = view::date(sq::config('form/date-format'), $value);
+		}
+		
+		return $attrs;
+	}
+	
+	private static function buildAttrs($name, $value, $attrs) {
+		return self::parseAttrs(self::getAttrs($name, $value, $attrs));
+	}
+	
 	// Takes an array and turns them into html attributes or a string and
 	// applies it as an id
 	private static function parseAttrs($attrs) {
 		$string = '';
 		
-		if (is_array($attrs)) {
-			foreach ($attrs as $key => $val) {
-				if (is_int($key)) {
-					$string .= ' '.$val;
-				} else {
-					$string .= ' '.$key.'="'.$val.'"';
-				}
+		foreach ($attrs as $key => $val) {
+			if (is_int($key)) {
+				$string .= ' '.$val;
+			} else {
+				$string .= ' '.$key.'="'.$val.'"';
 			}
-		} else {
-			$string .= ' id="'.$attrs.'"';
 		}
 		
 		return $string;

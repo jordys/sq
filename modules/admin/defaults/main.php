@@ -17,24 +17,7 @@ return array(
 		
 		// Require login for access to admin section. False is useful for dev
 		// environments.
-		'require-login' => true,
-		
-		// Form view settings
-		'form' => array(
-			
-			// Format for date inputs
-			'date-format' => 'm/d/Y',
-			
-			// Placeholder date format
-			'date-placeholder' => 'mm/dd/yyyy'
-		),
-		
-		// List view settings
-		'list' => array(
-			
-			// Format for dates
-			'date-format' => 'M d, Y'
-		)
+		'require-login' => true
 	)
 );
 

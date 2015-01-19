@@ -10,6 +10,7 @@
  ******************************************************************************/
 
 sq::load('/defaults/view');
+sq::load('/defaults/form');
 sq::load('/defaults/model');
 
 return array(

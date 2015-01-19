@@ -52,8 +52,10 @@ abstract class sqController extends component {
 			// to actions
 			$reflection = new ReflectionMethod(get_called_class(), $method);
 			foreach ($reflection->getParameters() as $param) {
-				if (url::request($param->getName())) {
-					$args[] = url::request($param->getName());
+				if ($model = url::model($param->getName())) {
+					$args[] = $model;
+				} elseif ($request = url::request($param->getName())) {
+					$args[] = $request;
 				} elseif ($param->isOptional()) {
 					break;
 				} else {

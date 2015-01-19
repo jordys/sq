@@ -100,6 +100,17 @@ abstract class sqUrl {
 		return false;
 	}
 	
+	// Gets a model passed as part of a form
+	public static function model($name = null) {
+		if ($models = self::request('sq-model')) {
+			if (in_array($name, $models)) {
+				return sq::model($name)->set(self::request($name));
+			}
+			
+			return true;
+		}
+	}
+	
 	// Recursivly checks navigates an array and applies strip tags and database
 	// securing code
 	public static function clean($data) {
