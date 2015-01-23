@@ -267,12 +267,8 @@ var sq = '.str_replace('    ', "\t", json_encode(self::$jsData, JSON_PRETTY_PRIN
 		
 		// Find the requested slot and create if it doesn't exist
 		$slot = self::$slots->find($id);
-		if ($slot) {
-			$content = $slot->content;
-			$type = $slot->type;
-			$altText = $slot->alt_text;
-		} else {
-			self::$slots->create(array(
+		if (!$slot) {
+			$slot = sq::model('sq_slots')->create(array(
 				'id' => $id,
 				'name' => $name,
 				'type' => $type,
@@ -281,15 +277,15 @@ var sq = '.str_replace('    ', "\t", json_encode(self::$jsData, JSON_PRETTY_PRIN
 		}
 		
 		// Special rendering for slot types
-		if ($content) {
-			switch ($type) {
+		if ($slot->content) {
+			switch ($slot->type) {
 				case 'markdown':
 					sq::load('phpMarkdown');
-					return markdown($content);
+					return markdown($slot->content);
 				case 'image':
-					return '<img src="'.sq::base().$content.'" alt="'.$altText.'"/>';
+					return '<img src="'.sq::base().$slot->content.'" alt="'.$slot->alt_text.'"/>';
 				default:
-					return $content;
+					return $slot->content;
 			}
 		}
 	}

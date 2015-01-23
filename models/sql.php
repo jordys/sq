@@ -103,7 +103,7 @@ class sql extends model {
 			return false;
 		}
 		
-		return $result !== false;
+		return true;
 	}
 	
 	public function make($schema) {
@@ -132,8 +132,9 @@ class sql extends model {
 			$this->set($data);
 		}
 		
-		$this->limit();
-		unset($this->data['id']);
+		if (is_numeric($this->data['id'])) {
+			unset($this->data['id']);
+		}
 		
 		if ($this->options['user-specific'] && !isset($this->data['users_id'])) {
 			$this->data['users_id'] = auth::user()->id;
