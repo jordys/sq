@@ -132,7 +132,7 @@ class sql extends model {
 			$this->set($data);
 		}
 		
-		if (is_numeric($this->data['id'])) {
+		if (empty($this->data['id']) || is_numeric($this->data['id'])) {
 			unset($this->data['id']);
 		}
 		
