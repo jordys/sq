@@ -111,7 +111,7 @@ abstract class sqController extends component {
 	// Default action is called when the specific action method doesn't exist.
 	// The action argument is the name of the unfound action. This default
 	// implementation calls renders the view in views/<controller>/<action>.
-	public function defaultAction($action) {
+	public function defaultAction($action = 'index') {
 		$class = get_called_class();
 		
 		// Check if the file exists. If it doesn't throw a 404 error
