@@ -42,10 +42,8 @@ abstract class sqController extends component {
 				$method = $action.'Action';
 			} elseif (method_exists($this, 'default'.$_SERVER['REQUEST_METHOD'].'Action')) {
 				$method = 'default'.$_SERVER['REQUEST_METHOD'].'Action';
-				$args[] = $raw;
 			} else {
 				$method = 'defaultAction';
-				$args[] = $raw;
 			}
 			
 			// Reflection allows http params to be injected as method arguments
