@@ -55,7 +55,7 @@ abstract class sqController extends component {
 				} elseif ($request = url::request($param->getName())) {
 					$args[] = $request;
 				} elseif ($param->isOptional()) {
-					break;
+					$args[] = $param->getDefaultValue();
 				} else {
 					sq::error('404', array(
 						'debug' => "Query parameter &lsquo;{$param->getName()}&rsquo; required for $raw action."
