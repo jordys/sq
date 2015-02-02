@@ -281,12 +281,17 @@ var sq = '.str_replace('    ', "\t", json_encode(self::$jsData, JSON_PRETTY_PRIN
 			switch ($slot->type) {
 				case 'markdown':
 					sq::load('phpMarkdown');
-					return markdown($slot->content);
+					$output = markdown($slot->content);
+					break;
 				case 'image':
-					return '<img src="'.sq::base().$slot->content.'" alt="'.$slot->alt_text.'"/>';
+					$output = '<img src="'.sq::base().$slot->content.'" alt="'.$slot->alt_text.'"/>';
+					break;
 				default:
-					return $slot->content;
+					$output = $slot->content;
+					break;
 			}
+			
+			return "<div class=\"sq-slot $id\">$output</div>";
 		}
 	}
 	
