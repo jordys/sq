@@ -31,7 +31,7 @@ abstract class sqUrl {
 	// Implementation for the get() post() and request() methods. Calls 
 	// cleanParam if data is set to be cleaned. Clean is on by default.
 	private static function getParam($url, $clean, $type) {
-		$data = false;
+		$data = null;
 		
 		// Check for truthy urls
 		if ($url) {
@@ -51,10 +51,7 @@ abstract class sqUrl {
 			// for undefined makes a lot of javascript ajax requests a lot
 			// easier because if a field is empty and submitted with ajax the 
 			// post will contain undefined instead of null.
-			if (isset($type[$url])
-				&& $type[$url] != '' 
-				&& $type[$url] != 'undefined'
-			) {
+			if (isset($type[$url]) && $type[$url] != '' && $type[$url] != 'undefined') {
 				$data = $type[$url];
 				
 				// Check if data should be cleaned and call cleanParam if needed
