@@ -14,6 +14,9 @@
 
 abstract class sqModel extends component {
 	
+	// Gets set to true after a database read
+	protected $isRead = false;
+	
 	// Called by the __tostring method to render a view of the data in the
 	// model. By default the view is a form for a single result and a listing
 	// multiple results. The default listing and form view can also be
@@ -67,36 +70,74 @@ abstract class sqModel extends component {
 		
 	}
 	
-	// Searches through model list a returns an item
+	/**
+	 * Searches through model records and returns a single item
+	 *
+	 * If called prior to a read it searches the database otherwise it searches
+	 * through the existing model objects.
+	 */
 	public function find($where) {
-		if (is_string($where)) {
-			$where = array('id' => $where);
-		}
-		
-		foreach ($this->data as $item) {
-			foreach ($where as $key => $val) {
-				if (is_object($item) && $item->$key == $val) {
-					return $item;
+		if ($this->isRead) {
+			if (is_string($where)) {
+				$where = array('id' => $where);
+			}
+			
+			foreach ($this->data as $item) {
+				foreach ($where as $key => $val) {
+					if (is_object($item) && $item->$key == $val) {
+						return $item;
+					}
 				}
 			}
+			
+			return false;
+		} else {
+			return $this->where($where)->limit()->read();
 		}
-		
-		return false;
 	}
 	
-	// Searches through a model list and returns all matching items
+	/**
+	 * Searches through model and returns a multiple items
+	 *
+	 * If called prior to a read it searches the database otherwise it searches
+	 * through the existing model list of model objects. Returns a model object
+	 * containing the found records.
+	 */
 	public function search($where) {
-		$results = array();
-		
-		foreach ($this->data as $item) {
-			foreach ($where as $key => $val) {
-				if ($item->$key == $val) {
-					$results[] = $item;
+		if ($this->isRead) {
+			$results = array();
+			
+			foreach ($this->data as $item) {
+				foreach ($where as $key => $val) {
+					if ($item->$key == $val) {
+						$results[] = $item;
+					}
 				}
 			}
+			
+			$this->data = $results;
+		} else {
+			$this->where($where)->limit(false)->read();
 		}
 		
-		return $results;
+		return $this;
+	}
+	
+	// Shorthand for read with no where statement
+	public function all() {
+		$this->options['where'] = array();
+		
+		return $this->read();
+	}
+	
+	// Shorthand method to create a new entry or update and existing one based
+	// on the existance of an id property or where statment.
+	public function save() {
+		if (isset($this->id) || !empty($this->options['where'])) {
+			return $this->update();
+		} else {
+			return $this->create();
+		}
 	}
 	
 	// Returns all of signle property from a model list as an array
@@ -112,9 +153,12 @@ abstract class sqModel extends component {
 		return $data;
 	}
 	
-	// Stores a key value array of where statements. Key = Value. If a single
-	// argument is passed it is assumed to be an id and limit is automatically
-	// imposed.
+	/**
+	 * Stores a key value array of where statements
+	 *
+	 * If a single argument is passed it is assumed to be an id and limit is
+	 * automatically imposed.
+	 */
 	public function where($argument, $operation = 'AND') {
 		
 		// Allow shorthand for searching by id
@@ -129,10 +173,13 @@ abstract class sqModel extends component {
 		return $this;
 	}
 	
-	// Sets the number of results that will be returned. If limit is set to
-	// boolean true the model will only contain the model data. Limit 1 will
-	// result in an array of models with only one entry. If limit() is called
-	// with no arguments then it will default to true.
+	/**
+	 * Sets the number of results that will be returned 
+	 *
+	 * If limit is set to boolean true the model will only contain the model 
+	 * data. Limit 1 will result in an array of models with only one entry. If 
+	 * limit() is called with no arguments then it will default to true.
+	 */
 	public function limit($limit = true) {
 		$this->options['limit'] = $limit;
 		

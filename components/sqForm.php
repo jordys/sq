@@ -8,7 +8,7 @@
  */
 
 abstract class sqForm {
-	protected static $model, $i = 1;
+	protected static $model, $i = 1, $status, $flash;
 	
 	public static function open($attrs = array(), $attrs2 = array()) {
 		if (is_object($attrs)) {
@@ -152,7 +152,7 @@ abstract class sqForm {
 	}
 	
 	// Choose from a list of related entries
-	public static function single($name, $value, $model, $attrs = array()) {
+	public static function single($name, $model, $value, $attrs = array()) {
 		$model = sq::model($model);
 		$model->options['load-relations'] = false;
 		$model->read(array('name', 'id'));
@@ -167,7 +167,7 @@ abstract class sqForm {
 			$items[$item->id] = $item->name;
 		}
 		
-		return self::select($name, $value, $items, $attrs);
+		return self::select($name, $items, $value, $attrs);
 	}
 	
 	// Prints a checkbox. Optionally checked
@@ -185,17 +185,25 @@ abstract class sqForm {
 	}
 	
 	// Prints a select box with an array of data
-	public static function select($name, $default, $data, $attrs = array()) {
+	public static function select($name, $data, $default = null, $attrs = array()) {
 		if (is_string($data)) {
 			$data = sq::config($data);
 		}
 		
-		$attrs = self::buildAttrs($name, $default, $attrs);
+		if (is_array($default)) {
+			$attrs = $default;
+		}
+		
+		$attrs = self::getAttrs($name, $default, $attrs);
+		$default = $attrs['value'];
+		unset($attrs['value']);
+		
+		$attrs = self::parseAttrs($attrs);
 		
 		$content = '<select '.$attrs.'>';
 		foreach ($data as $value => $label) {
 			$selected = null;
-			if ($default == $value && $default !== false) {
+			if ($default && $default == $value) {
 				$selected = 'selected';
 			}
 			
@@ -203,6 +211,62 @@ abstract class sqForm {
 		}
 		
 		return $content.'</select>';
+	}
+	
+	public static function success($flash = 'Success') {
+		self::status('success', $flash);
+	}
+	
+	public static function error($flash = 'Failure') {
+		self::status('error', $flash);
+	}
+	
+	public static function status($status, $flash = null) {
+		self::$status = $status;
+		self::$flash = $flash;
+		
+		if (!url::ajax()) {
+			if (!isset($_SESSION)) {
+				session_start();
+			}
+			
+			$_SESSION['sq-form-status'] = $status;
+			$_SESSION['sq-form-flash'] = $flash;
+		}
+	}
+	
+	public static function review() {
+		if (url::ajax()) {
+			echo json_encode(array(
+				'status' => self::$status,
+				'flash' => self::$flash
+			));
+			
+			die();
+		}
+		
+		$url = $_SERVER['PHP_SELF'];
+		if (url::get() && $_SERVER['QUERY_STRING']) {
+			$url .= '?'.$_SERVER['QUERY_STRING'];
+		}
+		
+		sq::redirect($_SERVER['REQUEST_URI']);
+	}
+	
+	public static function flash($flash = null, $status = 'info') {
+		if (isset($_SESSION['sq-form-flash'])) {
+			$flash = $_SESSION['sq-form-flash'];
+			unset($_SESSION['sq-form-flash']);
+		}
+		
+		if (isset($_SESSION['sq-form-status'])) {
+			$status = $_SESSION['sq-form-status'];
+			unset($_SESSION['sq-form-status']);
+		}
+		
+		if ($flash) {
+			return '<div class="sq-flash '.$status.'">'.$flash.'</div>';
+		}
 	}
 	
 	// Utility method to take a name parameter and convert it to a standard 
@@ -213,6 +277,9 @@ abstract class sqForm {
 		return 'sq-form-'.self::$i.'-'.strtolower(trim($string, '-'));
 	}
 	
+	// Handles the processing of attributes for form elements. Sanitizes the 
+	// value, name, id and other attributes and handles using a model set to the
+	// input value if a model is specified.
 	private static function getAttrs($name, $value, $attrs) {
 		if (is_array($value)) {
 			$attrs = $value;
@@ -236,12 +303,12 @@ abstract class sqForm {
 		return $attrs;
 	}
 	
+	// Gets attrs and then parses them and returns the result
 	private static function buildAttrs($name, $value, $attrs) {
 		return self::parseAttrs(self::getAttrs($name, $value, $attrs));
 	}
 	
-	// Takes an array and turns them into html attributes or a string and
-	// applies it as an id
+	// Takes an array and turns them html attributes
 	private static function parseAttrs($attrs) {
 		$string = '';
 		

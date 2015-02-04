@@ -76,6 +76,8 @@ class sql extends model {
 			$this->relateModel();
 		}
 		
+		$this->isRead = true;
+		
 		return $this;
 	}
 	
