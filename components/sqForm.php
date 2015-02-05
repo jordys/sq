@@ -114,23 +114,27 @@ abstract class sqForm {
 	
 	// Prints file upload button. If an image is set as value it is snown beside
 	// the upload button.
-	public static function file($name, $value = null, $attrs = array()) {
+	public static function image($name = 'upload', $value = null, $attrs = array()) {
 		$attrs['type'] = 'file';
-		$attrs = self::buildAttrs('file', null, $attrs);
+		$attrs = self::getAttrs($name, null, $attrs);
 		
-		$content = '<div class="field-block">';
+		$content = null;
 		
 		if ($value) {
 			$content .= '
-				<img class="file-image" src="'.sq::base().$value.'"/>
-				<label class="replace-image" for="'.$attrs['id'].'">Replace image: </label>
+				<div class="sq-replace-image">
+					<span style="background-image: url('.sq::base().$value.')"></span>
+					<img src="'.sq::base().$value.'"/>
+				</div>
+				<label class="sq-replace-label" for="'.$attrs['id'].'">Replace Image</label>
 			';
+		} else {
+			$content .= '<label class="sq-new-label" for="'.$attrs['id'].'">Upload Image</label>';
 		}
 		
-		return $content.'
-				<input '.$attrs.'/>
-			</div>
-		';
+		$content .= '<input '.self::parseAttrs($attrs).'/>';
+		
+		return $content;
 	}
 	
 	// Desplays a related model inline as a form within the form
