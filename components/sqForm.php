@@ -112,16 +112,14 @@ abstract class sqForm {
 		return self::textarea($name, $value, $attrs);
 	}
 	
-	// Prints file upload button. If an image is set as value it is snown beside
-	// the upload button.
+	// Displays an image upload widget. If a value is set the image will be
+	// shown beside the file input. Labels are included in the widget.
 	public static function image($name = 'upload', $value = null, $attrs = array()) {
 		$attrs['type'] = 'file';
 		$attrs = self::getAttrs($name, null, $attrs);
 		
-		$content = null;
-		
 		if ($value) {
-			$content .= '
+			$content = '
 				<div class="sq-replace-image">
 					<span style="background-image: url('.sq::base().$value.')"></span>
 					<img src="'.sq::base().$value.'"/>
@@ -129,12 +127,18 @@ abstract class sqForm {
 				<label class="sq-replace-label" for="'.$attrs['id'].'">Replace Image</label>
 			';
 		} else {
-			$content .= '<label class="sq-new-label" for="'.$attrs['id'].'">Upload Image</label>';
+			$content = '<label class="sq-new-label" for="'.$attrs['id'].'">Upload Image</label>';
 		}
 		
-		$content .= '<input '.self::parseAttrs($attrs).'/>';
+		return $content.'<input '.self::parseAttrs($attrs).'/>';
+	}
+	
+	// Basic file input
+	public static function file($name = 'upload', $value = null, $attrs = array()) {
+		$attrs['type'] = 'file';
+		$attrs = self::buildAttrs($name, null, $attrs);
 		
-		return $content;
+		return '<input '.self::parseAttrs($attrs).'/>';
 	}
 	
 	// Desplays a related model inline as a form within the form
