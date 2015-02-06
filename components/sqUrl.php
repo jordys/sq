@@ -98,13 +98,9 @@ abstract class sqUrl {
 	}
 	
 	// Gets a model passed as part of a form
-	public static function model($name = null) {
-		if ($models = self::request('sq-model')) {
-			if (in_array($name, $models)) {
-				return sq::model($name)->set(self::request($name));
-			}
-			
-			return true;
+	public static function model($name) {
+		if (self::request('sq-model') && in_array($name, self::request('sq-model'))) {
+			return sq::model($name)->set(self::request($name));
 		}
 	}
 	
