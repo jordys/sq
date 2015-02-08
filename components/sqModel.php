@@ -64,12 +64,6 @@ abstract class sqModel extends component {
 		
 	}
 	
-	// Returns row count ignoring limit statement. Implemented by the model
-	// driver class.
-	public function count() {
-		
-	}
-	
 	/**
 	 * Searches through model records and returns a single item
 	 *
@@ -133,7 +127,7 @@ abstract class sqModel extends component {
 	// Shorthand method to create a new entry or update and existing one based
 	// on the existance of an id property or where statment.
 	public function save() {
-		if (isset($this->id) || !empty($this->options['where'])) {
+		if ((isset($this->id) && $this->id) || !empty($this->options['where'])) {
 			return $this->update();
 		} else {
 			return $this->create();
