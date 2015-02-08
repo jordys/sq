@@ -286,14 +286,6 @@ class sql extends model {
 		$this->set($columns);
 	}
 	
-	public function count() {
-		$query = "SELECT COUNT(*) FROM ".$this->options['table'];
-		$query .= $this->parseWhere();
-		
-		$handle = self::$conn->query($query);
-		return $handle->fetchColumn();
-	}
-	
 	private function updateDatabase($data) {
 		$query = 'UPDATE '.$this->options['table'];
 				
