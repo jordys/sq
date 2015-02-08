@@ -109,12 +109,13 @@ abstract class sqModel extends component {
 				}
 			}
 			
-			$this->data = $results;
+			$model = sq::model($this->options['table']);
+			$model->data = $results;
+			
+			return $model;
 		} else {
-			$this->where($where)->limit(false)->read();
+			return $this->where($where)->limit(false)->read();
 		}
-		
-		return $this;
 	}
 	
 	// Shorthand for read with no where statement
