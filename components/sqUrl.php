@@ -31,16 +31,22 @@ abstract class sqUrl {
 	// Implementation for the get() post() and request() methods. Calls 
 	// cleanParam if data is set to be cleaned. Clean is on by default.
 	private static function getParam($url, $clean, $type) {
-		$data = null;
 		
 		// Check for truthy urls
 		if ($url) {
+			$data = null;
+			
 			switch($type) {
 				case 'get':
 					$type = $_GET;
 					break;
 				case 'post':
-					$type = $_POST;
+					if (isset($_POST)) {
+						$type = $_POST;
+					} else {
+						return false;
+					}
+					
 					break;
 				case 'request':
 					$type = $_REQUEST;
@@ -59,14 +65,16 @@ abstract class sqUrl {
 					$data = self::clean($data);
 				}
 			}
+			
+			return $data;
 		
 		// If no url argument is set simply see of the request method matches 
 		// and return true or false
 		} elseif ($_SERVER['REQUEST_METHOD'] == strtoupper($type)) {
-			$data = true;
+			return true;
+		} else {
+			return false;
 		}
-		
-		return $data;
 	}
 	
 	// Makes a url out of an array of components
