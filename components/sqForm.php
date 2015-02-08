@@ -17,8 +17,7 @@ abstract class sqForm {
 		}
 		
 		if (is_string($attrs)) {
-			$attrs2['action'] = $attrs;
-			$attrs = $attrs2;
+			$attrs = array('action' => $attrs);
 		}
 		
 		if (empty($attrs['method'])) {
@@ -281,8 +280,13 @@ abstract class sqForm {
 	// dashed id name
 	private static function parseId($string) {
 		$string = preg_replace('/[^a-zA-Z0-9]/', '-', $string);
+		$string = strtolower(trim($string, '-'));
 		
-		return 'sq-form-'.self::$i.'-'.strtolower(trim($string, '-'));
+		if (self::$model) {
+			$string = 'sq-form-'.self::$i.'-'.$string;
+		}
+		
+		return $string;
 	}
 	
 	// Handles the processing of attributes for form elements. Sanitizes the 
@@ -290,7 +294,7 @@ abstract class sqForm {
 	// input value if a model is specified.
 	private static function getAttrs($name, $value, $attrs) {
 		if (is_array($value)) {
-			$attrs = $value;
+			$attrs = $value + $attrs;
 			$value = null;
 		}
 		
