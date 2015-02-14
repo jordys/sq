@@ -127,11 +127,15 @@ abstract class sqModel extends component {
 	
 	// Shorthand method to create a new entry or update and existing one based
 	// on the existance of an id property or where statment.
-	public function save() {
-		if ((isset($this->id) && $this->id) || !empty($this->options['where'])) {
-			return $this->update();
+	public function save($data = array()) {
+		if (!empty($this->options['where']) && !$this->isRead) {
+			$this->limit()->read(array('id'));
+		}
+		
+		if (isset($this->id) && $this->id) {
+			return $this->update($data);
 		} else {
-			return $this->create();
+			return $this->create($data);
 		}
 	}
 	
