@@ -203,7 +203,8 @@ class sql extends model {
 	
 	public function query($query, $data = array()) {
 		if ($this->options['debug']) {
-			echo $query;
+			echo $query."\n";
+			print_r($data);
 		}
 		
 		try {
