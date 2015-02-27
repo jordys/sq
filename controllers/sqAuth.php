@@ -42,13 +42,8 @@ abstract class sqAuth extends controller {
 			if (isset($user->password) && self::authenticate($password, $user->password)) {
 				self::login($username, $remember);
 			}
-		}
-		
-		// Increment the attempts counter for each failed login attempt
-		if (isset($_SESSION['sq-login-attempts'])) {
-			$_SESSION['sq-login-attempts']++;
 		} else {
-			$_SESSION['sq-login-attempts'] = 1;
+			form::error($this->options['login-failed-message']);
 		}
 		
 		sq::redirect($_SERVER['HTTP_REFERER']);

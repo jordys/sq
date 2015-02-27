@@ -24,7 +24,10 @@ return array(
 		'remember-me' => true,
 		
 		// Field to use as username
-		'username-field' => 'email'
+		'username-field' => 'email',
+		
+		// Message to be flashed when a login fails
+		'login-failed-message' => 'Username or password not recognized.'
 	),
 	
 	// Users model
