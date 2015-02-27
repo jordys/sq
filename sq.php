@@ -362,8 +362,12 @@ class sq {
 	}
 	
 	// Redirect to another page
-	public static function redirect($url, $code = 302) {
+	public static function redirect($url = null, $code = 302) {
 		if (!headers_sent() && !self::$error) {
+			if (!$url) {
+				$url = $_SERVER['HTTP_REFERER'];
+			}
+			
 			header('location:'.$url);
 			die();
 		}
