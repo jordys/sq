@@ -8,7 +8,7 @@
  */
 
 abstract class sqForm {
-	protected static $model, $i = 1, $status, $flash;
+	protected static $model, $mark, $status, $flash;
 	
 	public static function open($attrs = array(), $attrs2 = array()) {
 		if (is_object($attrs)) {
@@ -24,6 +24,8 @@ abstract class sqForm {
 			$attrs['method'] = 'post';
 		}
 		
+		self::$mark = uniqid();
+		
 		$form = '<form '.self::parseAttrs($attrs).'>';
 		
 		if (self::$model) {
@@ -36,7 +38,6 @@ abstract class sqForm {
 	
 	public static function close() {
 		self::$model = null;
-		self::$i++;
 		
 		return '</form>';
 	}
@@ -159,7 +160,7 @@ abstract class sqForm {
 	}
 	
 	// Choose from a list of related entries
-	public static function single($name, $model, $value, $attrs = array()) {
+	public static function single($name, $model, $value = null, $attrs = array()) {
 		$model = sq::model($model);
 		$model->options['load-relations'] = false;
 		$model->read(array('name', 'id'));
@@ -178,13 +179,15 @@ abstract class sqForm {
 	}
 	
 	// Prints a checkbox. Optionally checked
-	public static function checkbox($name, $checked = null, $attrs = array()) {
-		if ($checked) {
+	public static function checkbox($name, $value = null, $attrs = array()) {
+		$attrs['type'] = 'checkbox';
+		$attrs = self::getAttrs($name, $value, $attrs);
+		
+		if ($attrs['value']) {
 			$attrs[] = 'checked';
 		}
 		
-		$attrs['type'] = 'checkbox';
-		$attrs = self::getAttrs($name, true, $attrs);
+		$attrs['value'] = 1;
 		
 		$content = '<input type="hidden" name="'.$attrs['name'].'" value="0"/>';
 		
@@ -261,6 +264,10 @@ abstract class sqForm {
 	}
 	
 	public static function flash($flash = null, $status = 'info') {
+		if (!isset($_SESSION)) {
+			session_start();
+		}
+		
 		if (isset($_SESSION['sq-form-flash'])) {
 			$flash = $_SESSION['sq-form-flash'];
 			unset($_SESSION['sq-form-flash']);
@@ -283,7 +290,7 @@ abstract class sqForm {
 		$string = strtolower(trim($string, '-'));
 		
 		if (self::$model) {
-			$string = 'sq-form-'.self::$i.'-'.$string;
+			$string = 'sq-form-'.self::$mark.'-'.$string;
 		}
 		
 		return $string;
@@ -299,17 +306,26 @@ abstract class sqForm {
 		}
 		
 		$attrs['value'] = $value;
-		$attrs['name'] = $name;
 		
 		if (empty($attrs['id'])) {
 			$attrs['id'] = self::parseId($name);
 		}
 		
-		if (!$value && self::$model) {
+		if (!isset($attrs['name'])) {
+			if (self::$model && !$value) {
+				$attrs['name'] = self::$model->options['name'].'['.$name.']';
+			} else {
+				$attrs['name'] = $name;
+			}
+		}
+		
+		if (!$value && self::$model && isset(self::$model->$name)) {
 			$attrs['value'] = self::$model->$name;
-			$attrs['name'] = self::$model->options['name'].'['.$name.']';
-		} elseif (isset($attrs['type']) && $attrs['type'] == 'date') {
-			$attrs['value'] = view::date(sq::config('form/date-format'), $value);
+		}
+		
+		// Format dates nicely
+		if (isset($attrs['type']) && $attrs['type'] == 'date') {
+			$attrs['value'] = view::date(sq::config('form/date-format'), $attrs['value']);
 		}
 		
 		return $attrs;
