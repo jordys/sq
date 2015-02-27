@@ -63,7 +63,7 @@ abstract class sqController extends component {
 				}
 			}
 			
-			$data = call_user_func_array(array($this, $method), $args);
+			$data = $reflection->invokeArgs($this, $args);
 		}
 		
 		// If something was returned set it as a new layout

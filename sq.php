@@ -273,7 +273,7 @@ class sq {
 		} else {
 			
 			// Throw an error for unfound controller
-			self::error(404);
+			self::error('404');
 			
 			// Return the default controller if none is found
 			return self::controller(self::config('default-controller'), $options);
