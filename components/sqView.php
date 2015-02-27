@@ -174,17 +174,20 @@ abstract class sqView extends component {
 		$head .= '<html lang="'.self::$language.'">'; // Open html tag
 		$head .= '<head>';                            // Open head tag
 		
-		// External stylesheets
-		foreach (array_reverse(self::$styles) as $group) {
-			foreach ($group as $style) {
-				$head .= '<link rel="stylesheet" href="'.$style.'"/>';
-			}
-		}
-		
 		// Print head scripts
 		foreach (array_reverse(self::$scripts['head']) as $group) {
 			foreach ($group as $script) {
 				$head .= '<script src="'.$script.'"></script>';
+			}
+		}
+		
+		// Generic dump from head variable
+		$head .= self::$head;
+		
+		// External stylesheets
+		foreach (array_reverse(self::$styles) as $group) {
+			foreach ($group as $style) {
+				$head .= '<link rel="stylesheet" href="'.$style.'"/>';
 			}
 		}
 		
@@ -201,9 +204,6 @@ abstract class sqView extends component {
 		// Named meta tags
 		$head .= '<meta name="description" content="'.self::$description.'">';
 		$head .= '<meta name="keywords" content="'.implode(',', self::$keywords).'">';
-		
-		// Generic dump from head variable
-		$head .= self::$head;
 		
 		// Close head tag
 		$head .= '</head>';
