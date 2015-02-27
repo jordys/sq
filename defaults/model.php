@@ -63,7 +63,7 @@ return array(
 		// PDO database credentials
 		'dbtype' => 'mysql',
 		'host' => 'localhost',
-		'port' => 13306,
+		'port' => 3306,
 		'username' => 'root',
 		'password' => 'root',
 		'dbname' => 'database'
