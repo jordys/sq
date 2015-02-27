@@ -130,12 +130,12 @@ class sql extends model {
 	}
 	
 	public function create($data = null) {
-		if (is_array($data)) {
-			$this->set($data);
-		}
-		
 		if (empty($this->data['id']) || is_numeric($this->data['id'])) {
 			unset($this->data['id']);
+		}
+		
+		if (is_array($data)) {
+			$this->set($data);
 		}
 		
 		if ($this->options['user-specific'] && !isset($this->data['users_id'])) {
