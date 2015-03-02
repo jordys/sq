@@ -370,6 +370,10 @@ abstract class sqModel extends component {
 				$model->options['cascade'] = $options['cascade'];
 			}
 			
+			if (isset($options['user-specific'])) {
+				$model->options['user-specific'] = $options['user-specific'];
+			}
+			
 			if (isset($options['load-relations'])) {
 				$model->options['load-relations'] = $options['load-relations'];
 			}
