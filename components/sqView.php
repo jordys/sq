@@ -229,7 +229,7 @@ abstract class sqView extends component {
 <script>
 
 // Data passed from the sq framework
-var sq = '.str_replace('    ', "\t", json_encode(self::$jsData, JSON_PRETTY_PRINT)).'
+var sq = '.str_replace('    ', "\t", json_encode(self::$jsData)).'
 
 </script>
 ';
