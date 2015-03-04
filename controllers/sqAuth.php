@@ -41,6 +41,8 @@ abstract class sqAuth extends controller {
 			
 			if (isset($user->password) && self::authenticate($password, $user->password)) {
 				self::login($username, $remember);
+			} else {
+				form::error($this->options['login-failed-message']);
 			}
 		} else {
 			form::error($this->options['login-failed-message']);
