@@ -190,6 +190,18 @@ abstract class sqModel extends component {
 		$this->options['order'] = $order;
 		$this->options['order-direction'] = strtoupper($direction);
 		
+		if ($this->isRead) {
+			usort($this->data, function($a, $b) {
+				$order = $this->options['order'];
+				
+				if ($this->options['order-direction'] == 'DESC') {
+					return $a[$order] < $b[$order];
+				} else {
+					return $a[$order] > $b[$order];
+				}
+			});
+		}
+		
 		return $this;
 	}
 	
