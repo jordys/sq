@@ -257,15 +257,25 @@ class sql extends model {
 			$row = $handle->fetch();
 			
 			if ($row) {
-				array_map('stripslashes', $row);
-				$this->set($row);
+				foreach ($row as $key => $val) {
+					if (is_string($val)) {
+						$this->$key = stripcslashes($val);
+					} else {
+						$this->$key = $val;
+					}
+				}
 			}
 		} else {
 			while ($row = $handle->fetch()) {
 				$model = sq::model($this->options['table']);
 				
-				array_map('stripslashes', $row);
-				$model->set($row);
+				foreach ($row as $key => $val) {
+					if (is_string($val)) {
+						$model->$key = stripcslashes($val);
+					} else {
+						$model->$key = $val;
+					}
+				}
 				
 				if ($this->options['load-relations']) {
 					$model->relateModel();
