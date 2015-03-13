@@ -305,7 +305,7 @@ abstract class sqForm {
 			$value = null;
 		}
 		
-		$attrs['value'] = $value;
+		$attrs['value'] = htmlentities($value);
 		
 		if (empty($attrs['id'])) {
 			$attrs['id'] = self::parseId($name);
