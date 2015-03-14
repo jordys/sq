@@ -16,6 +16,7 @@ abstract class sqModel extends component {
 	
 	// Gets set to true after a database read
 	protected $isRead = false;
+	public static $manyManyCache = array();
 	
 	// Called by the __tostring method to render a view of the data in the
 	// model. By default the view is a form for a single result and a listing
@@ -255,6 +256,10 @@ abstract class sqModel extends component {
 		return $this;
 	}
 	
+	public function isSingle() {
+		return $this->options['limit'] === true;
+	}
+	
 	// Creates a belongs to model relationship
 	public function belongsTo($model, array $options = array()) {
 		if (empty($options['from'])) {
@@ -309,7 +314,7 @@ abstract class sqModel extends component {
 	}
 	
 	public function manyMany($model, $options = array()) {
-		if (isset($this->data['id'])) {
+		if ($this->options['limit'] === true) {
 			
 			// Allow a shorthand of just passing in string instead of options to
 			// set the bridge table.
@@ -333,23 +338,36 @@ abstract class sqModel extends component {
 				$where += $options['where'];
 			}
 			
-			$bridge = sq::model($options['bridge'], array('class' => $model))
-				->where($where);
+			$bridge = sq::model($options['bridge'], array(
+				'class' => $model,
+				'user-specific' => false
+			));
 			
-			$bridge->options['user-specific'] = false;
-			$bridge->read();
-			
-			foreach ($bridge as $key => $item) {
-				$relation = sq::model($model, array('load-relations' => false))
-					->where(array('id' => $item->{$model.'_id'}))
-					->limit()
-					->read();
+			if ($this->data[$options['from']] !== null) {
+				$bridge->search($where);
 				
-				// Flatten bridge with the related model
-				unset($item->id);
-				$relation->set($item->toArray());
-				
-				$bridge[$key] = $relation;
+				foreach ($bridge as $key => $item) {
+					unset($item->id);
+					
+					if (isset(self::$manyManyCache[$item->{$model.'_id'}]) && false) {
+						$relation = self::$manyManyCache[$item->{$model.'_id'}];
+					} else {
+						$relation = sq::model($model);
+						
+						if (isset($options['user-specific'])) {
+							$relation->options['user-specific'] = $options['user-specific'];
+						}
+						
+						$relation->find($item->{$model.'_id'});
+						
+						self::$manyManyCache[$item->{$model.'_id'}] = $relation;
+					}
+					
+					// Flatten bridge with the related model
+					$relation->set($item->toArray());
+					
+					$bridge[$key] = $relation;
+				}
 			}
 			
 			$this->$model = $bridge;
@@ -365,60 +383,25 @@ abstract class sqModel extends component {
 	// Creates a model relationship. Can be called directly or with the helper
 	// hasOne, hasMany, belongsTo and manyMany methods.
 	protected function relate($name, $options) {
-		if (isset($this->data['id'])) {
-			$model = sq::model($name);
+		if ($this->options['limit'] === true) {
+			$model = sq::model($name, $options);
 			
-			$where = array($options['to'] => $this->data[$options['from']]);
+			$model->options['where'][$options['to']] = $this->data[$options['from']];
 			
-			if (isset($options['where'])) {
-				$where += $options['where'];
+			$read = isset($options['read']) ? $options['read'] : '*';
+			
+			if ($this->data[$options['from']] !== null) {
+				$model->read($read);
 			}
-			
-			if (isset($options['where-raw'])) {
-				$model->options['where-raw'] = $options['where-raw'];
-			}
-			
-			if (isset($options['cascade'])) {
-				$model->options['cascade'] = $options['cascade'];
-			}
-			
-			if (isset($options['user-specific'])) {
-				$model->options['user-specific'] = $options['user-specific'];
-			}
-			
-			if (isset($options['load-relations'])) {
-				$model->options['load-relations'] = $options['load-relations'];
-			}
-			
-			if (isset($options['order'])) {
-				if (isset($options['order-direction'])) {
-					$model->order($options['order'], $options['order-direction']);
-				} else {
-					$model->order($options['order']);
-				}
-			}
-			
-			if (isset($options['mount'])) {
-				$name = $options['mount'];
-			}
-			
-			$model->where($where);
-			
-			if (isset($options['limit'])) {
-				$model->limit($options['limit']);
-			}
-			
-			$read = '*';
-			if (isset($options['read'])) {
-				$read = $options['read'];
-			}
-			
-			$model->read($read);
 			
 			if (isset($options['flatten']) && $options['flatten'] && isset($options['limit']) && $options['limit'] === true) {
 				unset($model->id);
 				$this->set($model->toArray());
 			} else {
+				if (isset($options['mount'])) {
+					$name = $options['mount'];
+				}
+				
 				$this->data[$name] = $model;
 			}
 		} else {

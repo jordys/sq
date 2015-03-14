@@ -203,8 +203,8 @@ class sql extends model {
 	
 	public function query($query, $data = array()) {
 		if ($this->options['debug']) {
-			echo $query."\n";
-			print_r($data);
+			view::debug($query);
+			view::debug($data);
 		}
 		
 		try {
@@ -282,6 +282,8 @@ class sql extends model {
 				} else {
 					$model->options['load-relations'] = false;
 				}
+				
+				$model->options['limit'] = true;
 				
 				$this->data[] = $model;
 			}
