@@ -192,10 +192,14 @@ abstract class sqModel extends component {
 		$this->options['order-direction'] = strtoupper($direction);
 		
 		if ($this->isRead) {
+			
+			// This is required to work around object contexts in php 5.3
+			$ref = $this;
+			
 			usort($this->data, function($a, $b) {
-				$order = $this->options['order'];
+				$order = $ref->options['order'];
 				
-				if ($this->options['order-direction'] == 'DESC') {
+				if ($ref->options['order-direction'] == 'DESC') {
 					return $a[$order] < $b[$order];
 				} else {
 					return $a[$order] > $b[$order];
