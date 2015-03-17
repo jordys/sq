@@ -19,6 +19,9 @@ return array(
 		// Doctype used in template
 		'doctype' => '<!DOCTYPE html>',
 		
+		// Default charset declared in html head. False for none.
+		'charset' => 'UTF-8',
+		
 		// Lang attribute on html tag
 		'language' => 'en',
 		

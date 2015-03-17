@@ -40,7 +40,7 @@ abstract class sqView extends component {
 	
 	// In template variables
 	public static $description, $doctype, $title, $language, $favicon, $id,
-		$head, $foot, $keywords = array();
+		$head, $foot, $top, $charset, $keywords = array();
 	
 	public function __construct($options, $view, $data = array()) {
 		
@@ -53,7 +53,7 @@ abstract class sqView extends component {
 		parent::__construct($options);
 		
 		// Set defult options for description title doctype and such
-		foreach (array('description', 'keywords', 'title', 'doctype', 'language', 'favicon', 'id') as $prop) {
+		foreach (array('description', 'keywords', 'charset', 'title', 'doctype', 'language', 'favicon', 'id') as $prop) {
 			if (!self::$$prop) {
 				self::$$prop = $this->options[$prop];
 			}
@@ -174,6 +174,11 @@ abstract class sqView extends component {
 		$head .= '<html lang="'.self::$language.'">'; // Open html tag
 		$head .= '<head>';                            // Open head tag
 		
+		// Charset if set
+		if (self::$charset) {
+			$head .= '<meta charset="'.self::$charset.'">';
+		}
+		
 		// Print head scripts
 		foreach (array_reverse(self::$scripts['head']) as $group) {
 			foreach ($group as $script) {
@@ -181,8 +186,8 @@ abstract class sqView extends component {
 			}
 		}
 		
-		// Generic dump from head variable
-		$head .= self::$head;
+		// Generic dump from top variable
+		$head .= self::$top;
 		
 		// External stylesheets
 		foreach (array_reverse(self::$styles) as $group) {
@@ -204,6 +209,9 @@ abstract class sqView extends component {
 		// Named meta tags
 		$head .= '<meta name="description" content="'.self::$description.'">';
 		$head .= '<meta name="keywords" content="'.implode(',', self::$keywords).'">';
+		
+		// Dump foom head variable
+		$head .= self::$head;
 		
 		// Close head tag
 		$head .= '</head>';
