@@ -16,7 +16,12 @@ abstract class sqModel extends component {
 	
 	// Gets set to true after a database read
 	protected $isRead = false;
+	
+	// Cache of many many relations to avoid double reads
 	public static $manyManyCache = array();
+	
+	// Workaround to avoid object content rules when using usort
+	public static $usort;
 	
 	// Called by the __tostring method to render a view of the data in the
 	// model. By default the view is a form for a single result and a listing
@@ -194,9 +199,11 @@ abstract class sqModel extends component {
 		if ($this->isRead) {
 			
 			// This is required to work around object contexts in php 5.3
-			$ref = $this;
+			self::$usort = $this;
 			
 			usort($this->data, function($a, $b) {
+				$ref = sqModel::$usort;
+				
 				$order = $ref->options['order'];
 				
 				if ($ref->options['order-direction'] == 'DESC') {
