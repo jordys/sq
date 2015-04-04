@@ -78,7 +78,7 @@ abstract class sqModel extends component {
 	 */
 	public function find($where) {
 		if ($this->isRead) {
-			if (is_string($where)) {
+			if (!is_array($where)) {
 				$where = array('id' => $where);
 			}
 			
