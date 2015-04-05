@@ -292,7 +292,7 @@ class sq {
 	 * controllers.
 	 */
 	public static function module($name, $options = array()) {
-		$config = self::configure($name, $options, 'model');
+		$config = self::configure($name, $options, 'module');
 		
 		if (!isset($config['default-controller'])) {
 			$config['default-controller'] = $config['name'];

@@ -53,7 +53,7 @@ if ($model->options['inline-view']) {
 	}
 	
 	if ($arg) {
-		echo form::$type($baseName.'['.$name.']', $fieldValue, $arg);
+		echo form::$type($baseName.'['.$name.']', $arg, $fieldValue);
 	} else {
 		echo form::$type($baseName.'['.$name.']', $fieldValue);
 	}
