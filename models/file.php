@@ -27,7 +27,7 @@ class file extends model {
 			$data = $this->readFile($path);
 		}
 		
-		if ($this->limit === true && isset($data[0])) {
+		if ($this->options['limit'] === true && isset($data[0])) {
 			$data = $data[0];
 		}
 		
