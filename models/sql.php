@@ -267,7 +267,7 @@ class sql extends model {
 			}
 		} else {
 			while ($row = $handle->fetch()) {
-				$model = sq::model($this->options['table']);
+				$model = sq::model($this->options['table'])->limit();
 				
 				foreach ($row as $key => $val) {
 					if (is_string($val)) {
