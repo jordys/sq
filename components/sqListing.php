@@ -14,7 +14,7 @@ abstract class sqListing {
 	}
 	
 	public static function date($value) {
-		return view::date(sq::config('admin/list/date-format'), $value);
+		return view::date(sq::config('list/date-format'), $value);
 	}
 	
 	public static function image($value) {

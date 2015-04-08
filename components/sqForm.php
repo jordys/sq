@@ -44,11 +44,31 @@ abstract class sqForm {
 	
 	// Prints form label
 	public static function label($for, $value, $class = 'text') {
+		if (!isset($_SESSION)) {
+			session_start();
+		}
+		
+		if (preg_match('!\[([^\)]+)\]!', $for, $match)) {
+			$name = array_pop($match);
+		} else {
+			$name = $for;
+		}
+		
+		$_SESSION['sq-form-labels'][$name] = $value;
+		
 		return '<label class="'.$class.'" for="'.self::parseId($for).'">'.$value.'</label>';
 	}
 	
 	public static function element($name, $value = null, $attrs = array()) {
-		return '<input '.self::buildAttrs($name, $value, $attrs).'/>';
+		if ($error = self::inputError($name)) {
+			if (isset($attrs['class'])) {
+				$attrs['class'] .= 'sq-error sq-error-field';
+			}
+			
+			$attrs['class'] = 'sq-error sq-error-field';
+		}
+		
+		return '<input '.self::buildAttrs($name, $value, $attrs).'/>'.self::inputError($name);
 	}
 	
 	// Basic text input
@@ -94,13 +114,14 @@ abstract class sqForm {
 		$value = $attrs['value'];
 		unset($attrs['value']);
 		
-		return '<textarea '.self::parseAttrs($attrs).'>'.htmlentities($value).'</textarea>';
+		return '<textarea '.self::parseAttrs($attrs).'>'.htmlentities($value).'</textarea>'.self::inputError($name);
 	}
 	
 	// Similar to textarea but with a richtext class presumably to use tinyMCE
 	// or suchlike
 	public static function richtext($name, $value = null, $attrs = array()) {
 		$attrs['class'] = 'richtext';
+		$attrs['entities'] = false;
 		
 		return self::textarea($name, $value, $attrs);
 	}
@@ -130,19 +151,18 @@ abstract class sqForm {
 			$content = '<label class="sq-new-label" for="'.$attrs['id'].'">Upload Image</label>';
 		}
 		
-		return $content.'<input '.self::parseAttrs($attrs).'/>';
+		return $content.'<input '.self::parseAttrs($attrs).'/>'.self::inputError($name);
 	}
 	
 	// Basic file input
 	public static function file($name = 'upload', $value = null, $attrs = array()) {
 		$attrs['type'] = 'file';
-		$attrs = self::buildAttrs($name, null, $attrs);
 		
-		return '<input '.self::parseAttrs($attrs).'/>';
+		return '<input '.self::buildAttrs($name, null, $attrs).'/>'.self::inputError($name);
 	}
 	
 	// Desplays a related model inline as a form within the form
-	public static function inline($name, $value, $model) {
+	public static function inline($name, $model, $value) {
 		$model = sq::model($model);
 		
 		if ($value) {
@@ -191,7 +211,7 @@ abstract class sqForm {
 		
 		$content = '<input type="hidden" name="'.$attrs['name'].'" value="0"/>';
 		
-		return $content.'<input '.self::parseAttrs($attrs).'/>';
+		return $content.'<input '.self::parseAttrs($attrs).'/>'.self::inputError($name);
 	}
 	
 	// Prints a select box with an array of data
@@ -220,15 +240,19 @@ abstract class sqForm {
 			$content .= '<option '.$selected.' value="'.$value.'">'.$label.'</option>';
 		}
 		
-		return $content.'</select>';
+		return $content.'</select>'.self::inputError($name);
 	}
 	
 	public static function success($flash = 'Success') {
 		self::status('success', $flash);
 	}
 	
-	public static function error($flash = 'Failure') {
+	public static function error($flash = 'Error') {
 		self::status('error', $flash);
+	}
+	
+	public static function fatal($flash = 'Failure') {
+		self::status('fatal', $flash);
 	}
 	
 	public static function status($status, $flash = null) {
@@ -245,11 +269,16 @@ abstract class sqForm {
 		}
 	}
 	
-	public static function review() {
+	public static function review($flash = null, $status = 'error') {
+		if ($flash) {
+			self::$flash = $flash;
+			self::$status = $status;
+		}
+		
 		if (url::ajax()) {
 			echo json_encode(array(
-				'status' => self::$status,
-				'flash' => self::$flash
+				'flash' => self::$flash,
+				'status' => self::$status
 			));
 			
 			die();
@@ -263,10 +292,28 @@ abstract class sqForm {
 		sq::redirect($_SERVER['REQUEST_URI']);
 	}
 	
-	public static function flash($flash = null, $status = 'info') {
+	public static function validate($rules, $options = array()) {
+		$validator = new validator(url::post('form'), $rules, $options);
+		
+		if ($validator->isValid()) {
+			return true;
+		}
+		
 		if (!isset($_SESSION)) {
 			session_start();
 		}
+		
+		$_SESSION['sq-form-errors'] = $validator->errors();
+		
+		return false;
+	}
+	
+	public static function flash($flash = null) {
+		if (!isset($_SESSION)) {
+			session_start();
+		}
+		
+		$status = 'info';
 		
 		if (isset($_SESSION['sq-form-flash'])) {
 			$flash = $_SESSION['sq-form-flash'];
@@ -279,8 +326,29 @@ abstract class sqForm {
 		}
 		
 		if ($flash) {
-			return '<div class="sq-flash '.$status.'">'.$flash.'</div>';
+			return sq::view('forms/flash', array(
+				'status' => $status,
+				'flash' => $flash
+			));
 		}
+	}
+	
+	private static function inputError($name) {
+		if (!isset($_SESSION)) {
+			session_start();
+		}
+		
+		if (preg_match('!\[([^\)]+)\]!', $name, $match)) {
+			$name = array_pop($match);
+		}
+		
+		if (isset($_SESSION['sq-form-errors'][$name])) {
+			foreach ($_SESSION['sq-form-errors'][$name] as $error) {
+				return '<span class="sq-error sq-error-message">'.$error['message'].'</span>';
+			}
+		}
+		
+		return false;
 	}
 	
 	// Utility method to take a name parameter and convert it to a standard 
@@ -305,7 +373,12 @@ abstract class sqForm {
 			$value = null;
 		}
 		
-		$attrs['value'] = htmlentities($value);
+		if (!isset($attrs['entities']) || $attrs['entities']) {
+			$value = htmlentities($value);
+		}
+		unset($attrs['entities']);
+		
+		$attrs['value'] = $value;
 		
 		if (empty($attrs['id'])) {
 			$attrs['id'] = self::parseId($name);

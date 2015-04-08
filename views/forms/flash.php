@@ -1,0 +1,1 @@
+<div class="sq-flash <?php echo $status ?>"><?php echo $flash ?></div>
