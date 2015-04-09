@@ -78,7 +78,6 @@ abstract class sqAuth extends controller {
 		// Set the user info to the session
 		$_SESSION['sq-username'] = $user->{sq::config('auth/username-field')};
 		$_SESSION['sq-level'] = $user->level;
-		$_SESSION['sq-login-attempts'] = 0;
 		
 		if ($remember && sq::config('auth/remember-me')) {
 			$timeout = time() + sq::config('auth/cookie-timeout');
@@ -130,7 +129,6 @@ abstract class sqAuth extends controller {
 		
 		$_SESSION['sq-level'] = null;
 		$_SESSION['sq-username'] = null;
-		$_SESSION['sq-login-attempts'] = 0;
 		
 		// Clear the cookie
 		setcookie('auth', null, time() - 10, '/');
