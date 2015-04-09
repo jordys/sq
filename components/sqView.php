@@ -224,8 +224,12 @@ abstract class sqView extends component {
 		// Close head tag
 		$head .= '</head>';
 		
-		// Open the body tag with an id of the page type
-		$head .= '<body id="'.self::$id.'">';
+		// Open the body tag optionally with an id
+		if (self::$id) {
+			$head .= '<body id="'.self::$id.'">';
+		} else {
+			$head .= '<body>';
+		}
 		
 		return $head;
 	}
