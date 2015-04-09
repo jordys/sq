@@ -269,6 +269,7 @@ abstract class sqForm {
 		}
 	}
 	
+	// Return to form possibly showing errors
 	public static function review($flash = null, $status = 'error') {
 		if ($flash) {
 			self::$flash = $flash;
@@ -292,6 +293,7 @@ abstract class sqForm {
 		sq::redirect($_SERVER['REQUEST_URI']);
 	}
 	
+	// Validate form using passed in rules
 	public static function validate($rules, $options = array()) {
 		$validator = new validator(url::post('form'), $rules, $options);
 		
@@ -308,6 +310,7 @@ abstract class sqForm {
 		return false;
 	}
 	
+	// Output flash message into the form with possible default message
 	public static function flash($flash = null) {
 		if (!isset($_SESSION)) {
 			session_start();
@@ -333,6 +336,7 @@ abstract class sqForm {
 		}
 	}
 	
+	// Helper to print out error message below form input
 	private static function inputError($name) {
 		if (!isset($_SESSION)) {
 			session_start();
