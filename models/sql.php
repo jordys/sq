@@ -100,7 +100,7 @@ class sql extends model {
 	 */
 	public function exists() {
 		try {
-			$result = self::$conn->query('SELECT 1 FROM '.$this->options['table'].' LIMIT 1');
+			self::$conn->query('SELECT 1 FROM '.$this->options['table'].' LIMIT 1');
 		} catch (Exception $e) {
 			return false;
 		}

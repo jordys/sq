@@ -60,7 +60,7 @@ abstract class sqForm {
 	}
 	
 	public static function element($name, $value = null, $attrs = array()) {
-		if ($error = self::inputError($name)) {
+		if (self::inputError($name)) {
 			if (isset($attrs['class'])) {
 				$attrs['class'] .= 'sq-error sq-error-field';
 			}

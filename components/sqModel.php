@@ -424,8 +424,6 @@ abstract class sqModel extends component {
 	
 	// Utility method that creates model relationships from config after a read
 	protected function relateModel() {
-		$data = $this->data;
-		
 		foreach (array('belongs-to', 'has-one', 'has-many') as $relation) {
 			foreach ($this->options[$relation] as $name => $options) {
 				

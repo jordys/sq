@@ -72,7 +72,6 @@ class file extends model {
 	
 	protected function readDirectory($dir, $values = '*') {
 		$data = array();
-		$i = 0;
 		
 		$handle = opendir($dir);
 		while (false !== ($file = readdir($handle))) {
