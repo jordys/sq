@@ -368,7 +368,7 @@ class sq {
 				$url = $_SERVER['HTTP_REFERER'];
 			}
 			
-			header('location:'.$url);
+			header('location:'.$url, true, $code);
 			die();
 		}
 	}
