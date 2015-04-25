@@ -17,15 +17,15 @@ abstract class sqUrl {
 	 * validation and error checking.
 	 */
 	public static function get($url = null, $clean = true) {
-		return url::getParam($url, $clean, 'get');
+		return self::getParam($url, $clean, 'get');
 	}
 	
 	public static function post($url = null, $clean = true) {
-		return url::getParam($url, $clean, 'post');
+		return self::getParam($url, $clean, 'post');
 	}
 	
 	public static function request($url = null, $clean = true) {
-		return url::getParam($url, $clean, 'request');
+		return self::getParam($url, $clean, 'request');
 	}
 	
 	// Implementation for the get() post() and request() methods. Calls 
