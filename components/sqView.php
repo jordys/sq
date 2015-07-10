@@ -324,21 +324,47 @@ var sq = '.str_replace('    ', "\t", json_encode(self::$jsData)).'
 	}
 	
 	// Start a clip optionally saving the clip to a layout variable
-	public function clip($var = null) {
+	public function clip($name = null) {
 		ob_start();
 		
-		array_push($this->clips, $var);
+		if ($name) {
+			array_push($this->clips, $name);
+		}
 	}
 	
 	// Ends clip and returns the content captured
 	public function end() {
-		$content = ob_get_clean();
-		
-		if (!empty($this->clips)) {
-			$this->{array_pop($this->clips)} = $content;
+		if (empty($this->clips)) {
+			return ob_get_clean();
 		}
 		
-		return $content;
+		$clip = array_pop($this->clips);
+		
+		if (strpos($clip, 'sqcontext:') === 0) {
+			$clip = str_replace('sqcontext:', '', $clip);
+			
+			if (url::request('sqContext') == $clip) {
+				echo ob_get_clean();
+				die();
+			} else {
+				return '</div>';
+			}
+		} else {
+			$content = ob_get_clean();
+			$this->$clip = $content;
+			return $content;
+		}
+	}
+	
+	public function context($name) {
+		array_push($this->clips, 'sqcontext:'.$name);
+		
+		if (url::request('sqContext') == $name) {
+			ob_end_clean();
+			ob_start();
+		} else {
+			return '<div id="sq-context-'.$name.'">';
+		}
 	}
 	
 	// Adds a script to template
