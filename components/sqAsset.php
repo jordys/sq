@@ -44,7 +44,7 @@ abstract class sqAsset {
 			self::recursiveCopy(sq::root().$assetPath, $buildPath);
 		} elseif (file_exists(sq::root().$modulePath)) {
 			self::recursiveCopy(sq::root().$modulePath, $buildPath);
-		} elseif (file_exists(sq::path().sq::path().$assetPath)) {
+		} elseif (file_exists(sq::path().$assetPath)) {
 			self::recursiveCopy(sq::path().$assetPath, $buildPath);
 		} elseif (file_exists(sq::path().$modulePath)) {
 			self::recursiveCopy(sq::path().$modulePath, $buildPath);
