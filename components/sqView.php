@@ -248,13 +248,17 @@ abstract class sqView extends component {
 				$foot .= '
 <script>
 
-// Data passed from the sq framework
-var sq = '.str_replace('    ', "\t", json_encode(self::$jsData)).'
+// Init sq object
+var sq = {
+
+	// Data passed from the sq framework
+	data: '.str_replace('    ', "\t", json_encode(self::$jsData)).'
+}
 
 </script>
 ';
 			} else {
-				$foot .= '<script>var sq = '.json_encode(self::$jsData).'</script>';
+				$foot .= '<script>(var sq = {data: '.json_encode(self::$jsData).'}</script>';
 			}
 		}
 		
