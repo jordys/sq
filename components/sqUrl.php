@@ -105,6 +105,11 @@ abstract class sqUrl {
 		return false;
 	}
 	
+	// Returns the name of the current view context
+	public static function context() {
+		return url::request('sqContext');
+	}
+	
 	// Gets a model passed as part of a form
 	public static function model($name) {
 		if (self::request('sq-model') && in_array($name, self::request('sq-model'))) {
