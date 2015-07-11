@@ -336,7 +336,26 @@ var sq = {
 		}
 	}
 	
-	// Ends clip and returns the content captured
+	// Start a rendering context. Rendering contexts are a special kind of clip
+	// that, when requested by name with the sqContext url parameter, return
+	// only the content contained in that clip. When contexts aren't being
+	// requested they print out a wrapping div with the name as and id for use
+	// in sq.js or other javascript tools.
+	public function context($name) {
+		array_push($this->clips, 'sqcontext:'.$name);
+		
+		if (url::request('sqContext') == $name) {
+			ob_end_clean();
+			ob_start();
+		} else {
+			return '<div id="sq-context-'.$name.'">';
+		}
+	}
+	
+	// Ends clip and returns the content captured. For context clips end will
+	// immediately end view rendering and return only current clip content. If
+	// the context isn't currently active end prints out a closing div to close
+	// the div opened by view::context above.
 	public function end() {
 		if (empty($this->clips)) {
 			return ob_get_clean();
@@ -357,17 +376,6 @@ var sq = {
 			$content = ob_get_clean();
 			$this->$clip = $content;
 			return $content;
-		}
-	}
-	
-	public function context($name) {
-		array_push($this->clips, 'sqcontext:'.$name);
-		
-		if (url::request('sqContext') == $name) {
-			ob_end_clean();
-			ob_start();
-		} else {
-			return '<div id="sq-context-'.$name.'">';
 		}
 	}
 	
