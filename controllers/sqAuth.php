@@ -28,11 +28,7 @@ abstract class sqAuth extends controller {
 	}
 	
 	// Checks login posted from form
-	public function loginPostAction() {
-		$username = url::post('username');
-		$password = url::post('password');
-		$remember = url::post('remember');
-		
+	public function loginPostAction($username, $password, $remember = false) {
 		if ($username && $password) {
 			$user = sq::model('users', array('load-relations' => false))
 				->where(array(sq::config('auth/username-field') => $username))
@@ -177,27 +173,29 @@ abstract class sqAuth extends controller {
 	
 	// This function is a special action for the admin module that handles the
 	// changing of passwords in the admin interface
-	public function passwordAction() {
+	public function passwordGetAction($model, $id) {
 		if (sq::config('admin/require-login') || !self::check('admin')) {
 			return sq::view('admin/login');
 		}
 		
-		$users = sq::model(url::get('model'), array('load-relations' => false))
-			->where(url::get('id'))
+		$request = sq::request();
+		
+		$users = sq::model($model, array('load-relations' => false))
+			->where($id)
 			->read();
-			
-		if (url::post()) {
-			if (url::post('password') == url::post('confirm')) {
-				$users->password = self::hash(url::post('password'));
-				$users->update();
-				
-				sq::redirect(sq::base().'admin/'.url::get('model'));
-			}
-		}
-			
+		
 		return sq::view('admin/forms/password', array(
 			'model' => $users
 		));
+	}
+	
+	public function passwordPostAction($password, $confirm, $model) {
+		if ($password == $confirm) {
+			$users->password = self::hash($password);
+			$users->update();
+			
+			sq::redirect(sq::base().'admin/'.$model);
+		}
 	}
 }
 

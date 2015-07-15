@@ -3,7 +3,7 @@
 $modelName = $model->options['name'];
 
 if (!isset($action) || !$action) {
-	$action = url::get('module').'/'.$modelName.'/'.url::get('action');
+	$action = sq::request()->get('module').'/'.$modelName.'/'.sq::request()->get('action');
 }
 
 if (isset($model->id)) {
@@ -23,7 +23,7 @@ if ($model->options['inline-view']) {
 ?>
 <?php if (!$model->options['inline-view']): ?>
 <section class="form edit-form">
-	<h2><?php echo ucwords(url::get('action'))?></h2>
+	<h2><?php echo ucwords(sq::request()->get('action'))?></h2>
 	<form method="post" enctype="multipart/form-data" action="<?php echo $base, $action?>">
 <?php else: ?>
 	<div class="inline-form">
@@ -65,7 +65,7 @@ endforeach ?>
 <?php if (!$model->options['inline-view']): ?>
 		<div class="actions global-actions form-actions">
 			<input type="submit" name="button" value="Save"/>
-			<a class="cancel form-cancel" href="<?php echo $base.url::request('controller').'/'.$modelName?>">Cancel</a>
+			<a class="cancel form-cancel" href="<?php echo $base.sq::request()->any('controller').'/'.$modelName?>">Cancel</a>
 		</div>
 	</form>
 </section>

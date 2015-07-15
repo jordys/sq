@@ -17,6 +17,8 @@ class sq {
 	// and error is the current application error (404, PHP warning, etc...).
 	private static $config, $error;
 	
+	private static $cache = array();
+	
 	// Startup static function for the entire app. Handles setup tasks and 
 	// starts the controller bootstrap.
 	public static function init() {
@@ -61,19 +63,19 @@ class sq {
 		
 		// If module is url parameter exists call the module instead of the
 		// controller
-		if (url::request('module')) {
-			echo self::module(url::request('module'));
+		if (sq::request()->any('module')) {
+			echo self::module(sq::request()->any('module'));
 		} else {
 			
 			// Get controller parameter from the url. If no controller parameter
 			// is set then we call the default-controller from config.
-			$controller = url::request('controller');
+			$controller = sq::request()->any('controller');
 			if (!$controller) {
 				$controller = self::config('default-controller');
 			}
 			
 			// Call the currently specified controller
-			echo self::controller($controller)->action(url::request('action'));
+			echo self::controller($controller)->action(sq::request()->any('action'));
 		}
 	}
 	
@@ -201,6 +203,12 @@ class sq {
 		return $options;
 	}
 	
+	// Maps method calls to sq::component so calling sq::mailer() is the 
+	// equivalent of calling sq::component('mailer')
+	public static function __callStatic($name, $options = array()) {
+		return sq::component($name, $options);
+	}
+	
 	/**
 	 * Returns a component object
 	 *
@@ -211,14 +219,22 @@ class sq {
 	public static function component($name, $options = array()) {
 		$config = self::configure($name, $options, 'component');
 		
-		if (class_exists($config['name']) && is_subclass_of($config['name'], 'component')) {
+		// Check for cached component object
+		if (isset(self::$cache[$name])) {
+			return self::$cache[$name];
+		} elseif (class_exists($config['name']) && is_subclass_of($config['name'], 'component')) {
 			$component = new $config['name']($config);
+			
+			// Force override with passed in options
+			$component->options = self::merge($component->options, $options);
+			
+			// Cache the component if configured
+			if ($component->options['cache']) {
+				self::$cache[$name] = $component;
+			}
+			
+			return $component;
 		}
-		
-		// Force override with passed in options
-		$component->options = self::merge($component->options, $options);
-				
-		return $component;
 	}
 	
 	/**

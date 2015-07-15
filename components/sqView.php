@@ -344,7 +344,7 @@ var sq = {
 	public function context($name) {
 		array_push($this->clips, 'sqcontext:'.$name);
 		
-		if (url::request('sqContext') == $name) {
+		if (sq::request()->context == $name) {
 			ob_end_clean();
 			ob_start();
 		} else {
@@ -366,7 +366,7 @@ var sq = {
 		if (strpos($clip, 'sqcontext:') === 0) {
 			$clip = str_replace('sqcontext:', '', $clip);
 			
-			if (url::request('sqContext') == $clip) {
+			if (sq::request()->context == $clip) {
 				echo ob_get_clean();
 				die();
 			} else {

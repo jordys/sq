@@ -259,7 +259,7 @@ abstract class sqForm {
 		self::$status = $status;
 		self::$flash = $flash;
 		
-		if (!url::ajax()) {
+		if (!sq::request()->isAjax) {
 			if (!isset($_SESSION)) {
 				session_start();
 			}
@@ -276,7 +276,7 @@ abstract class sqForm {
 			self::$status = $status;
 		}
 		
-		if (url::ajax()) {
+		if (sq::request()->isAjax) {
 			echo json_encode(array(
 				'flash' => self::$flash,
 				'status' => self::$status
@@ -286,7 +286,7 @@ abstract class sqForm {
 		}
 		
 		$url = $_SERVER['PHP_SELF'];
-		if (url::get() && $_SERVER['QUERY_STRING']) {
+		if (sq::request()->isGet && $_SERVER['QUERY_STRING']) {
 			$url .= '?'.$_SERVER['QUERY_STRING'];
 		}
 		
@@ -295,7 +295,7 @@ abstract class sqForm {
 	
 	// Validate form using passed in rules
 	public static function validate($rules, $options = array()) {
-		$validator = new validator(url::post('form'), $rules, $options);
+		$validator = new validator(sq::request()->post('form'), $rules, $options);
 		
 		if ($validator->isValid()) {
 			return true;

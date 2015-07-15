@@ -50,9 +50,9 @@ abstract class sqController extends component {
 			// to actions
 			$reflection = new ReflectionMethod(get_called_class(), $method);
 			foreach ($reflection->getParameters() as $param) {
-				if ($model = url::model($param->getName())) {
+				if ($model = sq::request()->model($param->getName())) {
 					$args[] = $model;
-				} elseif ($request = url::request($param->getName())) {
+				} elseif ($request = sq::request()->any($param->getName())) {
 					$args[] = $request;
 				} elseif ($param->isOptional()) {
 					$args[] = $param->getDefaultValue();
@@ -88,7 +88,7 @@ abstract class sqController extends component {
 			}
 		}
 		
-		if (is_object($this->layout) && !url::ajax()) {
+		if (is_object($this->layout) && !sq::request()->isAjax) {
 			$this->layout->full = true;
 		}
 		

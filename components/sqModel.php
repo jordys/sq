@@ -253,8 +253,8 @@ abstract class sqModel extends component {
 	 */
 	public function paginate($perPage = 10, $page = null) {
 		if (!$page) {
-			if (url::get('page')) {
-				$page = url::get('page');
+			if (sq::request()->get('page')) {
+				$page = sq::request()->get('page');
 			} else {
 				$page = 1;
 			}

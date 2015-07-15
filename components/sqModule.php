@@ -41,14 +41,14 @@ abstract class sqModule extends component {
 		parent::__construct($options);
 		
 		// Call the specified controller or the default if none is specified
-		$controller = url::request('controller');
+		$controller = sq::request()->any('controller');
 		if (!$controller) {
 			$controller = $this->options['default-controller'];
 		}
 		
 		// Set controller to the module
 		$this->controller = sq::controller($this->options['name'].'/'.$controller)
-			->action(url::request('action'));
+			->action(sq::request()->any('action'));
 	}
 	
 	// Renders and returns the current controller. Also called via the 
