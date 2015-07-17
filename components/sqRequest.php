@@ -20,8 +20,12 @@ abstract class sqRequest extends component {
 		$this->get = $_GET;
 		$this->post = $_POST;
 		$this->any = $_REQUEST;
-		$this->isPost = $this->post();
-		$this->isGet = $this->get();
+		
+		$this->isPut = $_SERVER['REQUEST_METHOD'] == 'PUT';
+		$this->isHead = $_SERVER['REQUEST_METHOD'] == 'HEAD';
+		$this->isPost = $_SERVER['REQUEST_METHOD'] == 'POST';
+		$this->isGet = $_SERVER['REQUEST_METHOD'] == 'GET';
+		
 		$this->context = $this->any('sqContext');
 		
 		// Boolean marking if the request is an ajax request
@@ -35,33 +39,31 @@ abstract class sqRequest extends component {
 	 * These methods retrieve values from get, post and request globals and
 	 * return null if the requested parameter is not set.
 	 */
-	public function get($param = null) {
-		return $this->param($param, 'get');
+	public function get($param, $default = null) {
+		return $this->param('get', $param, $default);
 	}
 	
-	public function post($param = null) {
-		return $this->param($param, 'post');
+	public function post($param, $default = null) {
+		return $this->param('post', $param, $default);
 	}
 	
-	public function any($param = null) {
-		return $this->param($param, 'any');
+	public function any($param, $default = null) {
+		return $this->param('any', $param, $default);
 	}
 	
 	// Gets a model passed as part of a form
 	public function model($name) {
-		if ($this->post('sq-model') && in_array($name, $this->request('sq-model'))) {
-			return sq::model($name)->set(self::request($name));
+		if ($this->post('sq-model') && in_array($name, $this->post('sq-model'))) {
+			return sq::model($name)->set($this->post($name));
 		}
 	}
 	
 	// Implementation for the get() post() and request() methods above
-	private function param($param, $type) {
-		if (!$param) {
-			return $_SERVER['REQUEST_METHOD'] == strtoupper($type);
-		}
-		
-		if (isset($this->{$type}[$param])) {
+	private function param($type, $param, $default) {
+		if (!empty($this->{$type}[$param])) {
 			return $this->{$type}[$param];
+		} else {
+			return $default;
 		}
 	}
 }

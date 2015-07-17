@@ -69,10 +69,7 @@ class sq {
 			
 			// Get controller parameter from the url. If no controller parameter
 			// is set then we call the default-controller from config.
-			$controller = sq::request()->any('controller');
-			if (!$controller) {
-				$controller = self::config('default-controller');
-			}
+			$controller = sq::request()->any('controller', self::config('default-controller'));
 			
 			// Call the currently specified controller
 			echo self::controller($controller)->action(sq::request()->any('action'));
