@@ -139,7 +139,7 @@ class sql extends model {
 		}
 		
 		if ($this->options['user-specific'] && !isset($this->data['users_id'])) {
-			$this->data['users_id'] = auth::user()->id;
+			$this->data['users_id'] = sq::auth()->user->id;
 		}
 		
 		$values = array();
@@ -329,7 +329,7 @@ class sql extends model {
 		$query = null;
 				
 		if ($this->options['user-specific']) {
-			$this->options['where'] += array('users_id' => auth::user()->id);
+			$this->options['where'] += array('users_id' => sq::auth()->user->id);
 		}
 		
 		if ($this->options['where']) {
