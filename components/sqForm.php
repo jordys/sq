@@ -290,7 +290,7 @@ abstract class sqForm {
 			$url .= '?'.$_SERVER['QUERY_STRING'];
 		}
 		
-		sq::redirect($_SERVER['REQUEST_URI']);
+		sq::response()->redirect();
 	}
 	
 	// Validate form using passed in rules

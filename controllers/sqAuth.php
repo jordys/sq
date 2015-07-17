@@ -44,14 +44,14 @@ abstract class sqAuth extends controller {
 			form::error($this->options['login-failed-message']);
 		}
 		
-		sq::redirect($_SERVER['HTTP_REFERER']);
+		sq::response()->redirect();
 	}
 	
 	// Log out action
 	public function logoutAction() {
 		self::logout();
 		
-		sq::redirect($_SERVER['HTTP_REFERER']);
+		sq::response()->redirect();
 	}
 	
 	// Checks a password against a hashed password
@@ -194,7 +194,7 @@ abstract class sqAuth extends controller {
 			$users->password = self::hash($password);
 			$users->update();
 			
-			sq::redirect(sq::base().'admin/'.$model);
+			sq::response()->redirect(sq::base().'admin/'.$model);
 		}
 	}
 }

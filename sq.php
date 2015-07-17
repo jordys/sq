@@ -374,18 +374,6 @@ class sq {
 		return $config;
 	}
 	
-	// Redirect to another page
-	public static function redirect($url = null, $code = 302) {
-		if (!headers_sent() && !self::$error) {
-			if (!$url) {
-				$url = $_SERVER['HTTP_REFERER'];
-			}
-			
-			header('location:'.$url, true, $code);
-			die();
-		}
-	}
-	
 	// Returns the framework path
 	public static function path() {
 		return dirname(__FILE__).'/';
