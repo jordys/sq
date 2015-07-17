@@ -13,7 +13,7 @@ abstract class sqResponse extends component {
 	
 	// Redirect to another page
 	public function redirect($url = null, $code = 302) {
-		if (!headers_sent() && !self::$error) {
+		if (!headers_sent() && !sq::error()) {
 			if (!$url) {
 				$url = $_SERVER['HTTP_REFERER'];
 			}
