@@ -26,6 +26,9 @@ return array(
 		// Field to use as username
 		'username-field' => 'email',
 		
+		// Field to use as password
+		'password-field' => 'password',
+		
 		// Message to be flashed when a login fails
 		'login-failed-message' => 'Username or password not recognized.'
 	),
