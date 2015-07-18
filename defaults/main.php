@@ -35,7 +35,7 @@ return array(
 	// Directories to look in for autoloading classes. The order determines what
 	// directories are searched first. As soon as a class is found the script
 	// stops looking.
-	'autoload' => array('components', 'modules', 'controllers', 'models', 'lib', 'config', 'defaults'),
+	'autoload' => array('components', 'modules', 'controllers', 'models', 'vendor'),
 	
 	// Revision marker coded into the asset md5 urls. Can be any format that
 	// interprets to a string. Changing the revision number changes the asset
