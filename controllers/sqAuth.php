@@ -59,7 +59,7 @@ abstract class sqAuth extends controller {
 		}
 		
 		$user = sq::model('users', array('load-relations' => false))
-			->find(array(sq::config('auth/username-field') => $username));
+			->find(array($this->options['username-field'] => $username));
 		
 		if (self::authenticate($password, $user->{$this->options['password-field']})) {
 			
