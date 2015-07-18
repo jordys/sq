@@ -48,20 +48,20 @@ return array(
 	// Friendly labels for php errors used for in the log instead of the useless
 	// numbers
 	'error-labels' => array(
-		1    => '## FATAL ERROR ##',
+		1    => 'FATAL ERROR',
 		2    => 'WARNING',
-		4    => '## PARSE ERROR ##',
+		4    => 'PARSE ERROR',
 		8    => 'NOTICE',
-		16   => '## CORE ERROR ##',
+		16   => 'CORE ERROR',
 		32   => 'CORE WARNING',
 		64   => 'COMPILE ERROR',
 		128  => 'COMPILE WARNING',
-		256  => '## USER ERROR ##',
+		256  => 'USER ERROR',
 		512  => 'USER WARNING',
 		1024 => 'USER NOTICE',
 		6143 => 'ALL',
 		2048 => 'STRICT',
-		4096 => '## RECOVERABLE ERROR ##'
+		4096 => 'RECOVERABLE ERROR'
 	)
 );
 
