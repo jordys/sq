@@ -139,6 +139,10 @@ class sq {
 				self::$config = self::merge($returned, self::$config);
 			}
 		}
+		
+		if (strpos($class, 'sq') !== 0 && !class_exists($class, false) && class_exists('sq'.$class)) {
+			eval("class $class extends sq$class {}");
+		}
 	}
 	
 	// Combines the global, module, and passed in options for use in a component

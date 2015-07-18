@@ -53,10 +53,10 @@ abstract class sqModel extends component {
 	
 	// CRUD methods to be implemented. These four methods must be implemented by
 	// a driver class with the optional arguments listed here.
-	public abstract function create($data = null);
-	public abstract function read($values = '*');
-	public abstract function update($data = null, $where = null);
-	public abstract function delete($where = null);
+	public function create($data = null) {}
+	public function read($values = '*') {}
+	public function update($data = null, $where = null) {}
+	public function delete($where = null) {}
 	
 	// Makes a data store. For instance a folder to store files or a table to
 	// store sql data.
