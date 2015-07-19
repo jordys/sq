@@ -218,24 +218,31 @@ class sq {
 	 * object fully configured.
 	 */
 	public static function component($name, $options = array()) {
-		$config = self::configure($name, $options, 'component');
 		
 		// Check for cached component object
 		if (isset(self::$cache[$name])) {
 			return self::$cache[$name];
-		} elseif (class_exists($config['name']) && is_subclass_of($config['name'], 'component')) {
-			$component = new $config['name']($config);
-			
-			// Force override with passed in options
-			$component->options = self::merge($component->options, $options);
-			
-			// Cache the component if configured
-			if ($component->options['cache']) {
-				self::$cache[$name] = $component;
-			}
-			
-			return $component;
 		}
+		
+		$config = self::configure($name, $options, 'component');
+		
+		if (class_exists('components\\'.$name)) {
+			$class = 'components\\'.$name;
+		} elseif (class_exists($name) && is_subclass_of($name, 'component')) {
+			$class = $name;
+		}
+		
+		$component = new $class($config);
+		
+		// Force override with passed in options
+		$component->options = self::merge($component->options, $options);
+		
+		// Cache the component if configured
+		if ($component->options['cache']) {
+			self::$cache[$name] = $component;
+		}
+		
+		return $component;
 	}
 	
 	/**
@@ -251,7 +258,7 @@ class sq {
 		if (class_exists('models\\'.$config['class'])) {
 			$class = 'models\\'.$config['class'];
 		} elseif (class_exists($config['class']) && is_subclass_of($config['class'], 'model')) {
-			$class = new $config['class'];
+			$class = $config['class'];
 		}
 		
 		$model = new $class($config);
