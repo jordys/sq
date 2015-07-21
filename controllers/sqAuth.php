@@ -34,7 +34,7 @@ abstract class sqAuth extends controller {
 			
 		// If no session than check for a cookie if cookie login is enabled
 		} elseif (isset($_COOKIE['sq-auth']) && $this->options['remember-me']) {
-			$this->user->find(array('hashkey' => $_COOKIE['sq-auth']));
+			$this->user->find(array($this->options['hashkey'] => $_COOKIE['sq-auth']));
 			
 			// If a user is found log the user in again to increase the length
 			// of the cookie
@@ -76,7 +76,7 @@ abstract class sqAuth extends controller {
 				
 				setcookie('sq-auth', $hash, $timeout, '/');
 				
-				$user->hashkey = $hash;
+				$user->{$this->options['hashkey']} = $hash;
 				$user->update();
 			}
 			
@@ -101,7 +101,7 @@ abstract class sqAuth extends controller {
 	}
 	
 	// Checks login posted from form
-	public function loginPostAction($username, $password, $remember = false) {
+	public function loginPostAction($username = null, $password = null, $remember = false) {
 		$this->login($username, $password, $remember);
 		
 		if (!sq::request()->isAjax) {
@@ -109,6 +109,7 @@ abstract class sqAuth extends controller {
 		}
 	}
 	
+	// Logs out the currently logged in user
 	public function logoutAction() {
 		$this->logout();
 		
@@ -126,7 +127,6 @@ abstract class sqAuth extends controller {
 	// Returns hashed string
 	public static function hash($password) {
 		$hasher = new PasswordHash(8, sq::config('auth/portable-hashes'));
-		
 		return $hasher->HashPassword($password);
 	}
 	

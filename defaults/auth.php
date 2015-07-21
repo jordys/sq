@@ -23,11 +23,10 @@ return array(
 		// Enables cookie to be used for remembering users
 		'remember-me' => true,
 		
-		// Field to use as username
+		// Fields to use for authentication methods
 		'username-field' => 'email',
-		
-		// Field to use as password
 		'password-field' => 'password',
+		'hashkey-field'  => 'hashkey',
 		
 		// Message to be flashed when a login fails
 		'login-failed-message' => 'Username or password not recognized.'
