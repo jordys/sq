@@ -206,8 +206,12 @@ class sq {
 	
 	// Maps method calls to sq::component so calling sq::mailer() is the 
 	// equivalent of calling sq::component('mailer')
-	public static function __callStatic($name, $options = array()) {
-		return sq::component($name, $options);
+	public static function __callStatic($name, $args = null) {
+		if (isset($args[0])) {
+			$args = $args[0];
+		}
+		
+		return sq::component($name, $args);
 	}
 	
 	/**
@@ -425,7 +429,7 @@ class sq {
 				
 				// Merge sub arrays together only if the array exists in both
 				// arrays and is every key is a string
-				if (is_array($val) 
+				if (is_array($val)
 					&& isset($array1[$key]) && is_array($array1[$key])
 					&& array_unique(array_map("is_string", array_keys($val))) === array(true)
 				) {
