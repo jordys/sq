@@ -52,16 +52,11 @@ abstract class sqAuth extends controller {
 	// Logs the user with the username and password supplied into the system and
 	// sets a session. If the remember argument is true and the remember-me
 	// option is true a cookie will be set as well.
-	public function login($username, $password, $remember = false) {
-		if (!$username || !$password) {
-			form::error($this->options['login-failed-message']);
-			return false;
-		}
-		
+	public function login($username, $password = false, $remember = false) {
 		$user = sq::model('users', array('load-relations' => false))
 			->find(array($this->options['username-field'] => $username));
 		
-		if (self::authenticate($password, $user->{$this->options['password-field']})) {
+		if ($password === false || self::authenticate($password, $user->{$this->options['password-field']})) {
 			
 			// Set the user info to the session
 			$_SESSION['sq-username'] = $user->{$this->options['username-field']};
@@ -102,7 +97,11 @@ abstract class sqAuth extends controller {
 	
 	// Checks login posted from form
 	public function loginPostAction($username = null, $password = null, $remember = false) {
-		$this->login($username, $password, $remember);
+		if ($username && $password) {
+			$this->login($username, $password, $remember);
+		} else {
+			form::error($this->options['login-failed-message']);
+		}
 		
 		if (!sq::request()->isAjax) {
 			sq::response()->redirect();
@@ -123,7 +122,7 @@ abstract class sqAuth extends controller {
 		$hasher = new PasswordHash(8, sq::config('auth/portable-hashes'));
 		return $hasher->checkPassword($password, $hash);
 	}
-		
+	
 	// Returns hashed string
 	public static function hash($password) {
 		$hasher = new PasswordHash(8, sq::config('auth/portable-hashes'));
