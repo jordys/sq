@@ -322,7 +322,7 @@ var sq = {
 	public static function debug($content) {
 		if (sq::config('debug')) {
 			echo '<pre>';
-			print_r($content);
+			echo htmlentities(print_r($content, true));
 			echo '</pre>';
 		}
 	}
