@@ -9,7 +9,7 @@
  * php framework. Provides methods for interacting with view contexts and forms.
  */
 
-sq = function($, sq) {
+sq = function($) {
 	
 	// Private variable to hold callback functions
 	var callbacks = {'load': {
@@ -78,7 +78,7 @@ sq = function($, sq) {
 				context = 'any';
 			}
 			
-			if (callbacks[type][context] == undefined) {
+			if (callbacks[type][context] === undefined) {
 				callbacks[type][context] = [];
 			}
 			
@@ -104,4 +104,4 @@ sq = function($, sq) {
 			});
 		}
 	};
-}(jQuery, sq);
+}(jQuery);
