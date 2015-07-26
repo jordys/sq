@@ -401,20 +401,20 @@ class sq {
 	
 	// Returns the document root of the application
 	public static function base() {
-		$base = self::config('base');
+		if (self::config('base')) {
+			return self::config('base');
+		}
 		
 		// If no root path is set then determine from php
-		if (!$base) {
-			$base = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
-			$base .= $_SERVER['HTTP_HOST'];
-			
-			if (dirname($_SERVER['PHP_SELF'])) {
-				$base .= dirname($_SERVER['PHP_SELF']);
-			}
-			
-			if (substr($base, -1) != '/') {
-				$base .= '/';
-			}
+		$base = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
+		$base .= $_SERVER['HTTP_HOST'];
+		
+		if (dirname($_SERVER['PHP_SELF'])) {
+			$base .= dirname($_SERVER['PHP_SELF']);
+		}
+		
+		if (substr($base, -1) != '/') {
+			$base .= '/';
 		}
 		
 		return $base;
