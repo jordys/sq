@@ -258,7 +258,7 @@ var sq = {
 </script>
 ';
 			} else {
-				$foot .= '<script>(var sq = {data: '.json_encode(self::$jsData).'}</script>';
+				$foot .= '<script>var sq = {data: '.json_encode(self::$jsData).'}</script>';
 			}
 		}
 		
