@@ -26,9 +26,18 @@ abstract class sqMailer extends component {
 			$this->options['to'] = $to;
 		}
 		
+		// Set the content header as long as the message isn't multipart
+		if (!empty($this->options['text']) && empty($this->options['html'])) {
+			$this->addHeader('Content-Type: text/plain; charset=utf-8');
+		} elseif (!empty($this->options['html']) && empty($this->options['text'])) {
+			$this->addHeader('Content-Type: text/html; charset=utf-8');
+		}
+		
+		// Set required headers
+		$this->addHeader('MIME-Version: 1.0');
 		$this->addheader('From: '.$this->options['from']);
 		
-		mail($this->options['to'], $this->options['subject'], $this->getBody(), $this->headers);
+		mail($this->options['to'], $this->options['subject'], $this->getBody(), trim($this->headers));
 		
 		return $this;
 	}
