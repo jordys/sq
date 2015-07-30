@@ -142,7 +142,7 @@ class sq {
 			}
 		}
 		
-		if (strpos($class, 'sq') !== 0 && !class_exists($class, false) && class_exists('sq'.$class)) {
+		if (strpos($class, 'sq') !== 0 && !class_exists($class, false) && class_exists('sq'.ucfirst($class))) {
 			eval("class $class extends sq$class {}");
 		}
 	}
@@ -159,7 +159,7 @@ class sq {
 		self::load('/defaults/'.$name);
 		
 		// Merge direct config
-		if (isset($config[1])) {
+		if (isset($pieces[1])) {
 			$config = self::merge(self::config($pieces[0]), self::config($pieces[1]));
 		} else {
 			$config = self::config($pieces[0]);

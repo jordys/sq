@@ -9,7 +9,7 @@
  * php framework. Provides methods for interacting with view contexts and forms.
  */
 
-sq = function($) {
+sq = function(sq, $) {
 	
 	// Private variable to hold callback functions
 	var callbacks = {'load': {
@@ -69,6 +69,9 @@ sq = function($) {
 	
 	return {
 		
+		// Data object passed from view
+		data: sq.data,
+		
 		// Allows registration of callback functions before they are needed so
 		// they don't have to be called explicitly every time an operation is
 		// performed. Useful for reinit operations after a load for example.
@@ -104,4 +107,4 @@ sq = function($) {
 			});
 		}
 	};
-}(jQuery);
+}(sq, jQuery);
