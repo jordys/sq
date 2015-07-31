@@ -17,7 +17,7 @@ endif;
 <?php
 if ($actions): 
 	foreach ($actions as $action):
-		echo '<a href="'.$base.sq::request()->get('module').'/'.$modelName.'/'.route::format($action).'" class="action global-action list-action">'.ucwords($action).'</a>';
+		echo '<a href="'.$base.sq::request()->get('module').'/'.$modelName.'/'.sq::route()->format($action).'" class="action global-action list-action">'.ucwords($action).'</a>';
 	endforeach;
 endif;
 ?>
@@ -42,11 +42,11 @@ endforeach ?>
 					$item->$name = null;
 				endif;
 				echo '
-					<td class="'.route::format($type).'-list-item">
+					<td class="'.sq::route()->format($type).'-list-item">
 						<input class="sort" name="save['.$type.']['.$item->id.']" type="text" autocomplete="off" inputmode="numeric" maxlength="3" value="'.$item->$name.'"/>
 					</td>';
 			else:
-				echo '<td class="'.route::format($type).'-list-item">'.listing::$type($item->$name).'</td>';
+				echo '<td class="'.sq::route()->format($type).'-list-item">'.listing::$type($item->$name).'</td>';
 			endif;
 		endif;
 	endforeach;
@@ -58,7 +58,7 @@ endforeach ?>
 			if (is_int($item->id)):
 				$id = '/'.$item->id;
 			endif;
-			echo '<a href="'.$base.sq::request()->get('module').'/'.$modelName.'/'.route::format($action).$id.'" class="action inline-action list-action '.route::format($action).'-action">'.ucwords($action).'</a>';
+			echo '<a href="'.$base.sq::request()->get('module').'/'.$modelName.'/'.sq::route()->format($action).$id.'" class="action inline-action list-action '.sq::route()->format($action).'-action">'.ucwords($action).'</a>';
 		endforeach ?>
 						</td>
 	<?php endif ?>
