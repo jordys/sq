@@ -342,7 +342,22 @@ class sql extends model {
 					$query .= ' WHERE ';
 				}
 				
-				$query .= "$key = '$val'";
+				if (is_array($val)) {
+					$query .= '(';
+					$j = 0;
+					
+					foreach ($val as $param) {
+						if ($j++) {
+							$query .= ' OR ';
+						}
+						
+						$query .= "$key = '$param'";
+					}
+					
+					$query .= ')';
+				} else {
+					$query .= "$key = '$val'";
+				}
 			}
 		}
 		

@@ -72,7 +72,7 @@ abstract class sqModel extends component {
 	 * If called prior to a read it searches the database otherwise it searches
 	 * through the existing model objects.
 	 */
-	public function find($where) {
+	public function find($where, $operation = 'AND') {
 		if ($this->isRead) {
 			if (!is_array($where)) {
 				$where = array('id' => $where);
@@ -80,15 +80,19 @@ abstract class sqModel extends component {
 			
 			foreach ($this->data as $item) {
 				foreach ($where as $key => $val) {
-					if (is_object($item) && $item->$key == $val) {
+					if (is_array($val) && in_array($item->$key, $val)) {
 						return $item;
+					} elseif ($item->$key == $val) {
+						return $item;
+					} elseif ($operation != 'OR') {
+						continue 2;
 					}
 				}
 			}
 			
 			return false;
 		} else {
-			return $this->where($where)->limit()->read();
+			return $this->where($where, $operation)->limit()->read();
 		}
 	}
 	
@@ -99,24 +103,28 @@ abstract class sqModel extends component {
 	 * through the existing model list of model objects. Returns a model object
 	 * containing the found records.
 	 */
-	public function search($where) {
+	public function search($where, $operation = 'AND') {
 		if ($this->isRead) {
 			$results = array();
 			
 			foreach ($this->data as $item) {
 				foreach ($where as $key => $val) {
-					if ($item->$key == $val) {
+					if (is_array($val) && in_array($item->$key, $val)) {
 						$results[] = $item;
+					} elseif ($item->$key == $val) {
+						$results[] = $item;
+					} elseif ($operation != 'OR') {
+						continue 2;
 					}
 				}
 			}
 			
-			$model = sq::model($this->options['table']);
+			$model = clone($this);
 			$model->data = $results;
 			
 			return $model;
 		} else {
-			return $this->where($where)->limit(false)->read();
+			return $this->where($where, $operation)->limit(false)->read();
 		}
 	}
 	
