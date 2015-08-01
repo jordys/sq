@@ -47,7 +47,7 @@ sq = function(sq, $) {
 				if (typeof callback === 'function') {
 					callback();
 				}
-			},
+			}
 		});
 	}
 	
@@ -96,7 +96,7 @@ sq = function(sq, $) {
 			call({
 				context: context,
 				url: url,
-				method: 'get',
+				method: 'GET',
 				slug: true
 			}, function() {
 				triggerCallbacks('load', context);
