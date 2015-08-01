@@ -11,9 +11,8 @@ abstract class sqRoute extends component {
 		'cache' => true
 	);
 	
-	public function __construct($options) {
-		parent::__construct($options);
-		
+	// Triggered by sq to initialize routing
+	public function start() {
 		$uriParts = explode('&', $_SERVER['QUERY_STRING']);
 		
 		unset($_GET[$uriParts[0]]);
@@ -30,7 +29,7 @@ abstract class sqRoute extends component {
 			
 			$routeParts = explode('/', $route);
 			
-			if (count($routeParts) < count($uriParts)) {
+			if (count($routeParts) + substr_count($route, '|') < count($uriParts)) {
 				continue;
 			}
 			
@@ -42,7 +41,10 @@ abstract class sqRoute extends component {
 					continue 2;
 				}
 				
-				if (strpos($routePart, '?') && isset($uriParts[$index]) && in_array($uriParts[$index], $routeParts)) {
+				if ($this->getKey($routePart) == '|' && isset($uriParts[$index]) && isset($uriParts[$index + 1])) {
+					$params[$uriParts[$index]] = $uriParts[$index + 1];
+					$adjust--;
+				} elseif (strpos($routePart, '?') && isset($uriParts[$index]) && in_array($uriParts[$index], $routeParts)) {
 					$adjust++;
 				} elseif (isset($uriParts[$index]) && $routePart[0] == '{') {
 					$params[$this->getKey($routePart)] = $uriParts[$index];
