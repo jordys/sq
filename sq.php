@@ -61,6 +61,8 @@ class sq {
 		// Directories checked by the autoloader are set in the global config.
 		spl_autoload_register('sq::load');
 		
+		sq::route();
+		
 		// If module is url parameter exists call the module instead of the
 		// controller
 		if (sq::request()->any('module')) {
