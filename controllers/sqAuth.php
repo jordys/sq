@@ -34,7 +34,7 @@ abstract class sqAuth extends controller {
 			
 		// If no session than check for a cookie if cookie login is enabled
 		} elseif (isset($_COOKIE['sq-auth']) && $this->options['remember-me']) {
-			$this->user->find(array($this->options['hashkey'] => $_COOKIE['sq-auth']));
+			$this->user->find(array($this->options['hashkey-field'] => $_COOKIE['sq-auth']));
 			
 			// If a user is found log the user in again to increase the length
 			// of the cookie
@@ -71,7 +71,7 @@ abstract class sqAuth extends controller {
 				
 				setcookie('sq-auth', $hash, $timeout, '/');
 				
-				$user->{$this->options['hashkey']} = $hash;
+				$user->{$this->options['hashkey-field']} = $hash;
 				$user->update();
 			}
 			
