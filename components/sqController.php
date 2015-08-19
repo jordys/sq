@@ -15,31 +15,28 @@ abstract class sqController extends component {
 	 * Calls the action passed in. A null argument will result in the index 
 	 * action being called.
 	 */
-	public function action($action = null) {
+	public function action($action = null, $args = array()) {
 		if (!$action) {
 			$action = 'index';
 		}
 		
 		$action = strtolower($action);
 		
-		// Action parameter passed into functions isn't stripped of dashes and
-		// underscores
-		$raw = $action;
-		
-		$action = str_replace('-', '', $action);
-		$action = str_replace('_', '', $action);
+		// Strip method name of dashes and underscores
+		$method = str_replace('-', '', $action);
+		$method = str_replace('_', '', $method);
 		
 		// Filter can return a view such as a login screen or true indicating
 		// it's ok to proceed calling an action
-		$data = $this->filter($raw);
-		if ($data === true || $action == 'error' || $action == 'debug') {
-			$args = array();
+		$data = $this->filter($action);
+		
+		if ($data === true) {
 			
 			// Call the action method or the default action
-			if (method_exists($this, $action.$_SERVER['REQUEST_METHOD'].'Action')) {
-				$method = $action.$_SERVER['REQUEST_METHOD'].'Action';
-			} elseif (method_exists($this, $action.'Action')) {
-				$method = $action.'Action';
+			if (method_exists($this, $method.$_SERVER['REQUEST_METHOD'].'Action')) {
+				$method = $method.$_SERVER['REQUEST_METHOD'].'Action';
+			} elseif (method_exists($this, $method.'Action')) {
+				$method = $method.'Action';
 			} elseif (method_exists($this, 'default'.$_SERVER['REQUEST_METHOD'].'Action')) {
 				$method = 'default'.$_SERVER['REQUEST_METHOD'].'Action';
 			} else {
@@ -58,7 +55,7 @@ abstract class sqController extends component {
 					$args[] = $param->getDefaultValue();
 				} else {
 					sq::error('404', array(
-						'debug' => "Query parameter &lsquo;{$param->getName()}&rsquo; required for $raw action."
+						'debug' => "Query parameter &lsquo;{$param->getName()}&rsquo; required for $action action."
 					));
 				}
 			}
@@ -78,13 +75,9 @@ abstract class sqController extends component {
 	public function render() {
 		if (sq::error()) {
 			if (sq::config('debug')) {
-				$data = $this->debugAction(sq::error());
+				$this->action('debug', array(sq::error()));
 			} else {
-				$data = $this->errorAction(sq::error());
-			}
-			
-			if ($data) {
-				$this->layout = $data;
+				$this->action('error', array(sq::error()));
 			}
 		}
 		
