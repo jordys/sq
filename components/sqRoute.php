@@ -18,7 +18,7 @@ abstract class sqRoute extends component {
 		unset($_GET[$uriParts[0]]);
 		unset($_REQUEST[$uriParts[0]]);
 		
-		$uriParts = explode('/', $uriParts[0]);
+		$uriParts = explode('/', trim($uriParts[0], '/'));
 		
 		foreach ($this->options['definitions'] as $route => $val) {
 			$params = array();
