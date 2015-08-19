@@ -66,6 +66,8 @@ abstract class sqRoute extends component {
 			
 			return;
 		}
+		
+		sq::error('404');
 	}
 	
 	private function getValue($val) {
