@@ -75,7 +75,14 @@ class sq {
 			$controller = sq::request()->any('controller', self::config('default-controller'));
 			
 			// Call the currently specified controller
-			echo self::controller($controller)->action(sq::request()->any('action'));
+			$controller = self::controller($controller);
+			
+			// Check for routing errors before calling controller actions
+			if (!self::$error) {
+				$controller->action(sq::request()->any('action'));
+			}
+			
+			echo $controller;
 		}
 	}
 	
