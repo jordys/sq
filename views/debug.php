@@ -1,10 +1,10 @@
 <? self::$title = $error['code'].' | '.self::$title ?>
-<h2>Error <?=$error['code']?></h2>
+<h2>Error <?=$error['code'] ?></h2>
 <? if (isset($error['debug'])): ?>
 	<p><?=$error['debug'] ?></p>
 <? endif ?>
 <? if (isset($error['line'])): ?>
-	<p><strong>Line #<?=$error['line']?></strong> <?=$error['string']?> in <?=$error['file']?></p>
+	<p><strong>Line #<?=$error['line']?></strong> <?=$error['string'] ?> in <?=$error['file'] ?></p>
 	<h2>Trace</h2>
 	<? foreach ($error['trace'] as $line):
 		if (!isset($line['class'])):
@@ -20,6 +20,6 @@
 		endif;
 		
 		?>
-		<p><strong>Line #<?=$line['line']?></strong> <?=$line['file']?> <?=$line['class'],$line['type'],$line['function'].$line['args'] ?></p>
+		<p><strong>Line #<?=$line['line'] ?></strong> <?=$line['file'].' '.$line['class'].$line['type'].$line['function'].$line['args'] ?></p>
 	<? endforeach ?>
 <? endif ?>
