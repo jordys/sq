@@ -96,6 +96,8 @@ class sq {
 			if (!self::$error) {
 				self::$error = $details;
 			}
+			
+			view::reset();
 		}
 		
 		return self::$error;

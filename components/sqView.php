@@ -76,6 +76,17 @@ abstract class sqView extends component {
 		$this->data[$name] = $value;
 	}
 	
+	// Reset all the global view properties back to their default state
+	public static function reset() {
+		foreach (array('description', 'keywords', 'charset', 'title', 'doctype', 'language', 'favicon', 'id') as $prop) {
+			self::$$prop = sq::config('view/'.$prop);
+		}
+		
+		self::$styles = array();
+		self::$scripts = array('foot' => array(), 'head' => array());
+		self::$jsData = array();
+	}
+	
 	// Renders the template view file. If full is specified the template will
 	// include the auto generated header and footer sections. HTML templates 
 	// should only include content inside the body tag and omit the body tag and
