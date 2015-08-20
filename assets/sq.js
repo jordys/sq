@@ -10,12 +10,40 @@
  */
 
 sq = function(sq, $) {
-	var that = this;
 	
 	// Private variable to hold callback functions
 	var callbacks = {'load': {
 		'any': []
 	}};
+	
+	
+	// sq.slug sub namespace. Facilitates general handling of url slugs. Allows 
+	// site js to get and set the current url slug and handles the back button 
+	// to redirect to the correct page.
+	var slug = function() {
+		
+		// Handle popstate events by redirecting to the correct page
+		window.onpopstate = function(e) {
+			if (e.state) {
+				window.location = e.state.url;
+			}
+		}
+		
+		
+		/*** sq.slug public object ***/
+		
+		return {
+			get: function() {
+				return window.location.href;
+			},
+			
+			set: function(url, type) {
+				url = url.split('?')[0];
+				history.pushState({url: url}, null, url);
+			}
+		};
+	}();
+	
 	
 	// Utility function for ajax calls
 	function call(options, callback) {
@@ -41,7 +69,7 @@ sq = function(sq, $) {
 				}
 				
 				if (options.slug !== false) {
-					that.slug.set(options.url);
+					slug.set(options.url);
 				}
 				
 				if (typeof callback === 'function') {
@@ -65,39 +93,15 @@ sq = function(sq, $) {
 	}
 	
 	
-	/*** Public Object ***/
+	/*** sq public object ***/
 	
 	return {
 		
 		// Data object passed from view
 		data: sq.data,
 		
-		// General handling of url slugs. Allows site js to get and set the 
-		// the current url slug and handles the back button to redirect to the
-		// correct page.
-		slug: (function() {
-			
-			// Handle popstate events by redirecting to the correct page
-			window.onpopstate = function(e) {
-				if (e.state) {
-					window.location = e.state.url;
-				}
-			}
-			
-			
-			/*** Public Object ***/
-			
-			return {
-				get: function() {
-					return window.location.href;
-				},
-				
-				set: function(url, type) {
-					url = url.split('?')[0];
-					history.pushState({url: url}, null, url);
-				}
-			}
-		}()),
+		// sq.slug sub namespace
+		slug: slug,
 		
 		// Allows registration of callback functions before they are needed so
 		// they don't have to be called explicitly every time an operation is
