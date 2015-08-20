@@ -4,7 +4,7 @@
 	<p><?=$error['debug'] ?></p>
 <? endif ?>
 <? if (isset($error['line'])): ?>
-	<p><strong>Line #<?=$error['line']?></strong> <?=$error['string'] ?> in <?=$error['file'] ?></p>
+	<p><strong>Line #<?=$error['line'] ?></strong> <?=$error['string'] ?> in <?=$error['file'] ?></p>
 	<h2>Trace</h2>
 	<? foreach ($error['trace'] as $line):
 		if (!isset($line['class'])):
@@ -16,7 +16,20 @@
 		endif;
 		
 		if (isset($line['args'])):
-			$line['args'] = '('.implode(', ', $line['args']).')';
+			$args = array();
+			foreach ($line['args'] as $arg):
+				if (is_object($arg) && get_class($arg) == 'view'):
+					$args[] = "[$arg->view]";
+				elseif (is_object($arg)):
+					$args[] = ucwords(get_class($arg));
+				elseif (is_array($arg)):
+					$args[] = 'Array';
+				else:
+					$args[] = $arg;
+				endif;
+			endforeach;
+			
+			$line['args'] = '('.implode(', ', $args).')';
 		endif;
 		
 		?>
