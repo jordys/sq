@@ -10,8 +10,8 @@ endif;
 
 ?>
 <section class="form list-form">
-	<h2><?php echo ucwords($modelName)?></h2>
-	<span class="count"><?php echo count($model)?> Results</span>
+	<h2><?php echo ucwords($modelName) ?></h2>
+	<span class="count"><?php echo count($model) ?> Results</span>
 	<form method="post" action="">
 		<div class="actions global-actions listing-actions">
 <?php

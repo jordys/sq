@@ -35,7 +35,7 @@ abstract class sqModule extends component {
 		spl_autoload_register($class.'::load');
 		
 		// Load the module configuration defaults
-		self::load('main');
+		sq::load('/modules/'.self::$name.'/defaults/main');
 		
 		// Call component constructor
 		parent::__construct($options);

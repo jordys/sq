@@ -23,7 +23,7 @@ if ($model->options['inline-view']) {
 ?>
 <?php if (!$model->options['inline-view']): ?>
 <section class="form edit-form">
-	<h2><?php echo ucwords(sq::request()->get('action'))?></h2>
+	<h2><?php echo ucwords(sq::request()->get('action')) ?></h2>
 	<form method="post" enctype="multipart/form-data" action="<?php echo $base, $action?>">
 <?php else: ?>
 	<div class="inline-form">

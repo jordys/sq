@@ -9,7 +9,7 @@ return array(
 		'definitions' => array(
 			'{controller?}/{action?}/{id?}'
 		)
-	)	
+	)
 )
 
 ?>
