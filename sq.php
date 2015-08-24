@@ -219,11 +219,9 @@ class sq {
 	// Maps method calls to sq::component so calling sq::mailer() is the 
 	// equivalent of calling sq::component('mailer')
 	public static function __callStatic($name, $args = null) {
-		if (isset($args[0])) {
-			$args = $args[0];
-		}
+		array_unshift($args, $name);
 		
-		return sq::component($name, $args);
+		return forward_static_call_array(array('sq', 'component'), $args);
 	}
 	
 	/**
@@ -233,14 +231,14 @@ class sq {
 	 * instance calling sq::component('mailer') returns the mailer component
 	 * object fully configured.
 	 */
-	public static function component($name, $options = array()) {
+	public static function component() {
+		$args = func_get_args();
+		$name = array_shift($args);
 		
 		// Check for cached component object
 		if (isset(self::$cache[$name])) {
 			return self::$cache[$name];
 		}
-		
-		$config = self::configure($name, $options, 'component');
 		
 		if (class_exists('components\\'.$name)) {
 			$class = 'components\\'.$name;
@@ -248,7 +246,17 @@ class sq {
 			$class = $name;
 		}
 		
-		$component = new $class($config);
+		$reflection = new ReflectionClass($class);
+		$paramCount = $reflection->getConstructor()->getNumberOfParameters();
+		
+		$options = array();
+		if (isset($args[$paramCount])) {
+			$options = array_pop($args);
+		}
+		
+		$args[] = self::configure($name, $options, 'component');
+		
+		$component = $reflection->newInstanceArgs($args);
 		
 		// Force override with passed in options
 		$component->options = self::merge($component->options, $options);

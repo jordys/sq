@@ -53,7 +53,7 @@ abstract class sqAuth extends controller {
 	// sets a session. If the remember argument is true and the remember-me
 	// option is true a cookie will be set as well.
 	public function login($username, $password = false, $remember = false) {
-		$user = sq::model('users', array('load-relations' => false))
+		$user = sq::model('users')
 			->find(array($this->options['username-field'] => $username));
 		
 		if ($password === false || self::authenticate($password, $user->{$this->options['password-field']})) {
