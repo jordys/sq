@@ -250,11 +250,11 @@ class sq {
 		$paramCount = $reflection->getConstructor()->getNumberOfParameters();
 		
 		$options = array();
-		if (isset($args[$paramCount])) {
+		if (isset($args[$paramCount - 1])) {
 			$options = array_pop($args);
 		}
 		
-		$args[] = self::configure($name, $options, 'component');
+		$args[$paramCount - 1] = self::configure($name, $options, 'component');
 		
 		$component = $reflection->newInstanceArgs($args);
 		
