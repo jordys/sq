@@ -42,11 +42,24 @@ abstract class sqResponse extends component {
 			// Save flash to session for form to interpret
 			$_SESSION['sq-form-status'] = $status;
 			$_SESSION['sq-form-flash'] = $flash;
+			
+			// Save existing form data to session so it can be redisplayed
 			$_SESSION['sq-form-data'] = sq::request()->post;
 			
-			// Redirect to previous page
 			$this->redirect();
 		}
+	}
+	
+	// Reviews last page showing errors
+	public function review() {
+		if (!isset($_SESSION)) {
+			session_start();
+		}
+		
+		// Save existing form data to session so it can be redisplayed
+		$_SESSION['sq-form-data'] = sq::request()->post;
+		
+		$this->redirect();
 	}
 }
 
