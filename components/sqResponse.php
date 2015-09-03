@@ -22,6 +22,32 @@ abstract class sqResponse extends component {
 			die();
 		}
 	}
+	
+	// Show a quick message to the user
+	public function flash($flash, $status = 'info') {
+		
+		// For AJAX requests return a JSON object
+		if (sq::request()->isAjax) {
+			echo json_encode(array(
+				'status' => $status,
+				'flash' => $flash
+			));
+			
+			die();
+		} else {
+			if (!isset($_SESSION)) {
+				session_start();
+			}
+			
+			// Save flash to session for form to interpret
+			$_SESSION['sq-form-status'] = $status;
+			$_SESSION['sq-form-flash'] = $flash;
+			$_SESSION['sq-form-data'] = sq::request()->post;
+			
+			// Redirect to previous page
+			$this->redirect();
+		}
+	}
 }
 
 ?>
