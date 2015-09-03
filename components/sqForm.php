@@ -10,6 +10,13 @@
 abstract class sqForm extends model {
 	protected static $model, $mark;
 	
+	public function __construct($options) {
+		parent::__construct($options);
+		
+		$this->data = sq::request()->post;
+		unset($this->data['sq-model']);
+	}
+	
 	public static function open($attrs = array(), $attrs2 = array()) {
 		if (is_object($attrs)) {
 			self::$model = $attrs;
