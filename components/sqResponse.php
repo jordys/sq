@@ -43,10 +43,7 @@ abstract class sqResponse extends component {
 			$_SESSION['sq-form-status'] = $status;
 			$_SESSION['sq-form-flash'] = $flash;
 			
-			// Save existing form data to session so it can be redisplayed
-			$_SESSION['sq-form-data'] = sq::request()->post;
-			
-			$this->redirect();
+			$this->review();
 		}
 	}
 	

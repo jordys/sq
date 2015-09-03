@@ -72,15 +72,7 @@ abstract class sqModel extends component {
 			$rules = $this->options['rules'];
 		}
 		
-		$validator = sq::validator($this->data, $rules);
-		
-		if (!isset($_SESSION)) {
-			session_start();
-		}
-		
-		$_SESSION['sq-form-errors'] = $validator->errors;
-		
-		return $validator->isValid;
+		return sq::validator($this->data, $rules)->isValid;
 	}
 	
 	/**

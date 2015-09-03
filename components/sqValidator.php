@@ -35,6 +35,12 @@ abstract class sqValidator extends component {
 			}
 		}
 		
+		if (!isset($_SESSION)) {
+			session_start();
+		}
+		
+		$_SESSION['sq-form-errors'] = $this->errors;
+		
 		return $this->isValid;
 	}
 	

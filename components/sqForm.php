@@ -290,8 +290,6 @@ abstract class sqForm extends model {
 				return '<span class="sq-error sq-error-message">'.$error['message'].'</span>';
 			}
 		}
-		
-		return false;
 	}
 	
 	// Utility method to take a name parameter and convert it to a standard 
