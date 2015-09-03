@@ -1,8 +1,7 @@
 <?php
 
 abstract class sqValidator extends component {
-	public $rules;
-	protected $errors = array();
+	public $rules, $isValid = true, $errors = array();
 	
 	public function __construct($data, $rules, $options = array()) {
 		if (is_object($data) && is_a($data, 'component')) {
@@ -17,10 +16,6 @@ abstract class sqValidator extends component {
 		
 		parent::__construct($options);
 		$this->options = sq::merge(sq::config('validator'), $this->options);
-	}
-	
-	public function isValid() {
-		$status = true;
 		
 		foreach ($this->rules as $field => $rules) {
 			if (is_string($rules)) {
@@ -31,43 +26,32 @@ abstract class sqValidator extends component {
 				if (self::$rule($this->$field) === false) {
 					$this->errors[$field][] = array(
 						'rule' => $rule,
+						'value' => $this->$field,
 						'message' => $this->message($rule, $field)
 					);
 					
-					$status = false;
+					$this->isValid = false;
 				}
 			}
 		}
 		
-		return $status;
-	}
-	
-	public function errors() {
-		return $this->errors;
+		return $this->isValid;
 	}
 	
 	public static function required($value) {
 		if ((string)$value) {
-			return $value;
+			return true;
 		}
 		
 		return false;
 	}
 	
 	public static function numeric($value) {
-		if (!$value || is_numeric($value)) {
-			return $value;
-		}
-		
-		return false;
+		return (!$value || is_numeric($value));
 	}
 	
 	public static function integer($value) {
-		if (!$value || is_int($value)) {
-			return $value;
-		}
-		
-		return false;
+		return (!$value || is_int($value));
 	}
 	
 	private function message($rule, $name) {
