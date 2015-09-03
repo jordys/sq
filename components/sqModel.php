@@ -66,6 +66,23 @@ abstract class sqModel extends component {
 	// classes such as sql.
 	public function exists() {}
 	
+	// Validate form using passed in rules or options in model
+	public function validate($rules = null) {
+		if (!$rules) {
+			$rules = $this->options['rules'];
+		}
+		
+		$validator = sq::validator($this->data, $rules);
+		
+		if (!isset($_SESSION)) {
+			session_start();
+		}
+		
+		$_SESSION['sq-form-errors'] = $validator->errors;
+		
+		return $validator->isValid;
+	}
+	
 	/**
 	 * Searches through model records and returns a single item
 	 *
