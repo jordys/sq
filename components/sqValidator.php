@@ -15,7 +15,6 @@ abstract class sqValidator extends component {
 		$this->rules = $rules;
 		
 		parent::__construct($options);
-		$this->options = sq::merge(sq::config('validator'), $this->options);
 		
 		foreach ($this->rules as $field => $rules) {
 			if (is_string($rules)) {
@@ -26,7 +25,6 @@ abstract class sqValidator extends component {
 				if (self::$rule($this->$field) === false) {
 					$this->errors[$field][] = array(
 						'rule' => $rule,
-						'value' => $this->$field,
 						'message' => $this->message($rule, $field)
 					);
 					
