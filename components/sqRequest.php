@@ -55,13 +55,10 @@ abstract class sqRequest extends component {
 	public function model($name) {
 		if ($this->post('sq-model') && in_array($name, $this->post('sq-model'))) {
 			if ($name == 'form') {
-				$data = $this->post;
-				unset($data['sq-model']);
+				return sq::form();
 			} else {
-				$data = $this->post($name);
+				return sq::model($name)->set($this->post($name));
 			}
-			
-			return sq::model($name)->set($data);
 		}
 	}
 	
