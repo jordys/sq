@@ -54,7 +54,14 @@ abstract class sqRequest extends component {
 	// Gets a model passed as part of a form
 	public function model($name) {
 		if ($this->post('sq-model') && in_array($name, $this->post('sq-model'))) {
-			return sq::model($name)->set($this->post($name));
+			if ($name == 'form') {
+				$data = $this->post;
+				unset($data['sq-model']);
+			} else {
+				$data = $this->post($name);
+			}
+			
+			return sq::model($name)->set($data);
 		}
 	}
 	
