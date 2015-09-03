@@ -7,8 +7,8 @@
  * ones with default values.
  */
 
-abstract class sqForm {
-	protected static $model, $mark, $status, $flash;
+abstract class sqForm extends model {
+	protected static $model, $mark;
 	
 	public static function open($attrs = array(), $attrs2 = array()) {
 		if (is_object($attrs)) {
@@ -28,9 +28,10 @@ abstract class sqForm {
 		
 		$form = '<form '.self::parseAttrs($attrs).'>';
 		
-		if (self::$model) {
+		if (self::$model && $attrs['method'] == 'post') {
 			$form .= self::hidden('sq-model[]', self::$model->options['name']);
-			$form .= self::hidden('id');
+		} else {
+			$form .= self::hidden('sq-model[]', 'form');
 		}
 		
 		return $form;
@@ -243,80 +244,11 @@ abstract class sqForm {
 		return $content.'</select>'.self::inputError($name);
 	}
 	
-	public static function success($flash = 'Success') {
-		self::status('success', $flash);
-	}
-	
-	public static function error($flash = 'Error') {
-		self::status('error', $flash);
-	}
-	
-	public static function fatal($flash = 'Failure') {
-		self::status('fatal', $flash);
-	}
-	
-	public static function status($status, $flash = null) {
-		self::$status = $status;
-		self::$flash = $flash;
-		
-		if (!sq::request()->isAjax) {
-			if (!isset($_SESSION)) {
-				session_start();
-			}
-			
-			$_SESSION['sq-form-status'] = $status;
-			$_SESSION['sq-form-flash'] = $flash;
-		}
-	}
-	
-	// Return to form possibly showing errors
-	public static function review($flash = null, $status = 'error') {
-		if ($flash) {
-			self::$flash = $flash;
-			self::$status = $status;
-		}
-		
-		if (sq::request()->isAjax) {
-			echo json_encode(array(
-				'flash' => self::$flash,
-				'status' => self::$status
-			));
-			
-			die();
-		}
-		
-		$url = $_SERVER['PHP_SELF'];
-		if (sq::request()->isGet && $_SERVER['QUERY_STRING']) {
-			$url .= '?'.$_SERVER['QUERY_STRING'];
-		}
-		
-		sq::response()->redirect();
-	}
-	
-	// Validate form using passed in rules
-	public static function validate($rules, $options = array()) {
-		$validator = new validator(sq::request()->post('form'), $rules, $options);
-		
-		if ($validator->isValid()) {
-			return true;
-		}
-		
-		if (!isset($_SESSION)) {
-			session_start();
-		}
-		
-		$_SESSION['sq-form-errors'] = $validator->errors();
-		
-		return false;
-	}
-	
 	// Output flash message into the form with possible default message
-	public static function flash($flash = null) {
+	public static function flash($flash = null, $status = 'info') {
 		if (!isset($_SESSION)) {
 			session_start();
 		}
-		
-		$status = 'info';
 		
 		if (isset($_SESSION['sq-form-flash'])) {
 			$flash = $_SESSION['sq-form-flash'];
@@ -343,7 +275,7 @@ abstract class sqForm {
 		}
 		
 		if (preg_match('!\[([^\)]+)\]!', $name, $match)) {
-			$name = array_pop($match);
+			$name = $match;
 		}
 		
 		if (isset($_SESSION['sq-form-errors'][$name])) {
@@ -396,7 +328,13 @@ abstract class sqForm {
 			}
 		}
 		
-		if (!$value && self::$model && isset(self::$model->$name)) {
+		if (!isset($_SESSION)) {
+			session_start();
+		}
+		
+		if (isset($_SESSION['sq-form-data'][$attrs['name']])) {
+			$attrs['value'] = $_SESSION['sq-form-data'][$attrs['name']];
+		} elseif (!$value && self::$model && isset(self::$model->$name)) {
 			$attrs['value'] = self::$model->$name;
 		}
 		
