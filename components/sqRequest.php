@@ -11,7 +11,7 @@ abstract class sqRequest extends component {
 		'cache' => true
 	);
 	
-	public $get, $post, $any, $isAjax;
+	public $get, $post, $any, $isPut, $isHead, $isPost, $isGet, $context, $isAjax;
 	
 	// Set values to the various public properties
 	public function __construct($options) {
