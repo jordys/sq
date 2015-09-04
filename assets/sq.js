@@ -37,7 +37,7 @@ sq = function(sq, $) {
 				return window.location.href;
 			},
 			
-			set: function(url, type) {
+			set: function(url) {
 				url = url.split('?')[0];
 				history.pushState({url: url}, null, url);
 			}
