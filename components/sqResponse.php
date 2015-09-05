@@ -53,8 +53,11 @@ abstract class sqResponse extends component {
 		$this->redirect();
 	}
 	
+	// Go back to previous page in a pristine state with no form data or error
+	// messages
 	public function reset() {
 		unset($_SESSION['sq-form-errors']);
+		unset($_SESSION['sq-form-data']);
 		
 		$this->redirect();
 	}
