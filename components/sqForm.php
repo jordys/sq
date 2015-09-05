@@ -1,10 +1,11 @@
 <?php
 
 /**
- * Form element helpers
+ * Form component
  *
  * Simplifies the printing of generic form elements especially the more complex
- * ones with default values.
+ * ones with default values. Also can be used as a model to get data in
+ * controller actions.
  */
 
 abstract class sqForm extends model {
@@ -17,6 +18,7 @@ abstract class sqForm extends model {
 		unset($this->data['sq-model']);
 	}
 	
+	// Open a new form
 	public static function open($attrs = array(), $attrs2 = array()) {
 		if (is_object($attrs)) {
 			self::$model = $attrs;
@@ -44,6 +46,7 @@ abstract class sqForm extends model {
 		return $form;
 	}
 	
+	// Close current form
 	public static function close() {
 		self::$model = null;
 		

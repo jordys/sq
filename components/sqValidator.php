@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Validation component
+ *
+ * Handles validation data against prebuilt rules. Used by the framework to
+ * validate models.
+ */
+
 abstract class sqValidator extends component {
 	public $rules, $isValid = true, $errors = array();
 	
@@ -9,6 +16,7 @@ abstract class sqValidator extends component {
 		}
 		$this->data = $data;
 		
+		// Handle rules as a config string
 		if (is_string($rules)) {
 			$rules = sq::config($rules);
 		}
@@ -16,6 +24,7 @@ abstract class sqValidator extends component {
 		
 		parent::__construct($options);
 		
+		// Loop through the rules and fields and add the errors to the session
 		foreach ($this->rules as $field => $rules) {
 			if (is_string($rules)) {
 				$rules = array($rules);
@@ -39,6 +48,7 @@ abstract class sqValidator extends component {
 		return $this->isValid;
 	}
 	
+	// Data validation methods
 	public static function required($value) {
 		if ((string)$value) {
 			return true;
@@ -55,6 +65,7 @@ abstract class sqValidator extends component {
 		return (!$value || is_int($value));
 	}
 	
+	// Utility function to generate user friendly error messages
 	private function message($rule, $name) {
 		if (preg_match('!\[([^\)]+)\]!', $name, $match)) {
 			$name = array_pop($match);
