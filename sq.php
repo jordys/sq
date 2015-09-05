@@ -57,6 +57,9 @@ class sq {
 		// Set the date timezone to avoid error on some systems
 		date_default_timezone_set(self::config('timezone'));
 		
+		// Start session
+		session_start();
+		
 		// Set up the autoload function to automatically include class files. 
 		// Directories checked by the autoloader are set in the global config.
 		spl_autoload_register('sq::load');

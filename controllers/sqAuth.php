@@ -22,10 +22,6 @@ abstract class sqAuth extends controller {
 	public function __construct($options) {
 		parent::__construct($options);
 		
-		if (!isset($_SESSION)) {
-			session_start();
-		}
-		
 		$this->user = sq::model('users')->limit();
 		
 		// Check session for login
@@ -88,8 +84,8 @@ abstract class sqAuth extends controller {
 		$this->isLoggedIn = false;
 		$this->level = null;
 		
-		$_SESSION['sq-level'] = null;
-		$_SESSION['sq-username'] = null;
+		unset($_SESSION['sq-level']);
+		unset($_SESSION['sq-username']);
 		
 		// Clear the cookie
 		setcookie('sq-auth', null, time() - 10, '/');

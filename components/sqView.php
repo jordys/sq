@@ -94,10 +94,6 @@ abstract class sqView extends component {
 	public function render($view = null, $data = array()) {
 		
 		// Clear the labels session variable
-		if (!isset($_SESSION)) {
-			session_start();
-		}
-		
 		unset($_SESSION['sq-form-labels']);
 		
 		if ($view) {

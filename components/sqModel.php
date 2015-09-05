@@ -476,12 +476,8 @@ abstract class sqModel extends component {
 	// Utility function that uses a session to prevent duplicate data from being
 	// created. Prevents form double submits.
 	protected function checkDuplicate() {
-		if (!isset($_SESSION)) {
-			session_start();
-		}
-		
 		if (!$this->options['prevent-duplicates']
-			|| !isset($_SESSION['sq-last-'.$this->options['name']])
+			|| empty($_SESSION['sq-last-'.$this->options['name']])
 			|| $_SESSION['sq-last-'.$this->options['name']] !== md5(implode(',', $this->data))
 		) {
 			return true;

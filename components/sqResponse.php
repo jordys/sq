@@ -35,9 +35,6 @@ abstract class sqResponse extends component {
 			
 			die();
 		} else {
-			if (!isset($_SESSION)) {
-				session_start();
-			}
 			
 			// Save flash to session for form to interpret
 			$_SESSION['sq-form-status'] = $status;
@@ -49,12 +46,15 @@ abstract class sqResponse extends component {
 	
 	// Reviews last page showing errors
 	public function review() {
-		if (!isset($_SESSION)) {
-			session_start();
-		}
 		
 		// Save existing form data to session so it can be redisplayed
 		$_SESSION['sq-form-data'] = sq::request()->post;
+		
+		$this->redirect();
+	}
+	
+	public function reset() {
+		unset($_SESSION['sq-form-errors']);
 		
 		$this->redirect();
 	}

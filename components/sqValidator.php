@@ -33,10 +33,7 @@ abstract class sqValidator extends component {
 			}
 		}
 		
-		if (!isset($_SESSION)) {
-			session_start();
-		}
-		
+		// Save errors to the session
 		$_SESSION['sq-form-errors'] = $this->errors;
 		
 		return $this->isValid;
@@ -61,10 +58,6 @@ abstract class sqValidator extends component {
 	private function message($rule, $name) {
 		if (preg_match('!\[([^\)]+)\]!', $name, $match)) {
 			$name = array_pop($match);
-		}
-		
-		if (!isset($_SESSION)) {
-			session_start();
 		}
 		
 		if (isset($_SESSION['sq-form-labels'][$name])) {
