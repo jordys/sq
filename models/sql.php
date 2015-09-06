@@ -76,8 +76,6 @@ class sql extends model {
 			$this->relateModel();
 		}
 		
-		$this->isRead = true;
-		
 		return $this;
 	}
 	
@@ -265,6 +263,9 @@ class sql extends model {
 					}
 				}
 			}
+			
+			// Indicate that the model is in post read state
+			$this->isRead = true;
 		} else {
 			while ($row = $handle->fetch()) {
 				$model = sq::model($this->options['table'])->limit();
@@ -284,6 +285,9 @@ class sql extends model {
 				}
 				
 				$model->options['limit'] = true;
+				
+				// Indicate that the model is in post read state
+				$model->isRead = true;
 				
 				$this->data[] = $model;
 			}

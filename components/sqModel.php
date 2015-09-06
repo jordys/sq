@@ -110,28 +110,28 @@ abstract class sqModel extends component {
 	 * containing the found records.
 	 */
 	public function search($where, $operation = 'AND') {
-		if ($this->isRead) {
-			$results = array();
-			
-			foreach ($this->data as $item) {
-				foreach ($where as $key => $val) {
-					if (is_array($val) && in_array($item->$key, $val)) {
-						$results[] = $item;
-					} elseif ($item->$key == $val) {
-						$results[] = $item;
-					} elseif ($operation != 'OR') {
-						continue 2;
-					}
-				}
-			}
-			
-			$model = clone($this);
-			$model->data = $results;
-			
-			return $model;
-		} else {
+		if (!$this->isRead) {
 			return $this->where($where, $operation)->limit(false)->read();
 		}
+		
+		$results = array();
+		
+		foreach ($this->data as $item) {
+			foreach ($where as $key => $val) {
+				if (is_array($val) && in_array($item->$key, $val)) {
+					$results[] = $item;
+				} elseif ($item->$key == $val) {
+					$results[] = $item;
+				} elseif ($operation != 'OR') {
+					continue 2;
+				}
+			}
+		}
+		
+		$model = clone($this);
+		$model->data = $results;
+		
+		return $model;
 	}
 	
 	// Shorthand for read with no where statement
@@ -297,9 +297,7 @@ abstract class sqModel extends component {
 		
 		$options['limit'] = true;
 		
-		$this->relate($model, $options);
-		
-		return $this;
+		return $this->relate($model, $options, 'belongs-to');
 	}
 	
 	// Creates a has one model relationship
@@ -314,9 +312,7 @@ abstract class sqModel extends component {
 		
 		$options['limit'] = true;
 		
-		$this->relate($model, $options);
-		
-		return $this;
+		return $this->relate($model, $options, 'has-one');
 	}
 	
 	// Creates a has many model relationship
@@ -329,115 +325,132 @@ abstract class sqModel extends component {
 			$options['from'] = 'id';
 		}
 		
-		$this->relate($model, $options);
-		
-		return $this;
+		return $this->relate($model, $options, 'has-many');
 	}
 	
-	public function manyMany($model, $options = array()) {
-		if ($this->options['limit'] === true) {
-			
-			// Allow a shorthand of just passing in string instead of options to
-			// set the bridge table.
-			if (is_string($options)) {
-				$options = array(
-					'bridge' => $options
-				);
-			}
-			
-			if (empty($options['to'])) {
-				$options['to'] = $this->options['name'].'_id';
-			}
-			
-			if (empty($options['from'])) {
-				$options['from'] = 'id';
-			}
-			
-			$where = array($options['to'] => $this->data[$options['from']]);
-			
-			if (isset($options['where'])) {
-				$where += $options['where'];
-			}
-			
-			$bridge = sq::model($options['bridge'], array(
-				'class' => $model,
-				'user-specific' => false
-			));
-			
-			if ($this->data[$options['from']] !== null) {
-				$bridge->search($where);
-				
-				foreach ($bridge as $key => $item) {
-					unset($item->id);
-					
-					if (isset(self::$manyManyCache[$item->{$model.'_id'}]) && false) {
-						$relation = self::$manyManyCache[$item->{$model.'_id'}];
-					} else {
-						$relation = sq::model($model);
-						
-						if (isset($options['user-specific'])) {
-							$relation->options['user-specific'] = $options['user-specific'];
-						}
-						
-						$relation->find($item->{$model.'_id'});
-						
-						self::$manyManyCache[$item->{$model.'_id'}] = $relation;
-					}
-					
-					// Flatten bridge with the related model
-					$relation->set($item->toArray());
-					
-					$bridge[$key] = $relation;
-				}
-			}
-			
-			$this->$model = $bridge;
-		} else {
+	public function manyMany($model, $options) {
+		if (!$this->isRead) {
+			$this->options['many-many'][$name] = $options;
+		}
+		
+		if ($this->options['limit'] !== true) {
 			foreach ($this->data as $item) {
 				$item->manyMany($model, $options);
 			}
+			
+			return $this;
 		}
+		
+		if (!$this->isRead) {
+			return;
+		}
+		
+		// Allow a shorthand of just passing a string instead of options to
+		// set the bridge table
+		if (is_string($options)) {
+			$options = array(
+				'bridge' => $options
+			);
+		}
+		
+		if (empty($options['to'])) {
+			$options['to'] = $this->options['name'].'_id';
+		}
+		
+		if (empty($options['from'])) {
+			$options['from'] = 'id';
+		}
+		
+		$where = array($options['to'] => $this->data[$options['from']]);
+		
+		if (isset($options['where'])) {
+			$where += $options['where'];
+		}
+		
+		$bridge = sq::model($options['bridge'], array(
+			'class' => $model,
+			'user-specific' => false
+		));
+		
+		if ($this->data[$options['from']] !== null) {
+			$bridge->search($where);
+			
+			foreach ($bridge as $key => $item) {
+				unset($item->id);
+				
+				if (isset(self::$manyManyCache[$item->{$model.'_id'}])) {
+					$relation = self::$manyManyCache[$item->{$model.'_id'}];
+				} else {
+					$relation = sq::model($model);
+					
+					if (isset($options['user-specific'])) {
+						$relation->options['user-specific'] = $options['user-specific'];
+					}
+					
+					$relation->find($item->{$model.'_id'});
+					
+					self::$manyManyCache[$item->{$model.'_id'}] = $relation;
+				}
+				
+				// Flatten bridge with the related model
+				$relation->set($item->toArray());
+				
+				$bridge[$key] = $relation;
+			}
+		}
+		
+		$this->$model = $bridge;
 		
 		return $this;
 	}
 	
 	// Creates a model relationship. Can be called directly or with the helper
 	// hasOne, hasMany, belongsTo and manyMany methods.
-	protected function relate($name, $options) {
-		if ($this->options['limit'] === true) {
-			$model = sq::model($name, $options);
-			
-			$model->options['where'][$options['to']] = $this->data[$options['from']];
-			
-			$read = isset($options['read']) ? $options['read'] : '*';
-			
-			if ($this->data[$options['from']] !== null) {
-				$model->read($read);
-			}
-			
-			if (isset($options['flatten']) && $options['flatten'] && isset($options['limit']) && $options['limit'] === true) {
-				unset($model->id);
-				$this->set($model->toArray());
-			} else {
-				if (isset($options['mount'])) {
-					$name = $options['mount'];
-				}
-				
-				$this->data[$name] = $model;
-			}
-		} else {
-			foreach ($this->data as $item) {
-				$item->relate($name, $options);
-			}
+	protected function relate($name, $options, $type) {
+		if (!$this->isRead) {
+			$this->options[$type][$name] = $options;
 		}
+		
+		if ($this->options['limit'] !== true) {
+			foreach ($this->data as $item) {
+				$item->relate($name, $options, $type);
+			}
+			
+			return $this;
+		}
+		
+		if (!$this->isRead) {
+			return;
+		}
+		
+		$model = sq::model($name, $options);
+		$model->options['where'][$options['to']] = $this->data[$options['from']];
+		
+		$read = isset($options['read']) ? $options['read'] : '*';
+		if ($this->data[$options['from']] !== null) {
+			$model->read($read);
+		}
+		
+		if (isset($options['flatten']) && $options['flatten'] && isset($options['limit']) && $options['limit'] === true) {
+			unset($model->id);
+			$this->set($model->toArray());
+		} else {
+			if (isset($options['mount'])) {
+				$name = $options['mount'];
+			}
+			
+			$this->data[$name] = $model;
+		}
+		
+		return $this;
 	}
 	
 	// Utility method that creates model relationships from config after a read
 	protected function relateModel() {
-		foreach (array('belongs-to', 'has-one', 'has-many') as $relation) {
+		foreach (array('belongs-to', 'has-one', 'has-many', 'many-many') as $relation) {
 			foreach ($this->options[$relation] as $name => $options) {
 				
-				// Allows the shorthand has-many with just the name of the model
+				// Allows the shorthand relation with just the name of the model
 				if (is_numeric($name)) {
 					$name = $options;
 					$options = array();
