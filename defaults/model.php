@@ -26,6 +26,7 @@ return array(
 		'belongs-to' => array(),
 		'has-one' => array(),
 		'has-many' => array(),
+		'many-many' => array(),
 		
 		// When cascade is true when models are deleted their related models
 		// will be deleted as well
