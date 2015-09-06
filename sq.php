@@ -17,6 +17,8 @@ class sq {
 	// and error is the current application error (404, PHP warning, etc...).
 	private static $config, $error;
 	
+	// Store for components so they don't have to be realoaded from memory
+	// unnecessarily
 	private static $cache = array();
 	
 	// Startup static function for the entire app. Handles setup tasks and 
