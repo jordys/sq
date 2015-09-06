@@ -33,12 +33,17 @@ abstract class sqForm extends model {
 			$attrs['method'] = 'post';
 		}
 		
+		// Hash string added to input ids to avoid two elements with the same id
 		self::$mark = uniqid();
 		
 		$form = '<form '.self::parseAttrs($attrs).'>';
 		
+		// Add model config option to the form
 		if (self::$model && $attrs['method'] == 'post') {
 			$form .= self::hidden('sq-model[]', self::$model->options['name']);
+			
+			// Add id so the model will will have the correct where statement
+			$form .= self::hidden('id');
 		} else {
 			$form .= self::hidden('sq-model[]', 'form');
 		}
@@ -66,6 +71,7 @@ abstract class sqForm extends model {
 		return '<label class="'.$class.'" for="'.self::parseId($for).'">'.$value.'</label>';
 	}
 	
+	// General form input
 	public static function element($name, $value = null, $attrs = array()) {
 		if (self::inputError($name)) {
 			if (isset($attrs['class'])) {
