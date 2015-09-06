@@ -74,8 +74,7 @@ abstract class sqAuth extends controller {
 			return true;
 		}
 		
-		form::error($this->options['login-failed-message']);
-		return false;
+		sq::response()->flash($this->options['login-failed-message']);
 	}
 	
 	// Logs the current user out of the system
@@ -96,7 +95,7 @@ abstract class sqAuth extends controller {
 		if ($username && $password) {
 			$this->login($username, $password, $remember);
 		} else {
-			form::error($this->options['login-failed-message']);
+			sq::response()->flash($this->options['login-failed-message']);
 		}
 		
 		if (!sq::request()->isAjax) {
