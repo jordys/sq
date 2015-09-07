@@ -55,6 +55,10 @@ abstract class sqForm extends model {
 	public static function close() {
 		self::$model = null;
 		
+		// Clear errors after they are shown to the user
+		unset($_SESSION['sq-form-errors']);
+		unset($_SESSION['sq-form-data']);
+		
 		return '</form>';
 	}
 	
