@@ -110,7 +110,7 @@ class sql extends model {
 		if (!$this->exists()) {
 			$query = 'CREATE TABLE '.$this->options['table'].' (';
 			
-			if (!array_key_exists('id', $schema)) {	
+			if (!array_key_exists('id', $schema)) {
 				$query .= 'id INT(11) NOT NULL AUTO_INCREMENT, ';
 			}
 			

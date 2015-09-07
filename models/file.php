@@ -179,7 +179,7 @@ class file extends model {
 			$path .= basename($file['name']);
 		}
 		
-		if ($this->options['resize-x'] && $this->options['resize-y']) {				
+		if ($this->options['resize-x'] && $this->options['resize-y']) {
 			$image = new ImageManipulator($file['tmp_name']);
 			$image->resample($this->options['resize-x'], $this->options['resize-y']);
 			$image->save($this->options['path'].$path, IMAGETYPE_JPEG);

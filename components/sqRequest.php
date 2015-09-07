@@ -30,7 +30,7 @@ abstract class sqRequest extends component {
 		$this->context = $this->any('sqContext');
 		
 		// Boolean marking if the request is an ajax request
-		$this->isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) 
+		$this->isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH'])
 			&& strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 	}
 	

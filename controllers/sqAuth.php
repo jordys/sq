@@ -36,7 +36,7 @@ abstract class sqAuth extends controller {
 			// of the cookie
 			if (isset($this->user->level)) {
 				$this->login($this->user->{$this->options['username-field']}, $this->user->{$this->options['password-field']}, true);
-			}			
+			}
 		}
 		
 		if (isset($this->user->level)) {
