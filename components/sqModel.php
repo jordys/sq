@@ -79,26 +79,24 @@ abstract class sqModel extends component {
 	 * through the existing model objects.
 	 */
 	public function find($where, $operation = 'AND') {
-		if ($this->isRead) {
-			if (!is_array($where)) {
-				$where = array('id' => $where);
-			}
-			
-			foreach ($this->data as $item) {
-				foreach ($where as $key => $val) {
-					if (is_array($val) && in_array($item->$key, $val)) {
-						return $item;
-					} elseif ($item->$key == $val) {
-						return $item;
-					} elseif ($operation != 'OR') {
-						continue 2;
-					}
+		if (!$this->isRead) {
+			return $this->where($where, $operation)->limit()->read();
+		}
+		
+		if (!is_array($where)) {
+			$where = array('id' => $where);
+		}
+		
+		foreach ($this->data as $item) {
+			foreach ($where as $key => $val) {
+				if (is_array($val) && in_array($item->$key, $val)) {
+					return $item;
+				} elseif ($item->$key == $val) {
+					return $item;
+				} elseif ($operation != 'OR') {
+					continue 2;
 				}
 			}
-			
-			return false;
-		} else {
-			return $this->where($where, $operation)->limit()->read();
 		}
 	}
 	
@@ -330,7 +328,7 @@ abstract class sqModel extends component {
 	
 	public function manyMany($model, $options) {
 		if (!$this->isRead) {
-			$this->options['many-many'][$name] = $options;
+			$this->options['many-many'][$model] = $options;
 		}
 		
 		if ($this->options['limit'] !== true) {

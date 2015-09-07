@@ -110,7 +110,7 @@ class sql extends model {
 		if (!$this->exists()) {
 			$query = 'CREATE TABLE '.$this->options['table'].' (';
 			
-			if (!array_key_exists('id', $schema)) {	
+			if (!array_key_exists('id', $schema)) {
 				$query .= 'id INT(11) NOT NULL AUTO_INCREMENT, ';
 			}
 			
@@ -285,6 +285,7 @@ class sql extends model {
 				}
 				
 				$model->options['limit'] = true;
+				$model->isRead = true;
 				
 				// Indicate that the model is in post read state
 				$model->isRead = true;
@@ -292,6 +293,9 @@ class sql extends model {
 				$this->data[] = $model;
 			}
 		}
+		
+		// Indicate that the model is in post read state
+		$this->isRead = true;
 	}
 	
 	private function showColumnsQuery($handle) {

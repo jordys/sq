@@ -15,7 +15,7 @@ endif;
 	<form method="post" action="">
 		<div class="actions global-actions listing-actions">
 <?php
-if ($actions): 
+if ($actions):
 	foreach ($actions as $action):
 		echo '<a href="'.$base.sq::request()->get('module').'/'.$modelName.'/'.sq::route()->format($action).'" class="action global-action list-action">'.ucwords($action).'</a>';
 	endforeach;
