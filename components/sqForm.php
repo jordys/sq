@@ -237,23 +237,21 @@ abstract class sqForm extends model {
 	}
 	
 	// Prints a select box with an array of data
-	public static function select($name, $data, $value = null, $attrs = array()) {
+	public static function select($name, $data, $default = null, $attrs = array()) {
 		if (is_string($data)) {
 			$data = sq::config($data);
 		}
 		
 		// Default value if omitted will be replaced with attrs variable
-		if (is_array($value)) {
+		if (is_array($default)) {
 			$attrs = $default;
 		}
 		
-		$attrs = self::getAttrs($name, $attrs, $value);
+		$attrs = self::getAttrs($name, $attrs, $default);
 		$default = $attrs['value'];
 		unset($attrs['value']);
 		
-		$attrs = self::parseAttrs($attrs);
-		
-		$content = '<select '.$attrs.'>';
+		$content = '<select '.self::parseAttrs($attrs).'>';
 		foreach ($data as $value => $label) {
 			$selected = null;
 			if ($default && $default == $value) {
