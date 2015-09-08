@@ -89,21 +89,34 @@ abstract class sqRoute extends component {
 		return $key;
 	}
 	
-	// Makes a url out of an array of components
+	// Make a url that points back to a route with the passed in key / value
+	// parameters
 	public function to($fragments) {
-		$url = '';
-		
-		if (!is_array($fragments)) {
-			$fragments = func_get_args();
-		}
-		
-		foreach ($fragments as $fragment) {
-			if ($fragment) {
-				$url .= '/'.$fragment;
+		foreach ($this->options['definitions'] as $route => $val) {
+			if (is_numeric($route)) {
+				$route = $val;
+				$val = array();
 			}
+			
+			if ((substr_count('{', $route) - substr_count($route, '?')) > count($fragments)) {
+				continue;
+			}
+			
+			foreach ($fragments as $fragmentName => $fragmentValue) {
+				if (array_key_exists($fragmentName, $val) && $val[$fragmentName] == $fragmentValue) { 
+					continue;
+				} elseif (strpos($route, $fragmentName) === false) {
+					continue 2;
+				} else {
+					$route = str_replace('{'.$fragmentName.'}', $fragmentValue, $route);
+					$route = str_replace('{'.$fragmentName.'?}', $fragmentValue, $route);
+				}
+			}
+			
+			$route = preg_replace('/\/?\{[^)]+\}/', '', $route);
+			
+			return sq::base().$route;
 		}
-		
-		return sq::base().ltrim($url, '/');
 	}
 	
 	// Converts a string into a clean url
