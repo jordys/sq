@@ -166,7 +166,7 @@ abstract class sqForm extends model {
 	// shown beside the file input. Labels are included in the widget.
 	public static function image($name = 'upload', $value = null, $attrs = array()) {
 		$attrs['type'] = 'file';
-		$attrs = self::getAttrs($name, null, $attrs);
+		$attrs = self::getAttrs($name, $attrs, $value);
 		
 		if ($value) {
 			$content = '
