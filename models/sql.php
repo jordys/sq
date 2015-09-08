@@ -329,7 +329,7 @@ class sql extends model {
 	
 	private function parseWhere() {
 		$query = null;
-				
+		
 		if ($this->options['user-specific']) {
 			$this->options['where'] += array('users_id' => sq::auth()->user->id);
 		}
