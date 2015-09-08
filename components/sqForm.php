@@ -170,7 +170,7 @@ abstract class sqForm extends model {
 		
 		if ($value) {
 			$content = '
-				<div class="sq-replace-image-current">
+				<div class="sq-input-image-current">
 					<span style="background-image: url('.sq::base().$value.')"></span>
 					<img src="'.sq::base().$value.'"/>
 				</div>
