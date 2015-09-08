@@ -98,6 +98,10 @@ abstract class sqRoute extends component {
 				$val = array();
 			}
 			
+			// Remove default param values from route string because they aren't
+			// needed and mess matching up
+			$route = preg_replace('/\=[^)]+\}/', '}', $route);
+			
 			if ((substr_count('{', $route) - substr_count($route, '?')) > count($fragments)) {
 				continue;
 			}
