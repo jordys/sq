@@ -70,25 +70,6 @@ abstract class sqRoute extends component {
 		sq::error('404');
 	}
 	
-	private function getValue($val) {
-		$val = str_replace('{', '', $val);
-		$val = str_replace('}', '', $val);
-		$val = explode('=', $val);
-		
-		return $val[1];
-	}
-	
-	private function getKey($key) {
-		$key = explode('=', $key);
-		$key = $key[0];
-		
-		$key = str_replace('{', '', $key);
-		$key = str_replace('}', '', $key);
-		$key = str_replace('?', '', $key);
-		
-		return $key;
-	}
-	
 	// Make a url that points back to a route with the passed in key / value
 	// parameters
 	public function to($fragments) {
@@ -132,6 +113,26 @@ abstract class sqRoute extends component {
 		$url = strtolower($url);
 		
 		return urlencode($url);
+	}
+	
+	// Utility methods to extract keys and values from url fragments
+	private function getValue($val) {
+		$val = str_replace('{', '', $val);
+		$val = str_replace('}', '', $val);
+		$val = explode('=', $val);
+		
+		return $val[1];
+	}
+	
+	private function getKey($key) {
+		$key = explode('=', $key);
+		$key = $key[0];
+		
+		$key = str_replace('{', '', $key);
+		$key = str_replace('}', '', $key);
+		$key = str_replace('?', '', $key);
+		
+		return $key;
 	}
 }
 
