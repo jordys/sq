@@ -351,6 +351,9 @@ abstract class sqModel extends component {
 	// Creates a model relationship. Can be called directly or with the helper
 	// hasOne, hasMany, belongsTo and manyMany methods.
 	protected function relate($name, $options, $type) {
+		
+		// Manage calling this function on a list object. Loop through and call
+		// the same method on the contained model objects.
 		if (!$this->isRead) {
 			$this->options[$type][$name] = $options;
 		}
