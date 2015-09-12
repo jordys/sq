@@ -222,7 +222,7 @@ class sql extends model {
 			if (strpos($query, 'SELECT') !== false) {
 				$this->selectQuery($handle);
 			} elseif (strpos($query, 'INSERT') !== false) {
-				$this->insertQuery($handle);
+				$this->insertQuery();
 			} elseif (strpos($query, 'SHOW COLUMNS') !== false) {
 				$this->showColumnsQuery($handle);
 			}
@@ -240,7 +240,7 @@ class sql extends model {
 		}
 	}
 	
-	private function insertQuery($handle) {
+	private function insertQuery() {
 		
 		// When inserting always stick the last inserted id into the model
 		$this->id = self::$conn->lastInsertId();
