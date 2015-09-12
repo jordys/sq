@@ -106,8 +106,19 @@ class sql extends model {
 		return true;
 	}
 	
-	public function make($schema) {
+	/**
+	 * Basic create table functionality
+	 *
+	 * Makes a table with the passed in schema or schema from the model options.
+	 * Schema is an associative array column names as keys and SQL definition as
+	 * values. An auto incrementing id column is added if none is specified.
+	 */
+	public function make($schema = null) {
 		if (!$this->exists()) {
+			if (!$schema) {
+				$schema = $this->options['schema'];
+			}
+			
 			$query = 'CREATE TABLE '.$this->options['table'].' (';
 			
 			if (!array_key_exists('id', $schema)) {
@@ -240,6 +251,7 @@ class sql extends model {
 		}
 	}
 	
+	// Update some basic data to the model after inserting into SQL
 	private function insertQuery() {
 		
 		// When inserting always stick the last inserted id into the model
@@ -250,6 +262,9 @@ class sql extends model {
 		$this->where($this->id);
 	}
 	
+	// Insert data into the model from the query result. For single queries add
+	// the data to the current model otherwise create child models and add them
+	// as a list.
 	private function selectQuery($handle) {
 		if ($this->options['limit'] === true) {
 			$row = $handle->fetch();
@@ -265,6 +280,8 @@ class sql extends model {
 			}
 		} else {
 			while ($row = $handle->fetch()) {
+				
+				// Create child model
 				$model = sq::model($this->options['table'])->limit();
 				
 				foreach ($row as $key => $val) {
@@ -275,23 +292,22 @@ class sql extends model {
 					}
 				}
 				
+				// Call relation setup if enabled otherwise pass the disabled
+				// flag down the line
 				if ($this->options['load-relations']) {
 					$model->relateModel();
 				} else {
 					$model->options['load-relations'] = false;
 				}
 				
-				$model->options['limit'] = true;
-				$model->isRead = true;
-				
-				// Indicate that the model is in post read state
+				// Mark child model in post read state
 				$model->isRead = true;
 				
 				$this->data[] = $model;
 			}
 		}
 		
-		// Indicate that the model is in post read state
+		// Mark the model in post read state
 		$this->isRead = true;
 	}
 	

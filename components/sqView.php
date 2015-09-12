@@ -290,9 +290,7 @@ var sq = {
 		// Create model object if one doesn't already exist and read slots and
 		// cache them to the view
 		if (!self::$slots) {
-			self::$slots = sq::model('sq_slots')
-				->make(sq::config('sq_slots/schema'))
-				->read();
+			self::$slots = sq::model('sq_slots')->make()->read();
 		}
 		
 		// Find the requested slot and create if it doesn't exist
