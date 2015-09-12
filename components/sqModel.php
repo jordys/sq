@@ -54,7 +54,7 @@ abstract class sqModel extends component {
 	// CRUD methods to be implemented. These four methods must be implemented by
 	// a driver class with the optional arguments listed here.
 	public function create($data = null) {}
-	public function read($values = null) {}
+	public function read($values = '*') {}
 	public function update($data = null, $where = null) {}
 	public function delete($where = null) {}
 	
@@ -326,6 +326,7 @@ abstract class sqModel extends component {
 		return $this->relate($model, $options, 'has-many');
 	}
 	
+	// Creates a many to many model relationship
 	public function manyMany($model, $options) {
 		
 		// Allow a shorthand of just passing a string instead of options to
@@ -367,16 +368,21 @@ abstract class sqModel extends component {
 		}
 		
 		if ($type == 'many-many') {
-			$options['class'] = $name;
-			$name = $options['bridge'];
+			$model = sq::model($options['bridge'], array(
+				'class' => $name,
+				'user-specific' => false
+			));
+		} else {
+			$model = sq::model($name, $options);
 		}
-				
+		
 		$where = array($options['to'] => $this->data[$options['from']]);
 		if (isset($options['where'])) {
 			$where += $options['where'];
 		}
 		
-		$model = sq::model($name, $options)->where($where)->read();
+		$read = isset($options['read']) ? $options['read'] : '*';
+		$model->where($where)->read($read);
 		
 		if ($type == 'many-many') {
 			foreach ($model as $key => $item) {

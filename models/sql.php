@@ -59,13 +59,7 @@ class sql extends model {
 	 * directly to the model if limit is true or set as a list of model objects
 	 * if limit is false.
 	 */
-	public function read($values = null) {
-		if ($values) {
-			$this->options['read'] = $values;
-		} else {
-			$values = $this->options['read'];
-		}
-		
+	public function read($values = '*') {
 		if (is_array($values)) {
 			$values = implode(',', $values);
 		}
@@ -269,9 +263,6 @@ class sql extends model {
 					}
 				}
 			}
-			
-			// Indicate that the model is in post read state
-			$this->isRead = true;
 		} else {
 			while ($row = $handle->fetch()) {
 				$model = sq::model($this->options['table'])->limit();

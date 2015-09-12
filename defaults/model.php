@@ -55,7 +55,6 @@ return array(
 		'where' => array(),
 		'where-raw' => false,
 		'where-operation' => 'AND',
-		'read' => '*',
 		
 		// Actions for admin modules
 		'actions' => array('create'),
