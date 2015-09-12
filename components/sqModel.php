@@ -54,7 +54,7 @@ abstract class sqModel extends component {
 	// CRUD methods to be implemented. These four methods must be implemented by
 	// a driver class with the optional arguments listed here.
 	public function create($data = null) {}
-	public function read($values = '*') {}
+	public function read($values = null) {}
 	public function update($data = null, $where = null) {}
 	public function delete($where = null) {}
 	
@@ -327,21 +327,6 @@ abstract class sqModel extends component {
 	}
 	
 	public function manyMany($model, $options) {
-		if (!$this->isRead) {
-			$this->options['many-many'][$model] = $options;
-		}
-		
-		if ($this->options['limit'] !== true) {
-			foreach ($this->data as $item) {
-				$item->manyMany($model, $options);
-			}
-			
-			return $this;
-		}
-		
-		if (!$this->isRead) {
-			return $this;
-		}
 		
 		// Allow a shorthand of just passing a string instead of options to
 		// set the bridge table
@@ -359,47 +344,7 @@ abstract class sqModel extends component {
 			$options['from'] = 'id';
 		}
 		
-		$where = array($options['to'] => $this->data[$options['from']]);
-		
-		if (isset($options['where'])) {
-			$where += $options['where'];
-		}
-		
-		$bridge = sq::model($options['bridge'], array(
-			'class' => $model,
-			'user-specific' => false
-		));
-		
-		if ($this->data[$options['from']] !== null) {
-			$bridge->search($where);
-			
-			foreach ($bridge as $key => $item) {
-				unset($item->id);
-				
-				if (isset(self::$manyManyCache[$item->{$model.'_id'}])) {
-					$relation = self::$manyManyCache[$item->{$model.'_id'}];
-				} else {
-					$relation = sq::model($model);
-					
-					if (isset($options['user-specific'])) {
-						$relation->options['user-specific'] = $options['user-specific'];
-					}
-					
-					$relation->find($item->{$model.'_id'});
-					
-					self::$manyManyCache[$item->{$model.'_id'}] = $relation;
-				}
-				
-				// Flatten bridge with the related model
-				$relation->set($item->toArray());
-				
-				$bridge[$key] = $relation;
-			}
-		}
-		
-		$this->$model = $bridge;
-		
-		return $this;
+		return $this->relate($model, $options, 'many-many');
 	}
 	
 	// Creates a model relationship. Can be called directly or with the helper
@@ -421,12 +366,41 @@ abstract class sqModel extends component {
 			return $this;
 		}
 		
-		$model = sq::model($name, $options);
-		$model->options['where'][$options['to']] = $this->data[$options['from']];
+		if ($type == 'many-many') {
+			$options['class'] = $name;
+			$name = $options['bridge'];
+		}
+				
+		$where = array($options['to'] => $this->data[$options['from']]);
+		if (isset($options['where'])) {
+			$where += $options['where'];
+		}
 		
-		$read = isset($options['read']) ? $options['read'] : '*';
-		if ($this->data[$options['from']] !== null) {
-			$model->read($read);
+		$model = sq::model($name, $options)->where($where)->read();
+		
+		if ($type == 'many-many') {
+			foreach ($model as $key => $item) {
+				unset($item->id);
+				
+				if (isset(self::$manyManyCache[$item->{$name.'_id'}])) {
+					$relation = self::$manyManyCache[$item->{$name.'_id'}];
+				} else {
+					$relation = sq::model($name);
+					
+					if (isset($options['user-specific'])) {
+						$relation->options['user-specific'] = $options['user-specific'];
+					}
+					
+					$relation->find($item->{$name.'_id'});
+					
+					self::$manyManyCache[$item->{$name.'_id'}] = $relation;
+				}
+				
+				// Flatten bridge with the related model
+				$relation->set($item->toArray());
+				
+				$model[$key] = $relation;
+			}
 		}
 		
 		if (isset($options['flatten']) && $options['flatten'] && isset($options['limit']) && $options['limit'] === true) {
