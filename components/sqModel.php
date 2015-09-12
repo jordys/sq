@@ -340,7 +340,7 @@ abstract class sqModel extends component {
 		}
 		
 		if (!$this->isRead) {
-			return;
+			return $this;
 		}
 		
 		// Allow a shorthand of just passing a string instead of options to
@@ -418,7 +418,7 @@ abstract class sqModel extends component {
 		}
 		
 		if (!$this->isRead) {
-			return;
+			return $this;
 		}
 		
 		$model = sq::model($name, $options);
