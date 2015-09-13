@@ -4,6 +4,7 @@ class file extends model {
 	protected $fileProperties = array('id', 'file', 'image', 'name',
 		'extension', 'base', 'path', 'content', 'directory');
 	
+	// Set memory limit to the value in model config
 	public function __construct($options = array()) {
 		parent::__construct($options);
 		
