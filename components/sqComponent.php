@@ -136,26 +136,17 @@ abstract class sqComponent implements iterator, countable, arrayAccess {
 	}
 	
 	// Object setup code. Called by component constructor.
-	public function init() {
-		
-	}
+	public function init() {}
 	
 	// Object cleanup code. Called by component destructor.
-	public function cleanup() {
-		
-	}
+	public function cleanup() {}
 		
 	// Returns content to screen. Called by component __tostring.
-	public function render() {
-		
-	}
+	public function render() {}
 	
 	// Mass assignment method for class data. All the usual mass assignment 
 	// security warnings apply.
 	public function set($data, $overwrite = true) {
-		if (is_object($data)) {
-			$data = $data->data;
-		}
 		
 		// Sets new properties
 		if (is_array($data)) {

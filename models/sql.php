@@ -3,8 +3,8 @@
 /**
  * SQL model implementation
  *
- * Generic crud implementation of model to work with sql databases. The only
- * addition is the query method which allows arbitrary sql queries to be
+ * Generic crud implementation of model to work with SQL databases. The only
+ * addition is the query method which allows arbitrary SQL queries to be
  * executed. Uses PDO for the database interaction.
  */
 
@@ -40,7 +40,7 @@ class sql extends model {
 	}
 	
 	/**
-	 * Add a straight sql where query
+	 * Add a straight SQL where query
 	 * 
 	 * Chainable method that allows a straight sql where query to be used for
 	 * advanced searches that are too much for the where method.
@@ -52,10 +52,10 @@ class sql extends model {
 	}
 	
 	/**
-	 * Reads values from database and sets them to the model
+	 * Reads values from table and sets them to the model
 	 *
-	 * Accepts an optional array of columns to read from the database. Reads
-	 * records matching the where statement from the database. Results are set
+	 * Accepts an optional array of columns to read from the table. Reads
+	 * records matching the where statement from the table. Results are set
 	 * directly to the model if limit is true or set as a list of model objects
 	 * if limit is false.
 	 */
@@ -138,15 +138,18 @@ class sql extends model {
 		return $this;
 	}
 	
+	// Create a new record in the model
 	public function create($data = null) {
+		
+		// Unset a numberic id key if one exists
 		if (empty($this->data['id']) || is_numeric($this->data['id'])) {
 			unset($this->data['id']);
 		}
 		
-		if (is_array($data)) {
-			$this->set($data);
-		}
+		$this->set($data);
 		
+		// Mark record as belonging to the current user if marked as a user
+		// specific model
 		if ($this->options['user-specific'] && !isset($this->data['users_id'])) {
 			$this->data['users_id'] = sq::auth()->user->id;
 		}
@@ -169,13 +172,12 @@ class sql extends model {
 		return $this;
 	}
 	
+	// Update rows in table matching the where statement
 	public function update($data = null, $where = null) {
-		if ($data) {
-			$this->set($data);
+		$this->set($data);
 		
-			if ($where) {
-				$this->where($where);
-			}
+		if ($where) {
+			$this->where($where);
 		}
 		
 		$this->limit();
@@ -194,6 +196,7 @@ class sql extends model {
 		return $this;
 	}
 	
+	// Delete rows in table matching where statement
 	public function delete($where = null) {
 		if ($where) {
 			$this->where($where);
@@ -210,6 +213,7 @@ class sql extends model {
 		return $this;
 	}
 	
+	// Execute a straight mySQL query
 	public function query($query, $data = array()) {
 		if ($this->options['debug']) {
 			view::debug($query);
@@ -311,6 +315,8 @@ class sql extends model {
 		$this->isRead = true;
 	}
 	
+	// Sets the model to the equivelent of an empty record with the columns as
+	// keys but no values
 	private function showColumnsQuery($handle) {
 		$columns = array();
 		while ($row = $handle->fetch()) {
@@ -320,6 +326,7 @@ class sql extends model {
 		$this->set($columns);
 	}
 	
+	// Utility function to update data in the database from what is in the model
 	private function updateDatabase($data) {
 		$query = 'UPDATE '.$this->options['table'];
 				
@@ -340,12 +347,14 @@ class sql extends model {
 		}
 	}
 	
+	// Generates SQL order statement
 	private function parseOrder() {
 		if ($this->options['order'] && $this->options['limit'] !== true) {
 			return " ORDER BY {$this->options['order']} {$this->options['order-direction']}, id ASC";
 		}
 	}
 	
+	// Generates SQL where statement from array
 	private function parseWhere() {
 		$query = null;
 		
@@ -387,6 +396,7 @@ class sql extends model {
 		return $query;
 	}
 	
+	// Adds straight SQL where statement to the model
 	private function parseWhereRaw() {
 		$query = null;
 		
@@ -403,6 +413,7 @@ class sql extends model {
 		return $query;
 	}
 	
+	// Generates SQL limit statement
 	private function parseLimit() {
 		if ($this->options['limit']) {
 			return ' LIMIT '.$this->options['limit'];

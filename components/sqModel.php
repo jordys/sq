@@ -464,7 +464,7 @@ abstract class sqModel extends component {
 		}
 	}
 	
-	// Utility function that uses a session to prevent duplicate data from being
+	// Utility method that uses a session to prevent duplicate data from being
 	// created. Prevents form double submits.
 	protected function checkDuplicate() {
 		if (!$this->options['prevent-duplicates']

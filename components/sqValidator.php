@@ -11,9 +11,6 @@ abstract class sqValidator extends component {
 	public $rules, $isValid = true, $errors = array();
 	
 	public function __construct($data, $rules, $options = array()) {
-		if (is_object($data) && is_a($data, 'component')) {
-			$data = $data->data;
-		}
 		$this->data = $data;
 		
 		// Handle rules as a config string
