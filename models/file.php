@@ -4,7 +4,9 @@ class file extends model {
 	protected $fileProperties = array('id', 'file', 'image', 'name',
 		'extension', 'base', 'path', 'content', 'directory');
 	
-	public function init() {
+	public function __construct($options = array()) {
+		parent::__construct($options);
+		
 		ini_set('memory_limit', $this->options['memory-limit']);
 	}
 	
