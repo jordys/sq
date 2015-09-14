@@ -60,7 +60,7 @@ abstract class sqModel extends component {
 	
 	// Makes a data store. For instance a folder to store files or a table to
 	// store sql data.
-	public function make($schema) {}
+	public function make($schema = null) {}
 	
 	// Returns true if the database record exists. Must be implemented in driver
 	// classes such as sql.
@@ -175,7 +175,7 @@ abstract class sqModel extends component {
 	public function where($argument, $operation = 'AND') {
 		
 		// Allow shorthand for searching by id
-		if (!is_array($argument)) {
+		if (is_string($argument)) {
 			$this->limit();
 			$argument = array('id' => $argument);
 		}

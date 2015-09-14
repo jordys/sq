@@ -117,6 +117,8 @@ class sql extends model {
 		if (!$this->exists()) {
 			if (!$schema) {
 				$schema = $this->options['schema'];
+			} elseif (is_string($schema)) {
+				$schema = sq::config($schema);
 			}
 			
 			$query = 'CREATE TABLE '.$this->options['table'].' (';
