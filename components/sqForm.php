@@ -112,7 +112,7 @@ abstract class sqForm extends model {
 		
 		return self::element($name, $value, $attrs);
 	}
-		
+	
 	// Hidden filed
 	public static function hidden($name, $value = null, $attrs = array()) {
 		$attrs['type'] = 'hidden';
@@ -120,7 +120,7 @@ abstract class sqForm extends model {
 		return self::element($name, $value, $attrs);
 	}
 	
-		// Basic file input
+	// Basic file input
 	public static function file($name = 'upload', $value = null, $attrs = array()) {
 		$attrs['type'] = 'file';
 		
@@ -144,14 +144,14 @@ abstract class sqForm extends model {
 		return self::textarea($name, $value, $attrs);
 	}
 	
-	// Textarea
+	// Textarea with sq-input-blurb class
 	public static function blurb($name, $value = null, $attrs = array()) {
 		$attrs['class'] = 'sq-input-blurb';
 		
 		return self::textarea($name, $value, $attrs);
 	}
 	
-		// Money input
+	// Money input
 	public static function currency($name, $value = null, $attrs = array()) {
 		$attrs['class'] = 'sq-input-currency';
 		

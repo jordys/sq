@@ -215,7 +215,8 @@ class sql extends model {
 		return $this;
 	}
 	
-	// Execute a straight mySQL query
+	// Execute a straight mySQL query. Used behind the scenes by all the CRUD
+	// interactions.
 	public function query($query, $data = array()) {
 		if ($this->options['debug']) {
 			view::debug($query);
