@@ -390,25 +390,25 @@ class sq {
 		// Sets the changed parameter to the config array by looping  backwards
 		// over the name and creating nested arrays
 		if ($change !== -1) {
-			$new = $change;
-			$name = array_reverse($name);
-			
-			foreach ($name as $key => $val) {
-				$new = array($val => $new);
+			foreach (array_reverse($name) as $val) {
+				$change = array($val => $change);
 			}
 			
-			self::$config = self::merge(self::$config, $new);
+			self::$config = self::merge(self::$config, $change);
 		}
 		
 		// Find the requested parameter by looping through the name of the
 		// requested parameter until it is found
-		foreach ($name as $key => $val) {
-			if (isset(self::$config[$val])) {
-				return self::$config[$val];
+		$config = self::$config;
+		foreach ($name as $val) {
+			if (isset($config[$val])) {
+				$config = $config[$val];
 			} else {
 				return null;
 			}
 		}
+		
+		return $config;
 	}
 	
 	// Returns the framework path
