@@ -370,48 +370,45 @@ class sq {
 		
 		// Return the entire config array with no arguments
 		if (!$name) {
-			$config = self::$config;
+			return self::$config;
+		}
 		
 		// If the first argument is an array add it to config
-		} elseif (is_array($name)) {
+		if (is_array($name)) {
 			if ($change === true) {
 				self::$config = self::merge($name, self::$config);
 			} else {
 				self::$config = self::merge(self::$config, $name);
 			}
 			
-			$config = self::$config;
-			
-		// Get or set the config parameter based on array path notation
-		} else {
-			$name = explode('/', $name);
-			$config = self::$config;
-			
-			// Sets the changed parameter to the config array by looping 
-			// backwards over the name and creating nested arrays
-			if ($change !== -1) {
-				$new = $change;
-				$name = array_reverse($name);
-				
-				foreach ($name as $key => $val) {
-					$new = array($val => $new);
-				}
-				
-				self::$config = self::merge(self::$config, $new);
-			}
-			
-			// Find the requested parameter by looping through the name of the
-			// requested parameter until it is found
-			foreach ($name as $key => $val) {
-				if (isset($config[$val])) {
-					$config = $config[$val];
-				} else {
-					return null;
-				}
-			}
+			return self::$config;
 		}
 		
-		return $config;
+		// Get or set the config parameter based on array path notation
+		$name = explode('/', $name);
+		
+		// Sets the changed parameter to the config array by looping  backwards
+		// over the name and creating nested arrays
+		if ($change !== -1) {
+			$new = $change;
+			$name = array_reverse($name);
+			
+			foreach ($name as $key => $val) {
+				$new = array($val => $new);
+			}
+			
+			self::$config = self::merge(self::$config, $new);
+		}
+		
+		// Find the requested parameter by looping through the name of the
+		// requested parameter until it is found
+		foreach ($name as $key => $val) {
+			if (isset(self::$config[$val])) {
+				return self::$config[$val];
+			} else {
+				return null;
+			}
+		}
 	}
 	
 	// Returns the framework path
