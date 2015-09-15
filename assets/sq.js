@@ -1,7 +1,5 @@
 ;
 
-'use strict';
-
 /**
  * sq.js
  *
@@ -10,6 +8,7 @@
  */
 
 sq = function(sq, $) {
+	'use strict';
 	
 	// Private variable to hold callback functions
 	var callbacks = {'load': {
