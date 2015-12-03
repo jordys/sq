@@ -175,7 +175,7 @@ abstract class sqModel extends component {
 	public function where($argument, $operation = 'AND') {
 		
 		// Allow shorthand for searching by id
-		if (is_string($argument)) {
+		if (!is_array($argument)) {
 			$this->limit();
 			$argument = array('id' => $argument);
 		}
