@@ -221,8 +221,8 @@ class sq {
 		return $options;
 	}
 	
-	// Maps method calls to sq::component so calling sq::mailer() is the 
-	// equivalent of calling sq::component('mailer')
+	// Maps method calls to sq::component so calling sq::mailer($arg) is the 
+	// equivalent of calling sq::component('mailer', $arg)
 	public static function __callStatic($name, $args = null) {
 		array_unshift($args, $name);
 		
