@@ -88,6 +88,14 @@ abstract class sqRoute extends component {
 			}
 			
 			foreach ($fragments as $fragmentName => $fragmentValue) {
+				
+				// Handle passing through of a fragment name without a value. In
+				// this case use the value from the current URL.
+				if (is_numeric($fragmentName)) {
+					$fragmentName = $fragmentValue;
+					$fragmentValue = sq::request()->get($fragmentName);
+				}
+				
 				if (array_key_exists($fragmentName, $val) && $val[$fragmentName] == $fragmentValue) { 
 					continue;
 				} elseif (strpos($route, $fragmentName) === false) {
