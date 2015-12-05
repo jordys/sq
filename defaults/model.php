@@ -48,6 +48,10 @@ return array(
 			'form' => array()
 		),
 		
+		// Validation rules. Either a string to another config object or an 
+		// array with the various validation rules.
+		'rules' => array(),
+		
 		// Model manipulation defaults
 		'order' => false,
 		'order-direction' => 'DESC',
