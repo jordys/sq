@@ -30,7 +30,7 @@ abstract class sqValidator extends component {
 			foreach ($rules as $rule => $message) {
 				if (is_numeric($rule)) {
 					$rule = $message;
-
+					
 					$message = $this->options['messages']['generic'];
 					if (isset($this->options['messages'][$rule])) {
 						$message = $this->options['messages'][$rule];
@@ -89,8 +89,8 @@ abstract class sqValidator extends component {
 		}
 		
 		return strtr($message, array(
-			'[label]' => $label,
-			'[value]' => $value
+			'{label}' => $label,
+			'{value}' => $value
 		));
 	}
 }
