@@ -92,10 +92,6 @@ abstract class sqView extends component {
 	// should only include content inside the body tag and omit the body tag and
 	// everything outside of it.
 	public function render($view = null, $data = array()) {
-		
-		// Clear the labels session variable
-		unset($_SESSION['sq-form-labels']);
-		
 		if ($view) {
 			return sq::view($view, $data)
 				->set($data + $this->data)

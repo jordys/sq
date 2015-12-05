@@ -50,6 +50,9 @@ abstract class sqResponse extends component {
 		// Save existing form data to session so it can be redisplayed
 		$_SESSION['sq-form-data'] = sq::request()->post;
 		
+		// Clear the labels session variable
+		unset($_SESSION['sq-form-labels']);
+		
 		$this->redirect();
 	}
 	
