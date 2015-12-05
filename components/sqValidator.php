@@ -50,8 +50,6 @@ abstract class sqValidator extends component {
 		
 		// Save errors to the session
 		$_SESSION['sq-form-errors'] = $this->errors;
-		
-		return $this->isValid;
 	}
 	
 	// Data validation methods
