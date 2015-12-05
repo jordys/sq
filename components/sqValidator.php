@@ -27,11 +27,20 @@ abstract class sqValidator extends component {
 				$rules = array($rules);
 			}
 			
-			foreach ($rules as $rule) {
+			foreach ($rules as $rule => $message) {
+				if (is_numeric($rule)) {
+					$rule = $message;
+
+					$message = $this->options['messages']['generic'];
+					if (isset($this->options['messages'][$rule])) {
+						$message = $this->options['messages'][$rule];
+					}
+				}
+				
 				if (self::$rule($this->$field) === false) {
 					$this->errors[$field][] = array(
 						'rule' => $rule,
-						'message' => $this->message($rule, $field)
+						'message' => $this->message($message, $field, $this->$field)
 					);
 					
 					$this->isValid = false;
@@ -63,18 +72,20 @@ abstract class sqValidator extends component {
 	}
 	
 	// Utility function to generate user friendly error messages
-	private function message($rule, $name) {
+	private function message($message, $name, $value) {
 		if (preg_match('!\[([^\)]+)\]!', $name, $match)) {
 			$name = array_pop($match);
 		}
 		
+		$label = ucwords(str_replace('_', ' ', $name));
 		if (isset($_SESSION['sq-form-labels'][$name])) {
 			$label = $_SESSION['sq-form-labels'][$name];
-		} else {
-			$label = ucwords(str_replace('_', ' ', $name));
 		}
 		
-		return str_replace('[label]', $label, $this->options['messages'][$rule]);
+		return strtr($message, array(
+			'[label]' => $label,
+			'[value]' => $value
+		));
 	}
 }
 
