@@ -34,14 +34,13 @@ abstract class sqResponse extends component {
 			));
 			
 			die();
-		} else {
-			
-			// Save flash to session for form to interpret
-			$_SESSION['sq-form-status'] = $status;
-			$_SESSION['sq-form-flash'] = $flash;
-			
-			$this->review();
 		}
+			
+		// Save flash to session for form to interpret
+		$_SESSION['sq-form-status'] = $status;
+		$_SESSION['sq-form-flash'] = $flash;
+		
+		$this->review();
 	}
 	
 	// Reviews last page showing errors

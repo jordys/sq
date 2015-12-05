@@ -55,11 +55,11 @@ abstract class sqValidator extends component {
 	}
 	
 	public static function numeric($value) {
-		return (!$value || is_numeric($value));
+		return !$value || is_numeric($value);
 	}
 	
 	public static function integer($value) {
-		return (!$value || is_int($value));
+		return !$value || is_int($value);
 	}
 	
 	// Utility function to generate user friendly error messages
