@@ -81,10 +81,16 @@ abstract class sqRoute extends component {
 			
 			// Remove default param values from route string because they aren't
 			// needed and mess matching up
-			$route = preg_replace('/\=[^)]+\}/', '?}', $route);
+			$route = preg_replace('/\=[^)]+\}/U', '?}', $route);
 			
-			if ((substr_count('{', $route) - substr_count($route, '?')) > count($fragments)) {
+			if ((substr_count($route, '{') - substr_count($route, '?')) > count($fragments)) {
 				continue;
+			}
+			
+			foreach ($val as $item) {
+				if (!isset($fragments[$item])) {
+					continue 2;
+				}
 			}
 			
 			foreach ($fragments as $fragmentName => $fragmentValue) {
@@ -98,8 +104,13 @@ abstract class sqRoute extends component {
 				
 				if (array_key_exists($fragmentName, $val) && $val[$fragmentName] == $fragmentValue) { 
 					continue;
-				} elseif (strpos($route, $fragmentName) === false) {
-					continue 2;
+				} elseif (strpos($route, '{'.$fragmentName.'}') === false && strpos($route, '{'.$fragmentName.'?}') === false) {
+					if (strpos($route, '{|') !== false) {
+						$route = str_replace('{|}', $fragmentName.'/'.$fragmentValue, $route);
+						$route = str_replace('{|?}', $fragmentName.'/'.$fragmentValue, $route);
+					} else {
+						continue 2;
+					}
 				} else {
 					$route = str_replace('{'.$fragmentName.'}', $fragmentValue, $route);
 					$route = str_replace('{'.$fragmentName.'?}', $fragmentValue, $route);
