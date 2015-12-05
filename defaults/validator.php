@@ -13,6 +13,8 @@ return array(
 			'required' => '[label] is required',
 			'numeric'  => '[label] needs to be a number',
 			'integer'  => '[label] needs to be an integer',
+			'email'    => '[value] is not a valid email address',
+			'url'      => '[value] is not a valid URL',
 			'generic'  => '[label] is not valid'
 		)
 	)

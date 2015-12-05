@@ -69,6 +69,14 @@ abstract class sqValidator extends component {
 		return !$value || is_int($value);
 	}
 	
+	public static function email($value) {
+		return !$value || filter_var($value, FILTER_VALIDATE_EMAIL);
+	}
+	
+	public static function url($value) {
+		return !$value || filter_var($value, FILTER_VALIDATE_URL);
+	}
+	
 	// Utility function to generate user friendly error messages
 	private function message($message, $name, $value) {
 		if (preg_match('!\[([^\)]+)\]!', $name, $match)) {
