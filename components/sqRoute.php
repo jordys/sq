@@ -73,26 +73,32 @@ abstract class sqRoute extends component {
 	// Make a url that points back to a route with the passed in key / value
 	// parameters
 	public function to($fragments) {
-		foreach ($this->options['definitions'] as $route => $val) {
+		foreach ($this->options['definitions'] as $route => $params) {
 			if (is_numeric($route)) {
-				$route = $val;
-				$val = array();
+				$route = $params;
+				$params = array();
 			}
 			
-			// Remove default param values from route string because they aren't
-			// needed and mess matching up
+			// Remove default values from rule string because they aren't needed
+			// and mess matching up
 			$route = preg_replace('/\=[^)]+\}/U', '?}', $route);
 			
+			// If the rule has more sections than the supplied url fragments
+			// then skip the rule
 			if ((substr_count($route, '{') - substr_count($route, '?')) > count($fragments)) {
 				continue;
 			}
 			
-			foreach ($val as $item) {
-				if (!isset($fragments[$item])) {
+			// If the rule has params specified that don't match the supplied
+			// url fragments then skip the rule
+			foreach ($params as $key => $val) {
+				if (!isset($fragments[$key]) || $fragments[$key] != $val) {
 					continue 2;
 				}
 			}
 			
+			// Loop through the array of url fragments and try to match them
+			// with a rule
 			foreach ($fragments as $fragmentName => $fragmentValue) {
 				
 				// Handle passing through of a fragment name without a value. In
@@ -102,7 +108,7 @@ abstract class sqRoute extends component {
 					$fragmentValue = sq::request()->get($fragmentName);
 				}
 				
-				if (array_key_exists($fragmentName, $val) && $val[$fragmentName] == $fragmentValue) { 
+				if (array_key_exists($fragmentName, $params) && $params[$fragmentName] == $fragmentValue) { 
 					continue;
 				} elseif (strpos($route, '{'.$fragmentName.'}') === false && strpos($route, '{'.$fragmentName.'?}') === false) {
 					if (strpos($route, '{|') !== false) {
