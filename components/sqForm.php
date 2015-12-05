@@ -64,6 +64,10 @@ abstract class sqForm extends model {
 	
 	// Prints form label
 	public static function label($for, $value, $class = 'text') {
+		if (self::inputError($for)) {
+			$class .= ' sq-error sq-error-label';
+		}
+		
 		if (preg_match('!\[([^\)]+)\]!', $for, $match)) {
 			$name = array_pop($match);
 		} else {
@@ -79,7 +83,7 @@ abstract class sqForm extends model {
 	public static function element($name, $value = null, $attrs = array()) {
 		if (self::inputError($name)) {
 			if (isset($attrs['class'])) {
-				$attrs['class'] .= 'sq-error sq-error-field';
+				$attrs['class'] .= ' sq-error sq-error-field';
 			}
 			
 			$attrs['class'] = 'sq-error sq-error-field';
