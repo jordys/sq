@@ -424,6 +424,7 @@ abstract class sqModel extends component {
 				$name = $options['mount'];
 			}
 			
+			$model->options['name'] = $name;
 			$this->data[$name] = $model;
 		}
 		
