@@ -5,15 +5,19 @@
  *
  * sq.js provides a handfull of javascript utilities for interacting with the sq
  * php framework. Provides methods for interacting with view contexts and forms.
+ * View contexts can be set up on the backend to enable loading certain pieces
+ * of UI without the performance hit of returning the entire page and without
+ * the complexity of multiple urls.
  */
 
 sq = function(sq, $) {
 	'use strict';
 	
 	// Private variable to hold callback functions
-	var callbacks = {'load': {
-		'any': []
-	}};
+	var callbacks = {
+		'load': {'any': []},
+		'save': {'any': []}
+	};
 	
 	
 	// sq.slug sub namespace. Facilitates general handling of url slugs. Allows 
@@ -45,11 +49,9 @@ sq = function(sq, $) {
 	
 	
 	// Utility function for ajax calls
-	function call(options, callback) {
-		var data = {};
-		
+	function call(options, data, callback) {
 		if (options.context) {
-			data.sqContext = options.context;
+			options.url += '?sqContext=' + options.context;
 			
 			var $context = $('#sq-context-' + options.context);
 			
@@ -66,28 +68,38 @@ sq = function(sq, $) {
 					$context.html(data);
 				}
 				
-				if (options.slug !== false) {
+				if (options.slug) {
 					slug.set(options.url);
 				}
 				
 				if (typeof callback === 'function') {
-					callback();
+					callback(data);
 				}
 			}
 		});
 	}
 	
 	// Calls the correct callback functions based on type and context
-	function triggerCallbacks(type, context) {
+	function triggerCallbacks(type, context, data) {
 		if (callbacks[type][context] !== undefined) {
 			$.each(callbacks[type][context], function(index, value) {
-				value();
+				value(data);
 			});
 		}
 		
 		$.each(callbacks[type]['any'], function(index, value) {
-			value();
+			value(data);
 		});
+	}
+	
+	// Check if the passed in argument is a string or a jQuery object. If it's a
+	// string make it a jQuery object.
+	function parseElement($element) {
+		if (typeof $element === 'string') {
+			$element = $($element);
+		}
+		
+		return $element;
 	}
 	
 	
@@ -117,21 +129,61 @@ sq = function(sq, $) {
 			callbacks[type][context].push(callback);
 		},
 		
-		// Load content from a url into a view context. View contexts can be set
-		// up on the backend to enable loading certain pieces of UI without the
-		// performance hit of returning the entire page and without the 
-		// complexity of multiple urls.
-		load: function(context, url, callback) {
+		// Posts a form to the server and places the returned content into the
+		// specified view context
+		save: function($form, context, options, callback) {
+			$form = parseElement($form);
+			
+			if (typeof options === 'string') {
+				options = {url: options};
+			} else if (typeof options === 'function') {
+				callback = options;
+				options = {};
+			}
+			
 			call({
 				context: context,
-				url: url,
-				method: 'GET',
-				slug: true
-			}, function() {
-				triggerCallbacks('load', context);
+				url: options.url || $form.attr('action'),
+				method: options.method || $form.attr('method'),
+				slug: ('slug' in options) ? options.slug : true
+			}, $form.serialize(), function(data) {
+				triggerCallbacks('save', context, data);
 				
 				if (typeof callback === 'function') {
-					callback();
+					callback(data);
+				}
+			});
+		},
+		
+		// Show or hide a loading indicator on the passed in element
+		loading: function($element, show) {
+			$element = parseElement($element);
+			
+			if (show || show === undefined) {
+				if (!$element.children('.is-loading').length) {
+					$element.append('<div class="is-loading"></div>');
+				}
+			} else {
+				$element.children('.is-loading').remove();
+			}
+		},
+		
+		// Load content from a url into a view context
+		load: function(context, options, callback) {
+			if (typeof options === 'string') {
+				options = {url: options};
+			}
+			
+			call({
+				context: context,
+				url: options.url,
+				method: options.method || 'GET',
+				slug: ('slug' in options) ? options.slug : true
+			}, {}, function(data) {
+				triggerCallbacks('load', context, data);
+				
+				if (typeof callback === 'function') {
+					callback(data);
 				}
 			});
 		}
