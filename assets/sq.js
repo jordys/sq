@@ -61,7 +61,6 @@ sq = function(sq, $) {
 		$.ajax(options.url, {
 			method: options.method,
 			data: data,
-			sqContext: options.context,
 			success: function(data) {
 				if (options.context) {
 					$context.html(data);
