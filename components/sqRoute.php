@@ -73,7 +73,7 @@ abstract class sqRoute extends component {
 	// Make a url that points back to a route with the passed in key / value
 	// parameters
 	public function to($fragments) {
-		foreach ($this->options['definitions'] as $route => $params) {
+		foreach (array_reverse($this->options['definitions']) as $route => $params) {
 			if (is_numeric($route)) {
 				$route = $params;
 				$params = array();
