@@ -25,9 +25,9 @@ class file extends model {
 		}
 		
 		if (is_dir($path)) {
-			$data = $this->readDirectory($path);
+			$data = $this->readDirectory($path, $values);
 		} else {
-			$data = $this->readFile($path);
+			$data = $this->readFile($path, $values);
 		}
 		
 		if ($this->options['limit'] === true && isset($data[0])) {
