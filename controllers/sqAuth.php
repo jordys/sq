@@ -55,6 +55,7 @@ abstract class sqAuth extends controller {
 		// Guard against invalid login
 		if ($password !== false && (!isset($user->id) || self::authenticate($password, $user->{$this->options['password-field']}))) {
 			sq::response()->flash($this->options['login-failed-message']);
+			
 			return false;
 		}
 		
@@ -93,11 +94,11 @@ abstract class sqAuth extends controller {
 	
 	// Checks login posted from form
 	public function loginPostAction($username = null, $password = null, $remember = false) {
-		if ($username && $password) {
-			$this->login($username, $password, $remember);
-		} else {
+		if (!$username || !$password) {
 			sq::response()->flash($this->options['login-failed-message']);
 		}
+		
+		$this->login($username, $password, $remember);
 		
 		if (!sq::request()->isAjax) {
 			sq::response()->redirect();
