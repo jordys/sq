@@ -66,6 +66,9 @@ abstract class sqModel extends component {
 	// classes such as sql.
 	public function exists() {}
 	
+	// Returns the number of records. Implemented in driver.
+	public function count() {}
+	
 	// Validate form using passed in rules or options in model. Shorthand for
 	// calling sq::validate().
 	public function validate($rules = null) {

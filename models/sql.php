@@ -215,6 +215,16 @@ class sql extends model {
 		return $this;
 	}
 	
+	// Returns count of records matched by the where query
+	public function count() {
+		$query = 'SELECT COUNT(*) FROM '.$this->options['table'];
+		
+		$query .= $this->parseWhere();
+		$query .= $this->parseLimit();
+		
+		return self::$conn->query($query)->fetchColumn();
+	}
+	
 	// Execute a straight mySQL query. Used behind the scenes by all the CRUD
 	// interactions.
 	public function query($query, $data = array()) {
