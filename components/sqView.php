@@ -434,6 +434,33 @@ var sq = {
 		
 		return $string;
 	}
+	
+	// Generates page numbers for model
+	public static function pagination($model, $options = null) {
+		$currentPage = 1;
+		if (sq::request()->get('page')) {
+			$currentPage = sq::request()->get('page');
+		}
+		
+		$return = '<ul class="sq-pagination">';
+		for ($i = 1; $i <= $model->options['pages']; $i++) {
+			$url = sq::route()->to(array(
+				'page' => $i,
+				'controller',
+				'action'
+			));
+			
+			if ($i == $currentPage) {
+				$return .= '<li class="is-active">';
+			} else {
+				$return .= '<li>';
+			}
+			
+			$return .= '<a href="'.$url.'">'.$i.'</a></li>';
+		}
+		
+		return $return.'</ul>';
+	}
 }
 
 ?>

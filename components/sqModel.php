@@ -266,18 +266,14 @@ abstract class sqModel extends component {
 	 * Chainable method that groups database entries into pages. Can explictly
 	 * read a certain page number or rely on the page get parameter.
 	 */
-	public function paginate($perPage = 10, $page = null) {
-		if (!$page) {
-			if (sq::request()->get('page')) {
-				$page = sq::request()->get('page');
-			} else {
-				$page = 1;
-			}
+	public function paginate($perPage = 10) {
+		$page = 1;
+		if (sq::request()->get('page')) {
+			$page = sq::request()->get('page');
 		}
 		
-		if ($this->options['limit'] !== true) {
-			$this->options['limit'] = $perPage * $page - $perPage.','.$perPage;
-		}
+		$this->options['pages'] = $this->count() / $perPage;
+		$this->options['limit'] = $perPage * $page - $perPage.','.$perPage;
 		
 		return $this;
 	}
