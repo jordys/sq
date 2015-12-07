@@ -72,7 +72,20 @@ abstract class sqRoute extends component {
 	
 	// Make a url that points back to a route with the passed in key / value
 	// parameters
-	public function to($fragments) {
+	public function to($raw) {
+		$fragments = array();
+		
+		// Handle passing through of a fragment name without a value. In this
+		// case use the value from the current URL.
+		foreach ($raw as $fragmentName => $fragmentValue) {
+			if (is_numeric($fragmentName)) {
+				$fragmentName = $fragmentValue;
+				$fragmentValue = sq::request()->get($fragmentName);
+			}
+			
+			$fragments[$fragmentName] = $fragmentValue;
+		}
+		
 		foreach (array_reverse($this->options['definitions']) as $route => $params) {
 			if (is_numeric($route)) {
 				$route = $params;
@@ -100,14 +113,6 @@ abstract class sqRoute extends component {
 			// Loop through the array of url fragments and try to match them
 			// with a rule
 			foreach ($fragments as $fragmentName => $fragmentValue) {
-				
-				// Handle passing through of a fragment name without a value. In
-				// this case use the value from the current URL.
-				if (is_numeric($fragmentName)) {
-					$fragmentName = $fragmentValue;
-					$fragmentValue = sq::request()->get($fragmentName);
-				}
-				
 				if (array_key_exists($fragmentName, $params) && $params[$fragmentName] == $fragmentValue) { 
 					continue;
 				} elseif (strpos($route, '{'.$fragmentName.'}') === false && strpos($route, '{'.$fragmentName.'?}') === false) {
