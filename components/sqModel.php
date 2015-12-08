@@ -266,10 +266,9 @@ abstract class sqModel extends component {
 	 * Chainable method that groups database entries into pages. Can explictly
 	 * read a certain page number or rely on the page get parameter.
 	 */
-	public function paginate($perPage = 10) {
-		$page = 1;
-		if (sq::request()->get('page')) {
-			$page = sq::request()->get('page');
+	public function paginate($perPage = 10, $page = null) {
+		if (!$page) {
+			$page = sq::request()->get('page', 1);
 		}
 		
 		$offset = $perPage * $page - $perPage;
@@ -286,6 +285,8 @@ abstract class sqModel extends component {
 		return $this;
 	}
 	
+	// Returns true if the object represents a single data entry. False if the
+	// model represents a listing of multiple records.
 	public function isSingle() {
 		return $this->options['limit'] === true;
 	}
