@@ -3,7 +3,7 @@
 /**
  * Route component
  *
- * Handles routing for sq application.
+ * Handles routing and URL creation for a sq application.
  */
 
 abstract class sqRoute extends component {
@@ -76,6 +76,13 @@ abstract class sqRoute extends component {
 		$this->fragments = array();
 		
 		return $this->append($fragments);
+	}
+	
+	// Sets the url fragments to match the current URL
+	public function current() {
+		$this->fragments = sq::request()->get;
+		
+		return $this;
 	}
 	
 	// Handle adding url fragments to the object. If a fragment comes in without
