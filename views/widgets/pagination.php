@@ -32,8 +32,6 @@
 	endif;
 	
 	// Setup URL objects
-	$url = $options['url'];
-	
 	$firstUrl = clone($url);
 	$lastUrl = clone($url);
 	$prevUrl = clone($url);

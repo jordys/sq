@@ -437,12 +437,6 @@ var sq = {
 	
 	// Generates page numbers for model
 	public static function pagination($model, $options = array()) {
-		
-		// Handle options shorthand
-		if ($options instanceof route) {
-			$options = array('url' => $options);
-		}
-		
 		$options = sq::merge(sq::config('view/pagination'), $options);
 		
 		// Show nothing if there aren't enough items to paginate. This can be
@@ -451,20 +445,13 @@ var sq = {
 			return;
 		}
 		
-		// Set url if one isn't specified
-		if (empty($options['url'])) {
-			$options['url'] = sq::route()->to(array(
-				'controller',
-				'action'
-			));
-		}
-		
 		$options['first'] = str_replace('{number}', 1, $options['first']);
 		$options['last'] = str_replace('{number}', $model->options['pages'], $options['last']);
 		
 		return sq::view('widgets/pagination', array(
 			'currentPage' => sq::request()->get('page', 1),
 			'options' => $options,
+			'url' => sq::route()->current(),
 			'pageCount' => $model->options['pages']
 		));
 	}
