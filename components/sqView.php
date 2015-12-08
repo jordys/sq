@@ -436,19 +436,26 @@ var sq = {
 	}
 	
 	// Generates page numbers for model
-	public static function pagination($model, $options = null) {
-		$currentPage = 1;
-		if (sq::request()->get('page')) {
-			$currentPage = sq::request()->get('page');
+	public static function pagination($model, $options = array()) {
+		
+		// Handle options shorthand
+		if ($options instanceof route) {
+			$options = array('url' => $options);
 		}
 		
-		$return = '<ul class="sq-pagination">';
-		for ($i = 1; $i <= $model->options['pages']; $i++) {
-			$url = sq::route()->to(array(
-				'page' => $i,
+		if (empty($options['url'])) {
+			$options['url'] = sq::route()->to(array(
 				'controller',
 				'action'
 			));
+		}
+		
+		$currentPage = sq::request()->get('page', 1);
+		
+		$return = '<ul class="sq-pagination">';
+		for ($i = 1; $i <= $model->options['pages']; $i++) {
+
+			$options['url']->append(array('page' => $i));
 			
 			if ($i == $currentPage) {
 				$return .= '<li class="is-active">';
@@ -456,7 +463,7 @@ var sq = {
 				$return .= '<li>';
 			}
 			
-			$return .= '<a href="'.$url.'">'.$i.'</a></li>';
+			$return .= '<a href="'.$options['url'].'">'.$i.'</a></li>';
 		}
 		
 		return $return.'</ul>';
