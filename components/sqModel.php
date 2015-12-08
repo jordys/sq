@@ -272,8 +272,16 @@ abstract class sqModel extends component {
 			$page = sq::request()->get('page');
 		}
 		
-		$this->options['pages'] = $this->count() / $perPage;
-		$this->options['limit'] = $perPage * $page - $perPage.','.$perPage;
+		$offset = $perPage * $page - $perPage;
+		
+		if ($this->isRead) {
+			$this->options['pages'] = count($this->data) / $perPage;
+			$this->data = array_splice($this->data, $offset, $perPage);
+		} else {
+			$this->options['pages'] = $this->count() / $perPage;
+		}
+		
+		$this->options['limit'] = $offset.','.$perPage;
 		
 		return $this;
 	}
@@ -330,7 +338,7 @@ abstract class sqModel extends component {
 	}
 	
 	// Creates a many to many model relationship
-	public function manyMany($model, $options) {
+	public function manyMany($model, $options, $debug = false) {
 		
 		// Allow a shorthand of just passing a string instead of options to
 		// set the bridge table
