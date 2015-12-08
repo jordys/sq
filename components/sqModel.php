@@ -15,7 +15,10 @@
 abstract class sqModel extends component {
 	
 	// Gets set to true after a database read
-	protected $isRead = false;
+	public $isRead = false;
+	
+	// Set to true if the model is valid
+	public $isValid = null;
 	
 	// Cache of many many relations to avoid double reads
 	public static $manyManyCache = array();
@@ -76,7 +79,8 @@ abstract class sqModel extends component {
 			$rules = $this->options['rules'];
 		}
 		
-		return sq::validator($this->data, $rules)->isValid;
+		$this->isValid = sq::validator($this->data, $rules)->isValid;
+		return $this->isValid;
 	}
 	
 	/**
