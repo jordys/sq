@@ -335,8 +335,10 @@ abstract class sqForm extends model {
 			$attrs['name'] = $name;
 		}
 		
-		if (isset($_SESSION['sq-form-data'][$attrs['name']])) {
-			$attrs['value'] = $_SESSION['sq-form-data'][$attrs['name']];
+		if (isset($_SESSION['sq-form-data'][$name])) {
+			$attrs['value'] = $_SESSION['sq-form-data'][$name];
+		} elseif (self::$model && isset($_SESSION['sq-form-data'][self::$model->options['name']][$name])) {
+			$attrs['value'] = $_SESSION['sq-form-data'][self::$model->options['name']][$name];
 		} elseif (!$value && self::$model && isset(self::$model->$name)) {
 			$attrs['value'] = self::$model->$name;
 		}
