@@ -343,7 +343,7 @@ abstract class sqModel extends component {
 	}
 	
 	// Creates a many to many model relationship
-	public function manyMany($model, $options, $debug = false) {
+	public function manyMany($model, $options) {
 		
 		// Allow a shorthand of just passing a string instead of options to
 		// set the bridge table
