@@ -7,9 +7,9 @@
  */
 
 abstract class sqRoute extends component {
-	public $options = array(
-		'cache' => true
-	);
+	
+	// Array fragments for the url to be generated
+	public $fragments = array();
 	
 	// Triggered by sq to initialize routing
 	public function start() {
@@ -70,22 +70,30 @@ abstract class sqRoute extends component {
 		sq::error('404');
 	}
 	
-	// Make a url that points back to a route with the passed in key / value
-	// parameters
-	public function to($raw) {
-		$fragments = array();
+	// Clears the current arguments and replaces them with the passed in
+	// fragments.
+	public function to(array $fragments) {
+		$this->fragments = array();
 		
-		// Handle passing through of a fragment name without a value. In this
-		// case use the value from the current URL.
-		foreach ($raw as $fragmentName => $fragmentValue) {
+		return $this->append($fragments);
+	}
+	
+	// Handle adding url fragments to the object. If a fragment comes in without
+	// a value use the value from the current URL.
+	public function append(array $fragments) {
+		foreach ($fragments as $fragmentName => $fragmentValue) {
 			if (is_numeric($fragmentName)) {
 				$fragmentName = $fragmentValue;
 				$fragmentValue = sq::request()->get($fragmentName);
 			}
 			
-			$fragments[$fragmentName] = $fragmentValue;
+			$this->fragments[$fragmentName] = $fragmentValue;
 		}
 		
+		return $this;
+	}
+	
+	public function render() {
 		foreach (array_reverse($this->options['definitions']) as $route => $params) {
 			if (is_numeric($route)) {
 				$route = $params;
@@ -98,21 +106,21 @@ abstract class sqRoute extends component {
 			
 			// If the rule has more sections than the supplied url fragments
 			// then skip the rule
-			if ((substr_count($route, '{') - substr_count($route, '?')) > count($fragments)) {
+			if ((substr_count($route, '{') - substr_count($route, '?')) > count($this->fragments)) {
 				continue;
 			}
 			
 			// If the rule has params specified that don't match the supplied
 			// url fragments then skip the rule
 			foreach ($params as $key => $val) {
-				if (!isset($fragments[$key]) || $fragments[$key] != $val) {
+				if (!isset($this->fragments[$key]) || $this->fragments[$key] != $val) {
 					continue 2;
 				}
 			}
 			
 			// Loop through the array of url fragments and try to match them
 			// with a rule
-			foreach ($fragments as $fragmentName => $fragmentValue) {
+			foreach ($this->fragments as $fragmentName => $fragmentValue) {
 				if (array_key_exists($fragmentName, $params) && $params[$fragmentName] == $fragmentValue) { 
 					continue;
 				} elseif (strpos($route, '{'.$fragmentName.'}') === false && strpos($route, '{'.$fragmentName.'?}') === false) {
