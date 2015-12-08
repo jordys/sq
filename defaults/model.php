@@ -52,6 +52,9 @@ return array(
 		// array with the various validation rules.
 		'rules' => array(),
 		
+		// Number of items to show per page when paginating
+		'items-per-page' => 10,
+		
 		// Model manipulation defaults
 		'order' => false,
 		'order-direction' => 'DESC',

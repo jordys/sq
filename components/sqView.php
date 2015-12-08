@@ -443,6 +443,15 @@ var sq = {
 			$options = array('url' => $options);
 		}
 		
+		$options = sq::merge(sq::config('view/pagination'), $options);
+		
+		// Show nothing if there aren't enough items to paginate. This can be
+		// disabled by enabling the always-show option.
+		if (!$options['show-always'] && $model->options['pages'] <= 1) {
+			return;
+		}
+		
+		// Set url if one isn't specified
 		if (empty($options['url'])) {
 			$options['url'] = sq::route()->to(array(
 				'controller',
@@ -450,23 +459,14 @@ var sq = {
 			));
 		}
 		
-		$currentPage = sq::request()->get('page', 1);
+		$options['first'] = str_replace('{number}', 1, $options['first']);
+		$options['last'] = str_replace('{number}', $model->options['pages'], $options['last']);
 		
-		$return = '<ul class="sq-pagination">';
-		for ($i = 1; $i <= $model->options['pages']; $i++) {
-
-			$options['url']->append(array('page' => $i));
-			
-			if ($i == $currentPage) {
-				$return .= '<li class="is-active">';
-			} else {
-				$return .= '<li>';
-			}
-			
-			$return .= '<a href="'.$options['url'].'">'.$i.'</a></li>';
-		}
-		
-		return $return.'</ul>';
+		return sq::view('widgets/pagination', array(
+			'currentPage' => sq::request()->get('page', 1),
+			'options' => $options,
+			'pageCount' => $model->options['pages']
+		));
 	}
 }
 
