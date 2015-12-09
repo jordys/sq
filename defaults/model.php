@@ -90,10 +90,8 @@ return array(
 		// Useful for text files or JSON stores.
 		'read-content' => false,
 		
-		// With of image to resize / crop to. False for none.
+		// Dimensions of image to resize / crop to. False for none.
 		'resize-x' => false,
-		
-		// Height of image to resize / crop to. False for none.
 		'resize-y' => false,
 		
 		// Amount of memory allowed to be used for the image transformation
