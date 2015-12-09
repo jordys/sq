@@ -272,11 +272,11 @@ class sql extends model {
 	private function insertQuery() {
 		
 		// When inserting always stick the last inserted id into the model
-		$this->id = self::$conn->lastInsertId();
+		$this->data['id'] = self::$conn->lastInsertId();
 		
 		// Set the where statement to the id to allow an immediate read
 		// following the create
-		$this->where($this->id);
+		$this->where($this->data['id']);
 	}
 	
 	// Insert data into the model from the query result. For single queries add
