@@ -445,11 +445,24 @@ var sq = {
 			return;
 		}
 		
+		$currentPage = sq::request()->get('page', 1);
+		
+		// Generate SEO links in document head
+		if ($options['seo-links']) {
+			if ($currentPage < $model->options['pages']) {
+				self::$head .= '<link rel="next" href="'.sq::route()->current()->append(array('page' => $currentPage + 1)).'"/>';
+			}
+			
+			if ($currentPage > 1) {
+				self::$head .= '<link rel="prev" href="'.sq::route()->current()->append(array('page' => $currentPage - 1)).'"/>';
+			}
+		}
+		
 		$options['first'] = str_replace('{number}', 1, $options['first']);
 		$options['last'] = str_replace('{number}', $model->options['pages'], $options['last']);
 		
 		return sq::view('widgets/pagination', array(
-			'currentPage' => sq::request()->get('page', 1),
+			'currentPage' => $currentPage,
 			'options' => $options,
 			'url' => sq::route()->current(),
 			'pageCount' => $model->options['pages']

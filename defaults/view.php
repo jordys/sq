@@ -55,7 +55,10 @@ return array(
 			
 			// Show pagination even if there aren't enough entries to have more
 			// than one page
-			'show-always' => false
+			'show-always' => false,
+			
+			// Show rel="next" / rel="prev" links in the header for Google
+			'seo-links' => true
 		)
 	),
 	
