@@ -39,14 +39,36 @@ class sql extends model {
 		}
 	}
 	
-	/**
-	 * Add a straight SQL where query
-	 * 
-	 * Chainable method that allows a straight sql where query to be used for
-	 * advanced searches that are too much for the where method.
-	 */
-	public function whereRaw($query) {
-		$this->options['where-raw'] = $query;
+	// Create a new record in the model
+	public function create($data = null) {
+		
+		// Unset a numberic id key if one exists
+		if (empty($this->data['id']) || is_numeric($this->data['id'])) {
+			unset($this->data['id']);
+		}
+		
+		$this->set($data);
+		
+		// Mark record as belonging to the current user if marked as a user
+		// specific model
+		if ($this->options['user-specific'] && !isset($this->data['users_id'])) {
+			$this->data['users_id'] = sq::auth()->user->id;
+		}
+		
+		$values = array();
+		foreach ($this->data as $key => $val) {
+			$values[] = ":$key";
+		}
+		
+		$columns = implode(',', array_keys($this->data));
+		$values = implode(',', $values);
+		
+		$query = 'INSERT INTO '.$this->options['table']." ($columns) 
+			VALUES ($values)";
+		
+		if ($this->checkDuplicate($this->data)) {
+			$this->query($query, $this->data);
+		}
 		
 		return $this;
 	}
@@ -75,6 +97,59 @@ class sql extends model {
 		if ($this->options['load-relations'] === true) {
 			$this->relateModel();
 		}
+		
+		return $this;
+	}
+	
+	// Update rows in table matching the where statement
+	public function update($data = null, $where = null) {
+		$this->set($data);
+		
+		if ($where) {
+			$this->where($where);
+		}
+		
+		$this->limit();
+		
+		// If no where statement is applied assume the record being updated is
+		// the current one
+		if (empty($this->options['where']) && $this->data['id']) {
+			$this->where($this->data['id']);
+		}
+		
+		$this->read(array('id'));
+		
+		$this->updateDatabase($this->data);
+		$this->onRelated('update');
+		
+		return $this;
+	}
+	
+	// Delete rows in table matching where statement
+	public function delete($where = null) {
+		if ($where) {
+			$this->where($where);
+		}
+		
+		$query = 'DELETE FROM '.$this->options['table'];
+		
+		$query .= $this->parseWhere();
+		$query .= $this->parseLimit();
+		
+		$this->onRelated('delete');
+		$this->query($query);
+		
+		return $this;
+	}
+	
+	/**
+	 * Add a straight SQL where query
+	 * 
+	 * Chainable method that allows a straight sql where query to be used for
+	 * advanced searches that are too much for the where method.
+	 */
+	public function whereRaw($query) {
+		$this->options['where-raw'] = $query;
 		
 		return $this;
 	}
@@ -136,81 +211,6 @@ class sql extends model {
 			
 			$this->query($query);
 		}
-		
-		return $this;
-	}
-	
-	// Create a new record in the model
-	public function create($data = null) {
-		
-		// Unset a numberic id key if one exists
-		if (empty($this->data['id']) || is_numeric($this->data['id'])) {
-			unset($this->data['id']);
-		}
-		
-		$this->set($data);
-		
-		// Mark record as belonging to the current user if marked as a user
-		// specific model
-		if ($this->options['user-specific'] && !isset($this->data['users_id'])) {
-			$this->data['users_id'] = sq::auth()->user->id;
-		}
-		
-		$values = array();
-		foreach ($this->data as $key => $val) {
-			$values[] = ":$key";
-		}
-		
-		$columns = implode(',', array_keys($this->data));
-		$values = implode(',', $values);
-		
-		$query = 'INSERT INTO '.$this->options['table']." ($columns) 
-			VALUES ($values)";
-		
-		if ($this->checkDuplicate($this->data)) {
-			$this->query($query, $this->data);
-		}
-		
-		return $this;
-	}
-	
-	// Update rows in table matching the where statement
-	public function update($data = null, $where = null) {
-		$this->set($data);
-		
-		if ($where) {
-			$this->where($where);
-		}
-		
-		$this->limit();
-		
-		// If no where statement is applied assume the record being updated is
-		// the current one
-		if (empty($this->options['where']) && $this->data['id']) {
-			$this->where($this->data['id']);
-		}
-		
-		$this->read(array('id'));
-		
-		$this->updateDatabase($this->data);
-		$this->onRelated('update');
-		
-		return $this;
-	}
-	
-	// Delete rows in table matching where statement
-	public function delete($where = null) {
-		if ($where) {
-			$this->where($where);
-		}
-		
-		$query = 'DELETE FROM '.$this->options['table'];
-		
-		$query .= $this->parseWhere();
-		$query .= $this->parseLimit();
-		
-		$this->onRelated('delete');
-		$this->query($query);
 		
 		return $this;
 	}

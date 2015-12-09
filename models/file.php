@@ -11,6 +11,19 @@ class file extends model {
 		ini_set('memory_limit', $this->options['memory-limit']);
 	}
 	
+	public function create($data = null) {
+		$this->set($data);
+		
+		$dir = null;
+		if ($this->data['directory']) {
+			$dir = $this->data['directory'].'/';
+		}
+		
+		$this->options['id'] = $this->upload($_FILES['file'], $dir);
+		
+		return $this;
+	}
+	
 	public function read($values = '*') {
 		$data = array();
 		
@@ -35,22 +48,12 @@ class file extends model {
 		}
 		
 		$this->set($data);
-		$this->relateModel();
+		
+		if ($this->options['load-relations'] === true) {
+			$this->relateModel();
+		}
 		
 		return $this;
-	}
-	
-	public function create($data = null) {
-		if (is_array($data)) {
-			$this->set($data);
-		}
-		
-		$dir = null;
-		if ($this->data['directory'] != null) {
-			$dir = $this->data['directory'].'/';
-		}
-		
-		$this->id = $this->upload($_FILES['file'], $dir);
 	}
 	
 	public function update($data = null, $where = null) {
