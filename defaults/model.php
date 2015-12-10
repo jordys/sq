@@ -63,6 +63,9 @@ return array(
 		'where-raw' => false,
 		'where-operation' => 'AND',
 		
+		// Number of pages of results to show
+		'pages' => 1,
+		
 		// Actions for admin modules
 		'actions' => array('create'),
 		'inline-actions' => array('delete', 'update')
