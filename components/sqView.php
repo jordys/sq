@@ -87,6 +87,11 @@ abstract class sqView extends component {
 		self::$jsData = array();
 	}
 	
+	// Checks if a view exists in the application
+	public static function exists($file) {
+		return (bool)self::getViewPath($file);
+	}
+	
 	// Renders the template view file. If full is specified the template will
 	// include the auto generated header and footer sections. HTML templates 
 	// should only include content inside the body tag and omit the body tag and
@@ -112,7 +117,7 @@ abstract class sqView extends component {
 		$base = sq::base();
 		
 		ob_start();
-		include $this->getViewPath($this->view);
+		include self::getViewPath($this->view);
 		
 		if (isset($this->parent)) {
 			self::$current++;
@@ -159,18 +164,18 @@ abstract class sqView extends component {
 	 * path of the file to be included. If a view file with the same name exists
 	 * both in the framework and in the app the app one will be chosen.
 	 */
-	private function getViewPath($file) {
-		if (file_exists(dirname($_SERVER['SCRIPT_FILENAME']).'/views/'.$file.'.php')) {
-			$path = dirname($_SERVER['SCRIPT_FILENAME']).'/views/'.$file.'.php';
+	private static function getViewPath($file) {
+		if (file_exists(sq::root().'/views/'.$file.'.php')) {
+			$path = sq::root().'/views/'.$file.'.php';
 		} elseif (file_exists(sq::path().'views/'.$file.'.php')) {
 			$path = sq::path().'views/'.$file.'.php';
 		} else {
-			$exploded = explode('/', $file);
-			$module = $exploded[0];
+			$module = explode('/', $file);
+			$module = $module[0];
 			$file = str_replace($module.'/', '', $file);
 			
-			if (file_exists(dirname($_SERVER['SCRIPT_FILENAME']).'/modules/'.$module.'/views/'.$file.'.php')) {
-				$path = dirname($_SERVER['SCRIPT_FILENAME']).'/modules/'.$module.'/views/'.$file.'.php';
+			if (file_exists(sq::root().'/modules/'.$module.'/views/'.$file.'.php')) {
+				$path = sq::root().'/modules/'.$module.'/views/'.$file.'.php';
 			} elseif (file_exists(sq::path().'modules/'.$module.'/views/'.$file.'.php')) {
 				$path = sq::path().'modules/'.$module.'/views/'.$file.'.php';
 			}
