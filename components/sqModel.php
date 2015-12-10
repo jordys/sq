@@ -31,27 +31,27 @@ abstract class sqModel extends component {
 	// multiple results. The default listing and form view can also be
 	// overridden in the model options.
 	public function render() {
-		if ($this->layout) {
-			$name = explode('/', $this->layout);
-			$name = array_pop($name);
-			
-			$this->layout->model = $this;
-			if (isset($this->options['fields'][$name])) {
-				$this->layout->fields = $this->options['fields'][$name];
-			}
-			
-			return $this->layout;
-		} elseif ($this->options['limit']) {
-			return sq::view('forms/form', array(
+		$fields = $this->options['fields']['list'];
+		if ($this->isSingle()) {
+			$this->options['fields']['form'];
+		}
+		
+		if (!$this->layout) {
+			return sq::view('forms/'.($this->isSingle() ? 'form' : 'list'), array(
 				'model' => $this,
-				'fields' => $this->options['fields']['form']
-			));
-		} else {
-			return sq::view('forms/list', array(
-				'model' => $this,
-				'fields' => $this->options['fields']['list']
+				'fields' => $fields
 			));
 		}
+		
+		$name = array_pop(explode('/', $this->layout));
+		if (isset($this->options['fields'][$name])) {
+			$fields = $this->options['fields'][$name];
+		}
+		
+		$this->layout->fields = $fields;
+		$this->layout->model = $this;
+		
+		return $this->layout;
 	}
 	
 	// CRUD methods to be implemented. These four methods must be implemented by
