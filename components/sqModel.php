@@ -26,24 +26,37 @@ abstract class sqModel extends component {
 	// Workaround to avoid object content rules when using usort
 	public static $usort;
 	
+	// Setup initial replacer layout so it is available always
+	public function __construct($options = array()) {
+		parent::__construct($options);
+		
+		if (!$this->layout) {
+			$this->layout = sq::view('_sqReplace');
+		}
+	}
+	
 	// Called by the __tostring method to render a view of the data in the
 	// model. By default the view is a form for a single result and a listing
 	// multiple results. The default listing and form view can also be
 	// overridden in the model options.
 	public function render() {
-		$fields = $this->options['fields']['list'];
-		if ($this->isSingle()) {
-			$this->options['fields']['form'];
+		$name = explode('/', $this->layout->view);
+		$name = array_pop($name);
+		
+		// If the current layout is generic replace it with a either form or
+		// list depending on if we are looking at a single model.
+		if ($name == '_sqReplace') {
+			$name = $this->isSingle() ? 'form' : 'list';
+			
+			// Check for a view in forms/{model}/{list|form} that would replace
+			// the default if it exists
+			$this->layout->view = 'forms/'.$name;
+			if (view::exists('forms/'.$this->options['name'].'/'.$name)) {
+				$this->layout->view = 'forms/'.$this->options['name'].'/'.$name;
+			}
 		}
 		
-		if (!$this->layout) {
-			return sq::view('forms/'.($this->isSingle() ? 'form' : 'list'), array(
-				'model' => $this,
-				'fields' => $fields
-			));
-		}
-		
-		$name = array_pop(explode('/', $this->layout));
+		// Check for view specific fields
 		if (isset($this->options['fields'][$name])) {
 			$fields = $this->options['fields'][$name];
 		}
