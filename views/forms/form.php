@@ -1,4 +1,4 @@
-<?php
+<?
 
 $modelName = $model->options['name'];
 
@@ -21,16 +21,16 @@ if ($model->options['inline-view']) {
 }
 
 ?>
-<?php if (!$model->options['inline-view']): ?>
+<? if (!$model->options['inline-view']): ?>
 <section class="form edit-form">
-	<h2><?php echo ucwords(sq::request()->get('action')) ?></h2>
-	<form method="post" enctype="multipart/form-data" action="<?php echo $base, $action?>">
-<?php else: ?>
+	<h2><? echo ucwords(sq::request()->get('action')) ?></h2>
+	<form method="post" enctype="multipart/form-data" action="<? echo $base, $action?>">
+<? else: ?>
 	<div class="inline-form">
-		<h3><?php echo ucwords($modelName) ?></h3>
-		<input type="hidden" name="model[]" value="<?php echo $baseName ?>"/>
-<?php endif ?>
-<?php foreach ($fields as $name => $type):
+		<h3><? echo ucwords($modelName) ?></h3>
+		<input type="hidden" name="model[]" value="<? echo $baseName ?>"/>
+<? endif ?>
+<? foreach ($fields as $name => $type):
 	$type = explode('|', $type);
 	
 	$arg = false;
@@ -62,13 +62,13 @@ if ($model->options['inline-view']) {
 		echo '</div>';
 	}
 endforeach ?>
-<?php if (!$model->options['inline-view']): ?>
+<? if (!$model->options['inline-view']): ?>
 		<div class="actions global-actions form-actions">
 			<input type="submit" name="button" value="Save"/>
-			<a class="cancel form-cancel" href="<?php echo $base.sq::request()->any('controller').'/'.$modelName?>">Cancel</a>
+			<a class="cancel form-cancel" href="<? echo $base.sq::request()->any('controller').'/'.$modelName?>">Cancel</a>
 		</div>
 	</form>
 </section>
-<?php else: ?>
+<? else: ?>
 </div>
-<?php endif ?>
+<? endif ?>

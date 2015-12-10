@@ -43,7 +43,7 @@ class file extends model {
 			$data = $this->readFile($path, $values);
 		}
 		
-		if ($this->options['limit'] === true && isset($data[0])) {
+		if ($this->isSingle() && isset($data[0])) {
 			$data = $data[0];
 		}
 		

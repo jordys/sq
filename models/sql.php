@@ -218,9 +218,7 @@ class sql extends model {
 	// Returns count of records matched by the where query
 	public function count() {
 		$query = 'SELECT COUNT(*) FROM '.$this->options['table'];
-		
 		$query .= $this->parseWhere();
-		$query .= $this->parseLimit();
 		
 		return self::$conn->query($query)->fetchColumn();
 	}
@@ -283,7 +281,7 @@ class sql extends model {
 	// the data to the current model otherwise create child models and add them
 	// as a list.
 	private function selectQuery($handle) {
-		if ($this->options['limit'] === true) {
+		if ($this->isSingle()) {
 			$row = $handle->fetch();
 			
 			if ($row) {
@@ -362,7 +360,7 @@ class sql extends model {
 	
 	// Generates SQL order statement
 	private function parseOrder() {
-		if ($this->options['order'] && $this->options['limit'] !== true) {
+		if ($this->options['order'] && !$this->isSingle()) {
 			return " ORDER BY {$this->options['order']} {$this->options['order-direction']}, id ASC";
 		}
 	}

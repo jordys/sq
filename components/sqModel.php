@@ -378,7 +378,7 @@ abstract class sqModel extends component {
 			$this->options[$type][$name] = $options;
 		}
 		
-		if ($this->options['limit'] !== true) {
+		if (!$this->isSingle()) {
 			foreach ($this->data as $item) {
 				$item->relate($name, $options, $type);
 			}
@@ -468,7 +468,7 @@ abstract class sqModel extends component {
 	// Utility method that loops through related models after an action is
 	// performed and performs the same action on models where cascade is true
 	protected function onRelated($method) {
-		if ($this->options['limit'] !== true) {
+		if ($this->isSingle()) {
 			foreach ($this->data as $row) {
 				foreach ($row as $val) {
 					if (is_object($val) && $val->options['cascade']) {

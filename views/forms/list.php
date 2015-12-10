@@ -1,4 +1,4 @@
-<?php
+<?
 
 $inlineActions = $model->options['inline-actions'];
 $actions = $model->options['actions'];
@@ -10,11 +10,14 @@ endif;
 
 ?>
 <section class="form list-form">
-	<h2><?php echo ucwords($modelName) ?></h2>
-	<span class="count"><?php echo count($model) ?> Results</span>
+	<h2><? echo ucwords($modelName) ?></h2>
+	<span class="count"><? echo count($model) ?> Results</span>
+	
+	<?=view::pagination($model) ?>
+	
 	<form method="post" action="">
 		<div class="actions global-actions listing-actions">
-<?php
+<?
 if ($actions):
 	foreach ($actions as $action):
 		echo '<a href="'.$base.sq::request()->get('module').'/'.$modelName.'/'.sq::route()->format($action).'" class="action global-action list-action">'.ucwords($action).'</a>';
@@ -26,16 +29,16 @@ endif;
 			<table>
 				<thead>
 					<tr>
-<?php foreach ($fields as $name => $type):
+<? foreach ($fields as $name => $type):
 	echo '<th>'.ucwords($name).'</th>';
 endforeach ?>
 						<th class="list-actions"></th>
 					</tr>
 				</thead>
 				<tbody>
-<?php foreach ($model as $item): ?>
+<? foreach ($model as $item): ?>
 					<tr>
-	<?php foreach ($fields as $name => $type):
+	<? foreach ($fields as $name => $type):
 		if (isset($item->$name)):
 			if ($type == 'sort'):
 				if (!$item->$name):
@@ -52,7 +55,7 @@ endforeach ?>
 	endforeach;
 	if (isset($item->$name)): ?>
 						<td class="actions inline-actions list-actions">
-		<?php foreach ($inlineActions as $action):
+		<? foreach ($inlineActions as $action):
 			$id = '?id='.$item->id;
 			
 			if (is_int($item->id)):
@@ -61,14 +64,16 @@ endforeach ?>
 			echo '<a href="'.$base.sq::request()->get('module').'/'.$modelName.'/'.sq::route()->format($action).$id.'" class="action inline-action list-action '.sq::route()->format($action).'-action">'.ucwords($action).'</a>';
 		endforeach ?>
 						</td>
-	<?php endif ?>
+	<? endif ?>
 					</tr>
-<?php endforeach ?>
+<? endforeach ?>
 				</tbody>
 			</table>
 		</div>
-		<?php if (in_array('sort', $fields)): ?>
+		<? if (in_array('sort', $fields)): ?>
 			<button name="action" value="sort">Update</button>
-		<?php endif ?>
+		<? endif ?>
 	</form>
+	
+	<?=view::pagination($model) ?>
 </section>
