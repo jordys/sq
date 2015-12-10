@@ -10,8 +10,8 @@ endif;
 
 ?>
 <section class="form list-form">
-	<h2><? echo ucwords($modelName) ?></h2>
-	<span class="count"><? echo count($model) ?> Results</span>
+	<h2><?=ucwords($modelName) ?></h2>
+	<span class="count"><?=count($model) ?> Results</span>
 	
 	<?=view::pagination($model) ?>
 	

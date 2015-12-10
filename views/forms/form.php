@@ -23,12 +23,12 @@ if ($model->options['inline-view']) {
 ?>
 <? if (!$model->options['inline-view']): ?>
 <section class="form edit-form">
-	<h2><? echo ucwords(sq::request()->get('action')) ?></h2>
-	<form method="post" enctype="multipart/form-data" action="<? echo $base, $action?>">
+	<h2><?=ucwords(sq::request()->get('action')) ?></h2>
+	<form method="post" enctype="multipart/form-data" action="<?=$base.$action ?>">
 <? else: ?>
 	<div class="inline-form">
-		<h3><? echo ucwords($modelName) ?></h3>
-		<input type="hidden" name="model[]" value="<? echo $baseName ?>"/>
+		<h3><?=ucwords($modelName) ?></h3>
+		<input type="hidden" name="model[]" value="<?=$baseName ?>"/>
 <? endif ?>
 <? foreach ($fields as $name => $type):
 	$type = explode('|', $type);
@@ -65,7 +65,7 @@ endforeach ?>
 <? if (!$model->options['inline-view']): ?>
 		<div class="actions global-actions form-actions">
 			<input type="submit" name="button" value="Save"/>
-			<a class="cancel form-cancel" href="<? echo $base.sq::request()->any('controller').'/'.$modelName?>">Cancel</a>
+			<a class="cancel form-cancel" href="<?=$base.sq::request()->any('controller').'/'.$modelName ?>">Cancel</a>
 		</div>
 	</form>
 </section>
