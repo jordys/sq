@@ -88,18 +88,32 @@ abstract class sqRoute extends component {
 	// Handle adding url fragments to the object. If a fragment comes in without
 	// a value use the value from the current URL.
 	public function append(array $fragments) {
-		foreach ($fragments as $fragmentName => $fragmentValue) {
-			if (is_numeric($fragmentName)) {
-				$fragmentName = $fragmentValue;
-				$fragmentValue = sq::request()->get($fragmentName);
+		foreach ($fragments as $name => $value) {
+			
+			// Handle optional fragment names
+			$optional = false;
+			if (strpos($name, '?') !== false || strpos($value, '?') !== false) {
+				$name = str_replace('?', '', $name);
+				$value = str_replace('?', '', $value);
+				$optional = true;
 			}
 			
-			$this->fragments[$fragmentName] = $fragmentValue;
+			if (is_numeric($name)) {
+				$name = $value;
+				$value = sq::request()->get($name);
+			}
+			
+			if (!$value && $optional) {
+				continue;
+			}
+			
+			$this->fragments[$name] = $value;
 		}
 		
 		return $this;
 	}
 	
+	// Generates the url when the object is used as a string
 	public function render() {
 		foreach (array_reverse($this->options['definitions']) as $route => $params) {
 			if (is_numeric($route)) {
@@ -128,7 +142,7 @@ abstract class sqRoute extends component {
 			// Loop through the array of url fragments and try to match them
 			// with a rule
 			foreach ($this->fragments as $fragmentName => $fragmentValue) {
-				if (array_key_exists($fragmentName, $params) && $params[$fragmentName] == $fragmentValue) { 
+				if (array_key_exists($fragmentName, $params) && $params[$fragmentName] == $fragmentValue) {
 					continue;
 				} elseif (strpos($route, '{'.$fragmentName.'}') === false && strpos($route, '{'.$fragmentName.'?}') === false) {
 					if (strpos($route, '{|') !== false) {
@@ -143,9 +157,10 @@ abstract class sqRoute extends component {
 				}
 			}
 			
-			$route = preg_replace('/\/?\{[^)]+\}/', '', $route);
+			$route = preg_replace('/\/?\{[^)]+\}/U', '', $route);
+			$route = preg_replace('~/+~', '/', $route);
 			
-			return sq::base().$route;
+			return sq::base().trim($route, '/');
 		}
 	}
 	

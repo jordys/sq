@@ -19,8 +19,22 @@ endif;
 		<div class="actions global-actions listing-actions">
 <?
 if ($actions):
-	foreach ($actions as $action):
-		echo '<a href="'.$base.sq::request()->get('module').'/'.$modelName.'/'.sq::route()->format($action).'" class="action global-action list-action">'.ucwords($action).'</a>';
+	foreach ($actions as $key => $val):
+		$action = $val;
+		$display = ucwords($action);
+		if (!is_numeric($key)):
+			$action = $key;
+			$display = $val;
+		endif;	
+		
+		$url = sq::route()->to(array(
+			'controller?',
+			'module?',
+			'model' => $modelName,
+			'action' => $action
+		));
+		
+		echo '<a href="'.$url.'" class="action global-action list-action">'.$display.'</a>';
 	endforeach;
 endif;
 ?>
@@ -55,13 +69,23 @@ endforeach ?>
 	endforeach;
 	if (isset($item->$name)): ?>
 						<td class="actions inline-actions list-actions">
-		<? foreach ($inlineActions as $action):
-			$id = '?id='.$item->id;
-			
-			if (is_int($item->id)):
-				$id = '/'.$item->id;
+		<? foreach ($inlineActions as $key => $val):
+			$action = $val;
+			$display = ucwords($action);
+			if (!is_numeric($key)):
+				$action = $key;
+				$display = $val;
 			endif;
-			echo '<a href="'.$base.sq::request()->get('module').'/'.$modelName.'/'.sq::route()->format($action).$id.'" class="action inline-action list-action '.sq::route()->format($action).'-action">'.ucwords($action).'</a>';
+			
+			$url = sq::route()->to(array(
+				'controller?',
+				'module?',
+				'model' => $modelName,
+				'action' => $action,
+				'id' => $item->id
+			));
+			
+			echo '<a href="'.$url.'" class="action inline-action list-action '.sq::route()->format($action).'-action">'.$display.'</a>';
 		endforeach ?>
 						</td>
 	<? endif ?>
