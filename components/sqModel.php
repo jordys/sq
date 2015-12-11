@@ -482,17 +482,17 @@ abstract class sqModel extends component {
 	// performed and performs the same action on models where cascade is true
 	protected function onRelated($method) {
 		if ($this->isSingle()) {
+			foreach ($this->data as $val) {
+				if (is_object($val) && $val->options['cascade']) {
+					$val->$method();
+				}
+			}
+		} else {
 			foreach ($this->data as $row) {
 				foreach ($row as $val) {
 					if (is_object($val) && $val->options['cascade']) {
 						$val->$method();
 					}
-				}
-			}
-		} else {
-			foreach ($this->data as $val) {
-				if (is_object($val) && $val->options['cascade']) {
-					$val->$method();
 				}
 			}
 		}
