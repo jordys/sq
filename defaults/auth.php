@@ -50,7 +50,11 @@ return array(
 				'notes' => 'blurb'
 			)
 		),
-		'inline-actions' => array('delete', 'password', 'update'),
+		'inline-actions' => array(
+			'delete' => 'Delete',
+			'password' => 'Change Password',
+			'update' => 'Edit'
+		),
 		'admin-types' => array(
 			'user' => 'User',
 			'admin' => 'Admin'
