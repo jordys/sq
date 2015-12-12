@@ -67,8 +67,8 @@ return array(
 		'pages' => 1,
 		
 		// Actions for admin modules
-		'actions' => array('create'),
-		'inline-actions' => array('delete', 'update')
+		'actions' => array('create' => 'Create'),
+		'inline-actions' => array('delete' => 'Delete', 'update' => 'Update')
 	),
 	
 	// MySQL database connection information
