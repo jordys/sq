@@ -85,6 +85,13 @@ abstract class sqRoute extends component {
 		return $this;
 	}
 	
+	// Removes a fragment from the current url object
+	public function remove($fragment) {
+		unset($this->fragments[$fragment]);
+		
+		return $this;
+	}
+	
 	// Handle adding url fragments to the object. If a fragment comes in without
 	// a value use the value from the current URL.
 	public function append(array $fragments) {
