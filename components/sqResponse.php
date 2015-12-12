@@ -18,6 +18,10 @@ abstract class sqResponse extends component {
 				$url = $_SERVER['HTTP_REFERER'];
 			}
 			
+			if (is_array($url)) {
+				$url = sq::route()->to($url);
+			}
+			
 			header('location:'.$url, true, $code);
 			die();
 		}
