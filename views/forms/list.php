@@ -1,43 +1,25 @@
-<?
-
-$inlineActions = $model->options['inline-actions'];
-$actions = $model->options['actions'];
-$modelName = $model->options['name'];
-
-if (sq::request()->any('controller')):
-	$modelName = sq::request()->any('controller');
-endif;
-
-?>
 <section class="form list-form">
-	<h2><?=ucwords($modelName) ?></h2>
+	<h2><?=ucwords($model->options['name']) ?></h2>
 	<span class="count"><?=count($model) ?> Results</span>
 	
 	<?=view::pagination($model) ?>
 	
 	<form method="post" action="">
 		<div class="actions global-actions listing-actions">
-<?
-if ($actions):
-	foreach ($actions as $key => $val):
-		$action = $val;
-		$display = ucwords($action);
-		if (!is_numeric($key)):
-			$action = $key;
-			$display = $val;
-		endif;	
-		
-		$url = sq::route()->to(array(
-			'controller?',
-			'module?',
-			'model' => $modelName,
-			'action' => $action
-		));
-		
-		echo '<a href="'.$url.'" class="action global-action list-action">'.$display.'</a>';
-	endforeach;
-endif;
-?>
+<? foreach ($model->options['actions'] as $key => $val):
+	$action = $val;
+	$display = ucwords($action);
+	if (!is_numeric($key)):
+		$action = $key;
+		$display = $val;
+	endif;	
+	
+	$url = sq::route()->current()->append(array(
+		'action' => $action
+	))->remove('page');
+	
+	echo '<a href="'.$url.'" class="action global-action list-action">'.$display.'</a>';
+endforeach ?>
 		</div>
 		<div class="table-wrapper">
 			<table>
@@ -69,7 +51,7 @@ endforeach ?>
 	endforeach;
 	if (isset($item->$name)): ?>
 						<td class="actions inline-actions list-actions">
-		<? foreach ($inlineActions as $key => $val):
+		<? foreach ($model->options['inline-actions'] as $key => $val):
 			$action = $val;
 			$display = ucwords($action);
 			if (!is_numeric($key)):
@@ -77,13 +59,10 @@ endforeach ?>
 				$display = $val;
 			endif;
 			
-			$url = sq::route()->to(array(
-				'controller?',
-				'module?',
-				'model' => $modelName,
+			$url = sq::route()->current()->append(array(
 				'action' => $action,
 				'id' => $item->id
-			));
+			))->remove('page');
 			
 			echo '<a href="'.$url.'" class="action inline-action list-action '.sq::route()->format($action).'-action">'.$display.'</a>';
 		endforeach ?>
