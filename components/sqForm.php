@@ -11,6 +11,7 @@
 abstract class sqForm extends model {
 	protected static $model, $mark;
 	
+	// Populates form model object from the post parameters in the URL
 	public function __construct($options) {
 		parent::__construct($options);
 		
