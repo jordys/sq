@@ -39,6 +39,28 @@ class sql extends model {
 		}
 	}
 	
+	// Returns only alphanumeric characters and underscores. A whitelist of
+	// values to not sanitize can be passed in as a second argument.
+	public function sanitize($value, $whitelist = array()) {
+		
+		// If an array is passed in sanitize every key
+		if (is_array($value)) {
+			foreach ($value as $key => $item) {
+				$value[$key] = $this->sanitize($item);
+			}
+			
+			return $value;
+		}
+		
+		// If value is in whitelist return whitelisted value
+		if (in_array($value, $whitelist)) {
+			return $value;
+		}
+		
+		// Remove all characters except alphnumeric and underscores
+		return preg_replace('/[^A-Za-z0-9_]/', '', $value);
+	}
+	
 	// Create a new record in the model
 	public function create($data = null) {
 		
@@ -56,15 +78,15 @@ class sql extends model {
 		}
 		
 		$values = array();
-		foreach ($this->data as $key => $val) {
+		foreach ($this->sanitize(array_keys($this->data)) as $key) {
 			$values[] = ":$key";
 		}
 		
-		$columns = implode(',', array_keys($this->data));
+		$columns = implode(',', $this->sanitize(array_keys($this->data)));
 		$values = implode(',', $values);
 		
-		$query = 'INSERT INTO '.$this->options['table']." ($columns) 
-			VALUES ($values)";
+		$query = 'INSERT INTO '.$this->sanitize($this->options['table'])."
+			($columns) VALUES ($values)";
 		
 		if ($this->checkDuplicate($this->data)) {
 			$this->query($query, $this->data);
@@ -82,11 +104,13 @@ class sql extends model {
 	 * if limit is false.
 	 */
 	public function read($values = '*') {
+		$values = $this->sanitize($values, array('*'));
+		
 		if (is_array($values)) {
 			$values = implode(',', $values);
 		}
 		
-		$query = "SELECT $values FROM ".$this->options['table'];
+		$query = "SELECT $values FROM ".$this->sanitize($this->options['table']);
 		
 		$query .= $this->parseWhere();
 		$query .= $this->parseOrder();
@@ -117,7 +141,7 @@ class sql extends model {
 			$this->where($this->data['id']);
 		}
 		
-		$this->read(array('id'));
+		$this->read('id');
 		
 		$this->updateDatabase($this->data);
 		$this->onRelated('update');
@@ -131,7 +155,7 @@ class sql extends model {
 			$this->where($where);
 		}
 		
-		$query = 'DELETE FROM '.$this->options['table'];
+		$query = 'DELETE FROM '.$this->sanitize($this->options['table']);
 		
 		$query .= $this->parseWhere();
 		$query .= $this->parseLimit();
@@ -147,6 +171,9 @@ class sql extends model {
 	 * 
 	 * Chainable method that allows a straight sql where query to be used for
 	 * advanced searches that are too much for the where method.
+	 *
+	 * WARNING: raw where statements are executed 'as is' without any safety
+	 * checking.
 	 */
 	public function whereRaw($query) {
 		$this->options['where-raw'] = $query;
@@ -162,7 +189,7 @@ class sql extends model {
 	 * having null data is necessary.
 	 */
 	public function schema() {
-		return $this->query('SHOW COLUMNS FROM '.$this->options['table']);
+		return $this->query('SHOW COLUMNS FROM '.$this->sanitize($this->options['table']));
 	}
 	
 	/**
@@ -173,7 +200,7 @@ class sql extends model {
 	 */
 	public function exists() {
 		try {
-			self::$conn->query('SELECT 1 FROM '.$this->options['table'].' LIMIT 1');
+			self::$conn->query('SELECT 1 FROM '.$this->sanitize($this->options['table']).' LIMIT 1');
 		} catch (Exception $e) {
 			return false;
 		}
@@ -196,7 +223,7 @@ class sql extends model {
 				$schema = sq::config($schema);
 			}
 			
-			$query = 'CREATE TABLE '.$this->options['table'].' (';
+			$query = 'CREATE TABLE '.$this->sanitize($this->options['table']).' (';
 			
 			if (!array_key_exists('id', $schema)) {
 				$query .= 'id INT(11) NOT NULL AUTO_INCREMENT, ';
@@ -217,7 +244,7 @@ class sql extends model {
 	
 	// Returns count of records matched by the where query
 	public function count() {
-		$query = 'SELECT COUNT(*) FROM '.$this->options['table'];
+		$query = 'SELECT COUNT(*) FROM '.$this->sanitize($this->options['table']);
 		$query .= $this->parseWhere();
 		
 		return self::$conn->query($query)->fetchColumn();
@@ -286,11 +313,7 @@ class sql extends model {
 			
 			if ($row) {
 				foreach ($row as $key => $val) {
-					if (is_string($val)) {
-						$this->$key = stripcslashes($val);
-					} else {
-						$this->$key = $val;
-					}
+					$this->$key = $val;
 				}
 			}
 		} else {
@@ -300,11 +323,7 @@ class sql extends model {
 				$model = sq::model($this->options['table'])->limit();
 				
 				foreach ($row as $key => $val) {
-					if (is_string($val)) {
-						$model->$key = stripcslashes($val);
-					} else {
-						$model->$key = $val;
-					}
+					$model->$key = $val;
 				}
 				
 				// Call relation setup if enabled otherwise pass the disabled
@@ -339,11 +358,12 @@ class sql extends model {
 	
 	// Utility function to update data in the database from what is in the model
 	private function updateDatabase($data) {
-		$query = 'UPDATE '.$this->options['table'];
+		$query = 'UPDATE '.$this->sanitize($this->options['table']);
 				
 		$set = array();
 		foreach ($data as $key => $val) {
 			if (!in_array($key, array('id', 'created', 'edited')) && !is_object($val)) {
+				$key = $this->sanitize($key);
 				$set[] = "$key = :$key";
 			} else {
 				unset($data[$key]);
@@ -361,7 +381,8 @@ class sql extends model {
 	// Generates SQL order statement
 	private function parseOrder() {
 		if ($this->options['order'] && !$this->isSingle()) {
-			return " ORDER BY {$this->options['order']} {$this->options['order-direction']}, id ASC";
+			return ' ORDER BY '.$this->sanitize($this->options['order']).'
+				'.$this->sanitize($this->options['order-direction']).', id ASC';
 		}
 	}
 	
@@ -378,7 +399,7 @@ class sql extends model {
 			$i = 0;
 			foreach ($this->options['where'] as $key => $val) {
 				if ($i++) {
-					$query .= " {$this->options['where-operation']} ";
+					$query .= ' '.$this->sanitize($this->options['where-operation']).' ';
 				} else {
 					$query .= ' WHERE ';
 				}
@@ -392,12 +413,12 @@ class sql extends model {
 							$query .= ' OR ';
 						}
 						
-						$query .= "$key = '$param'";
+						$query .= $this->sanitize($key).' = '.self::$conn->quote($param);
 					}
 					
 					$query .= ')';
 				} else {
-					$query .= "$key = '$val'";
+					$query .= $this->sanitize($key).' = '.self::$conn->quote($val);
 				}
 			}
 		}
@@ -413,7 +434,7 @@ class sql extends model {
 		
 		if ($this->options['where-raw']) {
 			if ($this->options['where']) {
-				$query .= " {$this->options['where-operation']} ";
+				$query .= ' '.$this->sanitize($this->options['where-operation']).' ';
 			} else {
 				$query .= ' WHERE ';
 			}
@@ -427,7 +448,13 @@ class sql extends model {
 	// Generates SQL limit statement
 	private function parseLimit() {
 		if ($this->options['limit']) {
-			return ' LIMIT '.$this->options['limit'];
+			$limit = $this->sanitize($this->options['limit']);
+			
+			if (is_array($limit)) {
+				$limit = implode(',', $limit);
+			}
+			
+			return ' LIMIT '.$limit;
 		}
 	}
 }

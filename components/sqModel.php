@@ -301,7 +301,7 @@ abstract class sqModel extends component {
 			$this->options['pages'] = ceil($this->count() / $perPage);
 		}
 		
-		$this->options['limit'] = $offset.','.$perPage;
+		$this->options['limit'] = array($offset, $perPage);
 		
 		return $this;
 	}
