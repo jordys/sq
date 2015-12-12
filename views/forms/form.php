@@ -1,4 +1,4 @@
-<section class="form edit-form">
+<section class="sq-form">
 	<h2><?=ucwords(sq::request()->get('action')) ?></h2>
 	<?=form::open($model, array('enctype' => 'multipart/form-data')) ?>
 
@@ -11,7 +11,7 @@
 	endif;
 	$type = $type[0];
 ?>	
-		<div class="form-block">
+		<div class="sq-form-row sq-<?=$type ?>-form-row">
 			<?=form::label($baseName.'['.$name.']', ucwords(str_replace('_', ' ', $name)), $type) ?>
 			<? if ($arg):
 				echo form::$type($name, $arg);
@@ -20,9 +20,9 @@
 			endif ?>
 		</div>
 <? endforeach ?>
-		<div class="actions global-actions form-actions">
-			<input type="submit" name="button" value="Save"/>
-			<a class="cancel form-cancel" href="<?=$_SERVER['HTTP_REFERER'] ?>">Cancel</a>
+		<div class="sq-actions sq-form-actions">
+			<input class="sq-action sq-save-action" type="submit" name="button" value="Save"/>
+			<a class="sq-cancel" href="<?=$_SERVER['HTTP_REFERER'] ?>">Cancel</a>
 		</div>
 	<?=form::close() ?>
 </section>
