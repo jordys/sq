@@ -134,6 +134,8 @@ class file extends model {
 				}
 			}
 		}
+		
+		closedir($handle); 
 	}
 	
 	private function checkMatch($fileData) {
