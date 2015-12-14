@@ -89,31 +89,24 @@ return array(
 	// File model type configuration
 	'file' => array(
 		
-		// Base path of the file storage directory
-		'path' => 'uploads/',
-		
-		// Read the content of files and add it to array in adition to metadata.
-		// Useful for text files or JSON stores.
-		'read-content' => false,
-		
-		// Dimensions of image to resize / crop to. False for none.
-		'resize-x' => false,
-		'resize-y' => false,
+		// Base directory where the files are stored
+		'path' => 'files',
 		
 		// Amount of memory allowed to be used for the image transformation
 		// process
 		'memory-limit' => '16M',
 		
-		// Look in sub directories when searching
-		'recursive' => false,
-		
-		// Defines variants of images
-		'variations' => array()
+		// Read content from files. Values are false to never read, 'single' to
+		// online read for single file querries and 'always' to read content
+		// when searching and reading a single file.
+		'read-content' => 'single'
 	),
 	
 	// Files model
 	'files' => array(
 		'type' => 'file',
+		'path' => 'uploads',
+		
 		'fields' => array(
 			'list' => array(
 				'path' => 'image',
