@@ -174,8 +174,8 @@ abstract class sqModel extends component {
 		$data = array();
 		
 		foreach ($this->data as $item) {
-			if (isset($item->$column)) {
-				$data[] = $item->$column;
+			if (isset($item->data[$column])) {
+				$data[] = $item->data[$column];
 			}
 		}
 		
@@ -231,9 +231,9 @@ abstract class sqModel extends component {
 				$order = $ref->options['order'];
 				
 				if ($ref->options['order-direction'] == 'DESC') {
-					return $a[$order] < $b[$order];
+					return $a->data[$order] < $b->data[$order];
 				} else {
-					return $a[$order] > $b[$order];
+					return $a->data[$order] > $b->data[$order];
 				}
 			});
 		}
