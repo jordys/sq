@@ -30,7 +30,7 @@ abstract class sqModel extends component {
 	public function __construct($options = array()) {
 		parent::__construct($options);
 		
-		if (!$this->layout) {
+		if (!$this->layout && $this->options['use-layout']) {
 			$this->layout = sq::view('_sqReplace');
 		}
 	}

@@ -66,6 +66,9 @@ return array(
 		// Number of pages of results to show
 		'pages' => 1,
 		
+		// Set to false to disable model layout views
+		'use-layout' => true,
+		
 		// Actions for admin modules
 		'actions' => array('create' => 'Create'),
 		'inline-actions' => array('delete' => 'Delete', 'update' => 'Update')

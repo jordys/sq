@@ -216,30 +216,32 @@ class sql extends model {
 	 * values. An auto incrementing id column is added if none is specified.
 	 */
 	public function make($schema = null) {
-		if (!$this->exists()) {
-			if (!$schema) {
-				$schema = $this->options['schema'];
-			} elseif (is_string($schema)) {
-				$schema = sq::config($schema);
-			}
-			
-			$query = 'CREATE TABLE '.$this->sanitize($this->options['table']).' (';
-			
-			if (!array_key_exists('id', $schema)) {
-				$query .= 'id INT(11) NOT NULL AUTO_INCREMENT, ';
-			}
-			
-			foreach ($schema as $key => $val) {
-				$schema[$key] = $key.' '.$val;
-			}
-			
-			$query .= implode(',', $schema);
-			$query .= ', PRIMARY KEY (id))';
-			
-			$this->query($query);
+		
+		// Skip if the table already exists
+		if ($this->exists()) {
+			return $this;
 		}
 		
-		return $this;
+		if (!$schema) {
+			$schema = $this->options['schema'];
+		} elseif (is_string($schema)) {
+			$schema = sq::config($schema);
+		}
+		
+		$query = 'CREATE TABLE '.$this->sanitize($this->options['table']).' (';
+		
+		if (!array_key_exists('id', $schema)) {
+			$query .= 'id INT(11) NOT NULL AUTO_INCREMENT, ';
+		}
+		
+		foreach ($schema as $key => $val) {
+			$schema[$key] = $key.' '.$val;
+		}
+		
+		$query .= implode(',', $schema);
+		$query .= ', PRIMARY KEY (id))';
+		
+		return $this->query($query);
 	}
 	
 	// Returns count of records matched by the where query
@@ -320,7 +322,8 @@ class sql extends model {
 			while ($row = $handle->fetch()) {
 				
 				// Create child model
-				$model = sq::model($this->options['table'])->limit();
+				$model = sq::model($this->options['name'], array('use-layout' => false))
+					->limit();
 				
 				foreach ($row as $key => $val) {
 					$model->$key = $val;
