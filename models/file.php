@@ -1,7 +1,6 @@
 <?php
 
 class file extends model {
-	public $content, $file, $name, $extension, $id;
 	
 	// Set memory limit to the value in model config and make sure the model
 	// directory exists
