@@ -121,7 +121,7 @@ return array(
 				'image' => 'file'
 			)
 		),
-		'prevent-duplicates' => false,
+		'prevent-duplicates' => false
 	),
 	
 	// Directories to upload files in to. Used by the files model.
