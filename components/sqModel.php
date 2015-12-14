@@ -74,14 +74,6 @@ abstract class sqModel extends component {
 	public function update($data = null, $where = null) {}
 	public function delete($where = null) {}
 	
-	// Makes a data store. For instance a folder to store files or a table to
-	// store sql data.
-	public function make($schema = null) {}
-	
-	// Returns true if the database table exists. Must be implemented in driver
-	// classes such as sql.
-	public function exists() {}
-	
 	// Returns the number of records. Implemented in driver.
 	public function count() {}
 	
