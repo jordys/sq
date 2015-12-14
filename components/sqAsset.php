@@ -53,11 +53,7 @@ abstract class sqAsset {
 	
 	// Check if asset exists and is not expired
 	public static function check($path) {
-		if (file_exists(self::path($path, 'file'))) {
-			return true;
-		} else {
-			return false;
-		}
+		return file_exists(self::path($path, 'file'));
 	}
 	
 	// Returns the md5 path of an asset
