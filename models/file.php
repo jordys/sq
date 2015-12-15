@@ -182,6 +182,10 @@ class file extends model {
 		return $properties;
 	}
 	
+	public function count() {
+		$fileIterator = new FilesystemIterator($this->options['path'], FilesystemIterator::SKIP_DOTS);
+		return iterator_count($fileIterator);
+	}
 	
 	
 	
