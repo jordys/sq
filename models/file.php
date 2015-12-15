@@ -105,10 +105,6 @@ class file extends model {
 			$fileData = $this->getFileProperties($file);
 			
 			if ($this->checkMatch($fileData)) {
-				if ($this->options['limit'] && $i++ >= $this->options['limit']) {
-					break;
-				}
-				
 				$model = sq::model($this->options['name'], array('use-layout' => false))
 					->limit();
 				
@@ -126,15 +122,28 @@ class file extends model {
 					}
 				}
 				
-				if ($this->isSingle()) {
-					$this->data = $model->data;
-				} else {
-					$this->data[] = $model;
-				}
+				$this->data[] = $model;
 			}
 		}
 		
-		closedir($handle); 
+		closedir($handle);
+		
+		$this->limitItems();
+	}
+	
+	private function limitItems() {
+		$limit = $this->options['limit'];
+		
+		// Guard against no limit
+		if (!$limit) {
+			return;
+		}
+		
+		if (is_int($limit)) {
+			$limit = array(0, $limit);
+		}
+		
+		$this->data = array_slice($this->data, $limit[0], $limit[1]);
 	}
 	
 	private function checkMatch($fileData) {
