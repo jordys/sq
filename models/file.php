@@ -92,10 +92,8 @@ class file extends model {
 	}
 	
 	private function readDirectory() {
-		$handle = opendir($this->options['path']);
-		$i = 0;
-		
-		while (false !== ($file = readdir($handle))) {
+		$handle = opendir($this->options['path']);		
+		while (($file = readdir($handle)) !== false) {
 			
 			// Guard against directory files
 			if ($file == '..' || $file[0] == '.' || is_dir($this->options['path'].'/'.$file)) {
