@@ -187,43 +187,22 @@ class file extends model {
 		return iterator_count($fileIterator);
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	public function upload($file, $path = null, $name = false) {
-		if ($name) {
-			$path .= $name;
-		} else {
-			$path .= basename($file['name']);
+	public function upload($file = null, $name = null) {
+		
+		// File can either be a file array or a string to look for in the files
+		// array
+		if (is_string($file)) {
+			$file = $_FILES[$file];
 		}
 		
-		if ($this->options['resize-x'] && $this->options['resize-y']) {
-			$image = new ImageManipulator($file['tmp_name']);
-			$image->resample($this->options['resize-x'], $this->options['resize-y']);
-			$image->save($this->options['path'].$path, IMAGETYPE_JPEG);
-		} else {
-			move_uploaded_file($file['tmp_name'], $this->options['path'].$path);
+		// Get name from upload file if it isn't specified
+		if (!$name) {
+			$name .= basename($file['name']);
 		}
 		
-		foreach ($this->options['variations'] as $variant => $options) {
-			$image = new ImageManipulator($this->options['path'].$path);
-			$image->resample($options['width'], $options['height']);
-			$image->save($this->options['path'].$variant.'/'.$path, IMAGETYPE_JPEG);
-		}
+		move_uploaded_file($file['tmp_name'], $this->options['path'].'/'.$name);
 		
-		return $this->options['path'].$path;
-	}
-	
-	public function makeVariants() {
-		foreach ($this->options['variations'] as $variant => $options) {
-			$image = new ImageManipulator($this->id);
-			$image->resample($options['width'], $options['height']);
-			$image->save($this->options['path'].$variant.'/'.$this->name, IMAGETYPE_JPEG);
-		}
+		$this->set($this->getFileProperties($this->data['file'], $name));
 	}
 }
 
