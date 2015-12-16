@@ -16,33 +16,73 @@ class file extends model {
 	
 	public function create($data = null) {
 		$this->set($data);
-		$this->where($this->data['file']);
-		$this->set($this->getFileProperties($this->data['file']));
 		
-		file_put_contents($this->getPath(), $this->data['content']);
+		file_put_contents($this->options['path'].'/'.$this->data['file'], $this->data['content']);
 		
-		return $this;
+		return $this->where($this->data['file'])->read();
 	}
 	
-	public function read($values = '*') {
-		if (isset($this->options['where']['id'])) {
-			$this->data = $this->getFileProperties($this->options['where']['id'], $values);
+	public function read($values = null) {
+		foreach (new DirectoryIterator($this->options['path']) as $file) {
 			
-			if ($this->options['read-content'] && file_exists($this->getPath())) {
-				$this->data['content'] = file_get_contents($this->getPath());
+			// Skip against directories
+			if (!$file->isFile()) {
+				continue;
 			}
 			
-			if ($this->options['load-relations'] === true) {
-				$this->relateModel();
+			$data = array(
+				'file' => $file->getFilename(),
+				'name' => $file->getBasename('.'.$file->getExtension()),
+				'extension' => $file->getExtension(),
+				'path' => $file->getPath(),
+				'url' => sq::base().$file->getPathname(),
+				'id' => $file->getFilename()
+			);
+			
+			// Skip if where statment isn't a match
+			if (!$this->checkWhereStatement($data)) {
+				continue;
 			}
-		} else {
-			$this->readDirectory();
+			
+			if ($this->options['read-content'] == 'always' || ($this->isSingle() && $this->options['read-content'])) {
+				$data['content'] = file_get_contents($this->options['path'].'/'.$data['file']);
+			}
+			
+			if (is_array($values)) {
+				$data = array_intersect_key($data, array_flip($values));
+			}
+			
+			// If this is a single record break out of the loop and set the data
+			// directly to the model
+			if ($this->isSingle()) {
+				$this->data = $data;
+				break;
+			}
+			
+			$model = sq::model($this->options['name'], array(
+				'use-layout' => false,
+				'load-relations' => $this->options['load-relations']
+			))->where($file)->limit()->set($data);
+			
+			$model->isRead = true;
+			
+			// Call relation setup if enabled otherwise pass the disabled flag
+			// down the line
+			if ($model->options['load-relations']) {
+				$model->relateModel();
+			}
+			
+			$this->data[] = $model;
 		}
 		
 		$this->isRead = true;
 		
 		if (!$this->isSingle()) {
-			$this->order($this->options['order'], $this->options['order-direction']);
+			$this->limitItems();
+			
+			if ($this->options['order']) {
+				$this->order($this->options['order'], $this->options['order-direction']);
+			}
 		}
 		
 		return $this;
@@ -52,17 +92,26 @@ class file extends model {
 		
 		// Handle shorthand to update only file content
 		if (is_string($data)) {
-			$this->data['content'] = $data;
+			$data = array('content' => $data);
 		}
 		
 		if ($where) {
 			$this->where($where);
 		}
 		
-		// Get values from the current file if they haven't already been read
+		// If no where statement is applied assume the record being updated is
+		// the current one
+		if (empty($this->options['where']) && $this->data['id']) {
+			$this->where($this->data['id']);
+		}
+		
 		if (!$this->isRead) {
 			$this->read();
 		}
+		
+		$this->set($data);
+		
+		$data = $this->data;
 		
 		return $this->delete()->create($data);
 	}
@@ -72,7 +121,26 @@ class file extends model {
 			$this->where($where);
 		}
 		
-		unlink($this->getPath());
+		// If no where statement is applied assume the record being updated is
+		// the current one
+		if (empty($this->options['where']) && $this->data['id']) {
+			$this->where($this->data['id']);
+		}
+		
+		if (!$this->isRead) {
+			$this->read();
+		}
+		
+		if ($this->isSingle()) {
+			unlink($this->options['path'].'/'.$this->data['file']);
+			$this->onRelated('delete');
+		} else {
+			foreach ($this->data as $item) {
+				$item->delete();
+			}
+		}
+		
+		$this->data = array();
 		
 		return $this;
 	}
@@ -83,50 +151,10 @@ class file extends model {
 			'file' => null,
 			'name' => null,
 			'extension' => null,
+			'path' => null,
+			'url' => null,
 			'id' => null
 		);
-	}
-	
-	private function getPath() {
-		return $this->options['path'].'/'.$this->options['where']['id'];
-	}
-	
-	private function readDirectory() {
-		$handle = opendir($this->options['path']);		
-		while (($file = readdir($handle)) !== false) {
-			
-			// Guard against directory files
-			if ($file == '..' || $file[0] == '.' || is_dir($this->options['path'].'/'.$file)) {
-				continue;
-			}
-			
-			$fileData = $this->getFileProperties($file);
-			
-			if ($this->checkMatch($fileData)) {
-				$model = sq::model($this->options['name'], array('use-layout' => false))
-					->limit();
-				
-				$model->options['load-relations'] = $this->options['load-relations'];
-				
-				if ($this->options['read-content'] == 'always' || ($this->isSingle() && $this->options['read-content'] == 'single')) {
-					$model->where($file)->read();
-				} else {
-					$model->set($fileData);
-					
-					// Call relation setup if enabled otherwise pass the
-					// disabled flag down the line
-					if ($model->options['load-relations']) {
-						$model->relateModel();
-					}
-				}
-				
-				$this->data[] = $model;
-			}
-		}
-		
-		closedir($handle);
-		
-		$this->limitItems();
 	}
 	
 	private function limitItems() {
@@ -144,49 +172,24 @@ class file extends model {
 		$this->data = array_slice($this->data, $limit[0], $limit[1]);
 	}
 	
-	private function checkMatch($fileData) {
+	private function checkWhereStatement($fileData) {
 		if (empty($this->options['where'])) {
 			return true;
 		}
 		
-		$status = false;
 		foreach ($this->options['where'] as $key => $val) {
 			if ($fileData[$key] == $val) {
 				$status = true;
 				
-				if ($this->options['where-operation']) {
+				if ($this->options['where-operation'] == 'OR') {
 					return true;
 				}
+			} else {
+				$status = false;
 			}
 		}
 		
 		return $status;
-	}
-	
-	private function getFileProperties($file, $values = '*') {
-		if ($values == '*') {
-			$values = array('file', 'name', 'extension', 'id');
-		}
-		
-		$properties = array();
-		foreach ($values as $val) {
-			switch ($val) {
-				case 'id':
-				case 'file':
-					$property = $file;
-					break;
-				case 'name':
-					$property = pathinfo($file, PATHINFO_FILENAME);
-					break;
-				case 'extension':
-					$property = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-					break;
-			}
-			
-			$properties[$val] = $property;
-		}
-		
-		return $properties;
 	}
 	
 	public function count() {
@@ -209,7 +212,7 @@ class file extends model {
 		
 		move_uploaded_file($file['tmp_name'], $this->options['path'].'/'.$name);
 		
-		$this->set($this->getFileProperties($this->data['file'], $name));
+		$this->read($name);
 	}
 }
 
