@@ -139,7 +139,6 @@ class sql extends model {
 			$this->where($this->data['id']);
 		}
 		
-		$this->limit()->read('id');
 		$this->updateDatabase($this->data);
 		$this->onRelated('update');
 		
@@ -152,19 +151,14 @@ class sql extends model {
 			$this->where($where);
 		}
 		
-		// If no where statement is applied assume the record being updated is
-		// the current one
-		if (empty($this->options['where']) && $this->data['id']) {
-			$this->where($this->data['id']);
-		}
-		
 		$query = 'DELETE FROM '.$this->sanitize($this->options['table']);
 		
 		$query .= $this->parseWhere();
 		$query .= $this->parseLimit();
 		
-		$this->onRelated('delete');
+		$this->limit()->onRelated('delete');
 		$this->query($query);
+		$this->data = array();
 		
 		return $this;
 	}
@@ -317,27 +311,22 @@ class sql extends model {
 			$row = $handle->fetch();
 			
 			if ($row) {
-				foreach ($row as $key => $val) {
-					$this->$key = $val;
-				}
+				$this->data = $row;
 			}
 		} else {
 			while ($row = $handle->fetch()) {
 				
 				// Create child model
-				$model = sq::model($this->options['name'], array('use-layout' => false))
-					->limit();
+				$model = sq::model($this->options['name'], array(
+					'use-layout' => false,
+					'load-relations' => $this->options['load-relations']
+				))->where($row['id']);
 				
-				foreach ($row as $key => $val) {
-					$model->$key = $val;
-				}
+				$model->data = $row;
 				
-				// Call relation setup if enabled otherwise pass the disabled
-				// flag down the line
+				// Call relation setup if enabled
 				if ($this->options['load-relations']) {
 					$model->relateModel();
-				} else {
-					$model->options['load-relations'] = false;
 				}
 				
 				// Mark child model in post read state
