@@ -46,7 +46,7 @@ class sql extends model {
 		// If an array is passed in sanitize every key
 		if (is_array($value)) {
 			foreach ($value as $key => $item) {
-				$value[$key] = $this->sanitize($item);
+				$value[$key] = $this->sanitize($item, $whitelist);
 			}
 			
 			return $value;
@@ -133,16 +133,13 @@ class sql extends model {
 			$this->where($where);
 		}
 		
-		$this->limit();
-		
 		// If no where statement is applied assume the record being updated is
 		// the current one
 		if (empty($this->options['where']) && $this->data['id']) {
 			$this->where($this->data['id']);
 		}
 		
-		$this->read('id');
-		
+		$this->limit()->read('id');
 		$this->updateDatabase($this->data);
 		$this->onRelated('update');
 		
@@ -153,6 +150,12 @@ class sql extends model {
 	public function delete($where = null) {
 		if ($where) {
 			$this->where($where);
+		}
+		
+		// If no where statement is applied assume the record being updated is
+		// the current one
+		if (empty($this->options['where']) && $this->data['id']) {
+			$this->where($this->data['id']);
 		}
 		
 		$query = 'DELETE FROM '.$this->sanitize($this->options['table']);
