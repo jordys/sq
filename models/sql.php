@@ -103,11 +103,13 @@ class sql extends model {
 	 * directly to the model if limit is true or set as a list of model objects
 	 * if limit is false.
 	 */
-	public function read($values = '*') {
-		$values = $this->sanitize($values, array('*'));
+	public function read($values = null) {
+		$values = $this->sanitize($values);
 		
 		if (is_array($values)) {
 			$values = implode(',', $values);
+		} else {
+			$values = '*';
 		}
 		
 		$query = "SELECT $values FROM ".$this->sanitize($this->options['table']);
@@ -116,13 +118,7 @@ class sql extends model {
 		$query .= $this->parseOrder();
 		$query .= $this->parseLimit();
 		
-		$this->query($query);
-		
-		if ($this->options['load-relations'] === true) {
-			$this->relateModel();
-		}
-		
-		return $this;
+		return $this->query($query);
 	}
 	
 	// Update rows in table matching the where statement
@@ -314,11 +310,6 @@ class sql extends model {
 				
 				$model->data = $row;
 				
-				// Call relation setup if enabled
-				if ($this->options['load-relations']) {
-					$model->relateModel();
-				}
-				
 				// Mark child model in post read state
 				$model->isRead = true;
 				
@@ -328,6 +319,11 @@ class sql extends model {
 		
 		// Mark the model in post read state
 		$this->isRead = true;
+		
+		// Call relation setup if enabled
+		if ($this->options['load-relations']) {
+			$this->relateModel();
+		}
 	}
 	
 	// Sets the model to the equivelent of an empty record with the columns as

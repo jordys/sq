@@ -70,7 +70,7 @@ abstract class sqModel extends component {
 	// CRUD methods to be implemented. These four methods must be implemented by
 	// a driver class with the optional arguments listed here.
 	public function create($data = null) {}
-	public function read($values = '*') {}
+	public function read($values = null) {}
 	public function update($data = null, $where = null) {}
 	public function delete($where = null) {}
 	
@@ -409,7 +409,7 @@ abstract class sqModel extends component {
 			$where += $options['where'];
 		}
 		
-		$read = isset($options['read']) ? $options['read'] : '*';
+		$read = isset($options['read']) ? $options['read'] : null;
 		$model->where($where)->read($read);
 		
 		if ($type == 'many-many') {

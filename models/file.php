@@ -73,12 +73,6 @@ class file extends model {
 			
 			$model->isRead = true;
 			
-			// Call relation setup if enabled otherwise pass the disabled flag
-			// down the line
-			if ($model->options['load-relations']) {
-				$model->relateModel();
-			}
-			
 			$this->data[] = $model;
 		}
 		
@@ -90,6 +84,11 @@ class file extends model {
 			if ($this->options['order']) {
 				$this->order($this->options['order'], $this->options['order-direction']);
 			}
+		}
+		
+		// Call relation setup if enabled
+		if ($this->options['load-relations']) {
+			$this->relateModel();
 		}
 		
 		return $this;
@@ -114,7 +113,10 @@ class file extends model {
 		
 		$data = $this->data;
 		
-		return $this->delete()->create($data);
+		$this->delete()->create($data);
+		$this->onRelated('update');
+		
+		return $this;
 	}
 	
 	public function delete($where = null) {
