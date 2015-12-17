@@ -417,7 +417,7 @@ abstract class sqModel extends component {
 				unset($item->id);
 				
 				if (isset(self::$manyManyCache[$item->{$name.'_id'}])) {
-					$relation = self::$manyManyCache[$item->{$name.'_id'}];
+					$relation = clone(self::$manyManyCache[$item->{$name.'_id'}]);
 				} else {
 					$relation = sq::model($name);
 					

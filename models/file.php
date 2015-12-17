@@ -23,6 +23,13 @@ class file extends model {
 	}
 	
 	public function read($values = null) {
+		
+		// If no where statement is applied and data is set assume the record
+		// being altered is the current one
+		if (empty($this->options['where']) && isset($this->data['id'])) {
+			$this->where($this->data['id']);
+		}
+		
 		foreach (new DirectoryIterator($this->options['path']) as $file) {
 			
 			// Skip against directories
@@ -97,12 +104,6 @@ class file extends model {
 		
 		if ($where) {
 			$this->where($where);
-		}
-		
-		// If no where statement is applied assume the record being updated is
-		// the current one
-		if (empty($this->options['where']) && $this->data['id']) {
-			$this->where($this->data['id']);
 		}
 		
 		if (!$this->isRead) {

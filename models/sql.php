@@ -133,13 +133,7 @@ class sql extends model {
 			$this->where($where);
 		}
 		
-		// If no where statement is applied assume the record being updated is
-		// the current one
-		if (empty($this->options['where']) && $this->data['id']) {
-			$this->where($this->data['id']);
-		}
-		
-		$this->updateDatabase($this->data);
+		$this->updateDatabase();
 		$this->onRelated('update');
 		
 		return $this;
@@ -297,10 +291,6 @@ class sql extends model {
 		
 		// When inserting always stick the last inserted id into the model
 		$this->data['id'] = self::$conn->lastInsertId();
-		
-		// Set the where statement to the id to allow an immediate read
-		// following the create
-		$this->where($this->data['id']);
 	}
 	
 	// Insert data into the model from the query result. For single queries add
@@ -352,17 +342,14 @@ class sql extends model {
 	}
 	
 	// Utility function to update data in the database from what is in the model
-	private function updateDatabase($data) {
+	private function updateDatabase() {
+		$data = array_intersect_key($this->data, array_flip(array('id', 'created', 'edited')));
 		$query = 'UPDATE '.$this->sanitize($this->options['table']);
 				
 		$set = array();
 		foreach ($data as $key => $val) {
-			if (!in_array($key, array('id', 'created', 'edited')) && !is_object($val)) {
-				$key = $this->sanitize($key);
-				$set[] = "$key = :$key";
-			} else {
-				unset($data[$key]);
-			}
+			$key = $this->sanitize($key);
+			$set[] = "$key = :$key";
 		}
 		
 		$query .= ' SET '.implode(',', $set);
@@ -383,6 +370,13 @@ class sql extends model {
 	
 	// Generates SQL where statement from array
 	private function parseWhere() {
+		
+		// If model represents a record and no where statement is applied assume
+		// where is for the current model
+		if (empty($this->options['where']) && isset($this->data['id'])) {
+			$this->where($this->data['id']);
+		}
+		
 		$query = null;
 		
 		if ($this->options['user-specific']) {
