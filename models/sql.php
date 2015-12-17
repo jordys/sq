@@ -339,7 +339,7 @@ class sql extends model {
 	
 	// Utility function to update data in the database from what is in the model
 	private function updateDatabase() {
-		$data = array_intersect_key($this->data, array_flip(array('id', 'created', 'edited')));
+		$data = array_diff_key($this->data, array_flip(array('id', 'created', 'edited')));
 		$query = 'UPDATE '.$this->sanitize($this->options['table']);
 				
 		$set = array();
