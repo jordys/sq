@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * File model implementation
+ *
+ * Provides an eloquent object oriented interface for managing files as objects.
+ * Each file within the directory specified in the 'path' option is treated as a
+ * record and can be manipulated with the CRUD method.
+ *
+ * The contents of the files can be read by enabling the 'read-content' option.
+ * The id of a file record is the same as it's filename.
+ */
+
 class file extends model {
 	
 	// Set memory limit to the value in model config and make sure the model

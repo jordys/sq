@@ -3,9 +3,8 @@
 /**
  * SQL model implementation
  *
- * Generic crud implementation of model to work with SQL databases. The only
- * addition is the query method which allows arbitrary SQL queries to be
- * executed. Uses PDO for the database interaction.
+ * Provides an eloquent object oriented interface for managing mySQL records.
+ * Handles basic CRUD operations as well as straight SQL queries.
  */
 
 class sql extends model {
