@@ -55,46 +55,28 @@ class file extends model {
 			$this->where($this->data['id']);
 		}
 		
-		foreach (new DirectoryIterator($this->options['path']) as $file) {
-			
-			// Skip against directories
-			if (!$file->isFile()) {
-				continue;
-			}
-			
-			$data = array(
-				'file' => $file->getFilename(),
-				'name' => $file->getBasename('.'.$file->getExtension()),
-				'extension' => $file->getExtension(),
-				'path' => $file->getPath(),
-				'url' => sq::base().$file->getPathname(),
-				'id' => $file->getFilename()
-			);
-			
-			// Skip if where statment isn't a match
-			if (!$this->checkWhereStatement($data)) {
-				continue;
-			}
-			
+		// Loop through the items in the directory
+		foreach ($this->readDirectory() as $item) {
 			if ($this->options['read-content'] == 'always' || ($this->isSingle() && $this->options['read-content'])) {
-				$data['content'] = file_get_contents($this->options['path'].'/'.$data['file']);
+				$item['content'] = file_get_contents($this->options['path'].'/'.$item['file']);
 			}
 			
 			if (is_array($values)) {
-				$data = array_intersect_key($data, array_flip($values));
+				$item = array_intersect_key($item, array_flip($values));
 			}
 			
 			// If this is a single record break out of the loop and set the data
 			// directly to the model
 			if ($this->isSingle()) {
-				$this->data = $data;
+				$this->data = $item;
 				break;
 			}
 			
+			// Set the data to a model and place that model into the collection
 			$model = sq::model($this->options['name'], array(
 				'use-layout' => false,
 				'load-relations' => $this->options['load-relations']
-			))->where($file)->limit()->set($data);
+			))->where($item['id'])->limit()->set($item);
 			
 			$model->isRead = true;
 			
@@ -104,8 +86,6 @@ class file extends model {
 		$this->isRead = true;
 		
 		if (!$this->isSingle()) {
-			$this->limitItems();
-			
 			if ($this->options['order']) {
 				$this->order($this->options['order'], $this->options['order-direction']);
 			}
@@ -189,8 +169,7 @@ class file extends model {
 	 * using pagination.
 	 */
 	public function count() {
-		$fileIterator = new FilesystemIterator($this->options['path'], FilesystemIterator::SKIP_DOTS);
-		return iterator_count($fileIterator);
+		return count($this->readDirectory());
 	}
 	
 	/**
@@ -238,21 +217,49 @@ class file extends model {
 		return $this;
 	}
 	
+	// Reads through a directory and returns an array of the file properties
+	private function readDirectory() {
+		$data = array();
+		foreach (new DirectoryIterator($this->options['path']) as $file) {
+			
+			// Skip directories
+			if (!$file->isFile()) {
+				continue;
+			}
+			
+			$item = array(
+				'file' => $file->getFilename(),
+				'name' => $file->getBasename('.'.$file->getExtension()),
+				'extension' => $file->getExtension(),
+				'path' => $file->getPath(),
+				'url' => sq::base().$file->getPathname(),
+				'id' => $file->getFilename()
+			);
+			
+			// Skip if where statment isn't a match
+			if ($this->checkWhereStatement($item)) {
+				$data[] = $item;
+			}
+		}
+		
+		return $this->limitItems($data);
+	}
+	
 	// Utility method to trim the current items in the collection to the currect
 	// number
-	private function limitItems() {
+	private function limitItems($items) {
 		$limit = $this->options['limit'];
 		
 		// Guard against no limit
 		if (!$limit) {
-			return;
+			return $items;
 		}
 		
 		if (is_int($limit)) {
 			$limit = array(0, $limit);
 		}
 		
-		$this->data = array_slice($this->data, $limit[0], $limit[1]);
+		return array_slice($items, $limit[0], $limit[1]);
 	}
 	
 	// Checks if the file read matches the where option
