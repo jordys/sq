@@ -262,7 +262,7 @@ class file extends model {
 		return array_slice($items, $limit[0], $limit[1]);
 	}
 	
-	// Checks if the file read matches the where option
+	// Checks if the file read matches the where statument
 	private function checkWhereStatement($fileData) {
 		if (empty($this->options['where'])) {
 			return true;
