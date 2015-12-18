@@ -25,6 +25,12 @@ class file extends model {
 		ini_set('memory_limit', $this->options['memory-limit']);
 	}
 	
+	/**
+	 * Create a file
+	 *
+	 * Adds a file to the model directory. Only file and content properties are
+	 * needed.
+	 */
 	public function create($data = null) {
 		$this->set($data);
 		
@@ -33,6 +39,14 @@ class file extends model {
 		return $this->where($this->data['file'])->read();
 	}
 	
+	/**
+	 * Read files from the directory that match the where statment
+	 *
+	 * The directory is iteratoed through looking for matches to the where
+	 * option and then the number of records specified by the limit option are
+	 * returned. The values argument accepts an optional array to specify what
+	 * file properties to add to the record object.
+	 */
 	public function read($values = null) {
 		
 		// If no where statement is applied and data is set assume the record
@@ -105,6 +119,13 @@ class file extends model {
 		return $this;
 	}
 	
+	/**
+	 * Update an existing file
+	 *
+	 * The can be used to change a file's name, it's content or both. It is
+	 * implemented by calling a delete then a read. Accepts two optional
+	 * 'shorthand' parameters to pass in the data and a where statement.
+	 */
 	public function update($data = null, $where = null) {
 		
 		// Handle shorthand to update only file content
@@ -130,24 +151,25 @@ class file extends model {
 		return $this;
 	}
 	
+	/**
+	 * Delete file(s) from directory
+	 *
+	 * Deletes all files matching the current where statement. Accepts a where
+	 * array option as a 'shorthand' argument.
+	 */
 	public function delete($where = null) {
 		if ($where) {
 			$this->where($where);
-		}
-		
-		// If no where statement is applied assume the record being updated is
-		// the current one
-		if (empty($this->options['where']) && $this->data['id']) {
-			$this->where($this->data['id']);
 		}
 		
 		if (!$this->isRead) {
 			$this->read();
 		}
 		
+		$this->onRelated('delete');
+		
 		if ($this->isSingle()) {
 			unlink($this->options['path'].'/'.$this->data['file']);
-			$this->onRelated('delete');
 		} else {
 			foreach ($this->data as $item) {
 				$item->delete();
@@ -159,6 +181,49 @@ class file extends model {
 		return $this;
 	}
 	
+	/**
+	 * Counts records
+	 *
+	 * Returns the number of items in the collection matched by the where 
+	 * statement. Returns the full number counted not just the first page when
+	 * using pagination.
+	 */
+	public function count() {
+		$fileIterator = new FilesystemIterator($this->options['path'], FilesystemIterator::SKIP_DOTS);
+		return iterator_count($fileIterator);
+	}
+	
+	/**
+	 * Uploads a file into the model directory
+	 *
+	 * The file can be specified by key to read from the php $_FILES superglobal
+	 * or as a file object. A name can optionally be specified for the uploaded
+	 * file. If a name isn't specified the existing file name will be used.
+	 */
+	public function upload($file = null, $name = null) {
+		
+		// File can either be a file array or a string to look for in the files
+		// array
+		if (is_string($file)) {
+			$file = $_FILES[$file];
+		}
+		
+		// Get name from upload file if it isn't specified
+		if (!$name) {
+			$name .= basename($file['name']);
+		}
+		
+		move_uploaded_file($file['tmp_name'], $this->options['path'].'/'.$name);
+		
+		$this->read($name);
+	}
+	
+	/**
+	 * Returns an empty model
+	 *
+	 * The properties of the model are well defined unlike other model
+	 * implementations. The properties to set to the model are specified below.
+	 */
 	public function schema() {
 		$this->data = array(
 			'content' => null,
@@ -173,6 +238,8 @@ class file extends model {
 		return $this;
 	}
 	
+	// Utility method to trim the current items in the collection to the currect
+	// number
 	private function limitItems() {
 		$limit = $this->options['limit'];
 		
@@ -188,6 +255,7 @@ class file extends model {
 		$this->data = array_slice($this->data, $limit[0], $limit[1]);
 	}
 	
+	// Checks if the file read matches the where option
 	private function checkWhereStatement($fileData) {
 		if (empty($this->options['where'])) {
 			return true;
@@ -206,29 +274,6 @@ class file extends model {
 		}
 		
 		return $status;
-	}
-	
-	public function count() {
-		$fileIterator = new FilesystemIterator($this->options['path'], FilesystemIterator::SKIP_DOTS);
-		return iterator_count($fileIterator);
-	}
-	
-	public function upload($file = null, $name = null) {
-		
-		// File can either be a file array or a string to look for in the files
-		// array
-		if (is_string($file)) {
-			$file = $_FILES[$file];
-		}
-		
-		// Get name from upload file if it isn't specified
-		if (!$name) {
-			$name .= basename($file['name']);
-		}
-		
-		move_uploaded_file($file['tmp_name'], $this->options['path'].'/'.$name);
-		
-		$this->read($name);
 	}
 }
 

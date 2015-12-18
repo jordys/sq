@@ -170,9 +170,8 @@ class sql extends model {
 	/**
 	 * Returns an empty model
 	 *
-	 * schema() sets the model to empty state. It sets all the values in the
-	 * model to null. Useful for making create forms or other actions where
-	 * having null data is necessary.
+	 * schema() sets all the available values in the model to null. Useful for
+	 * making create forms or other actions where having null data is necessary.
 	 */
 	public function schema() {
 		return $this->query('SHOW COLUMNS FROM '.$this->sanitize($this->options['table']));
