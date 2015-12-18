@@ -169,6 +169,8 @@ class file extends model {
 			'url' => null,
 			'id' => null
 		);
+		
+		return $this;
 	}
 	
 	private function limitItems() {
