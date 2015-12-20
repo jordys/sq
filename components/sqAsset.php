@@ -1,41 +1,65 @@
 <?php
 
 /**
- * Asset management
+ * Asset component
  *
- * This class contains methods for asset management. It copies assets from the 
- * app module and framework asset folders and copies them to the app's built 
- * folder.
+ * This component handles managing css, javascript and other frontend assets in
+ * sq applications. Assets are stores in the framework, module and application
+ * assets/ directories and are built into a directory in the application. When
+ * in debug model the assets are rebuilt every time.
+ *
+ * When calling the component it takes the path of the asset to load as the
+ * first argument. When the component is used as a string a link to the asset
+ * is returned.
  */
 
-abstract class sqAsset {
+abstract class sqAsset extends component {
+	private $path = null;
 	
-	// Use asset in a project. Makes the asset if it does not exist and returns
-	// the url of the asset.
-	public static function load($path) {
-		if (!self::check($path) || sq::config('debug')) {
-			self::make($path);
-		}
+	// Checks to see if the asset is already built and builds it if necessary
+	public function __construct($path, $options = array()) {
+		$this->path = $path;
 		
-		return self::path($path);
+		parent::__construct($options);
 	}
 	
-	// Finds the asset file and copies it to the built folder
-	public static function make($path) {
-		$assetPath = 'assets/'.$path;
-		$buildPath = self::path($path, 'file');
+	// Asset returns the file url when treated like a string
+	public function render() {
+		if ($this->check() || sq::config('debug')) {
+			$this->build();
+		}
 		
-		// Top level directory may be a folder or can refer to a module/assets
-		// folder.
+		return sq::base().$this->getFilePath();
+	}
+	
+	/**
+	 * Checks if asset exists
+	 *
+	 * Returns true if the asset exists.
+	 */
+	public function check() {
+		return file_exists($this->getFilePath());
+	}
+	
+	/**
+	 * Builds asset files
+	 *
+	 * Searches site directory, module directories and framework directory for
+	 * assets. Found assets will be built in that precedence.
+	 */
+	public function build() {
+		$assetPath = 'assets/'.$this->path;
+		$buildPath = sq::root().$this->getFilePath();
+		
 		$fragments = explode('/', $path);
 		$module = $fragments[0];
 		array_shift($fragments);
 		$modulePath = 'modules/'.$module.'/assets/'.implode('/', $fragments);
 		
-		// Create built asset directory if it does not exist
+		// Create built asset directory if it doesn't exist
 		$dir = dirname($buildPath);
 		if (!is_dir($dir)) {
-			mkdir($dir, 0777, true);
+			mkdir($dir, $this->options['permissions'], true);
 		}
 		
 		// Directories searched for the asset in order: app/assets,
@@ -51,23 +75,12 @@ abstract class sqAsset {
 		}
 	}
 	
-	// Check if asset exists and is not expired
-	public static function check($path) {
-		return file_exists(self::path($path, 'file'));
-	}
-	
 	// Returns the md5 path of an asset
-	public static function path($path, $type = 'url') {
-		$path = 'built/'.md5(sq::config('asset-revision')).'/'.$path;
-		
-		if ($type == 'file') {
-			return sq::root().$path;
-		} else {
-			return sq::base().$path;
-		}
+	private function getFilePath() {
+		return $this->options['path'].'/'.md5($this->options['revision']).'/'.$this->path;
 	}
 	
-	// Utility function to copy and entire folder recursively
+	// Utility function to copy directories recursively
 	private static function recursiveCopy($path, $destination) {
 		if (is_dir($path)) {
 			if (!file_exists($destination)) {
@@ -75,7 +88,6 @@ abstract class sqAsset {
 			}
 			
 			$handle = opendir($path);
-			
 			while (false !== ($file = readdir($handle))) {
 				if ($file != '..' && $file[0] != '.') {
 					self::recursiveCopy($path.'/'.$file, $destination.'/'.$file);

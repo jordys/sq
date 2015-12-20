@@ -37,11 +37,6 @@ return array(
 	// stops looking.
 	'autoload' => array('components', 'modules', 'controllers', 'models', 'vendor'),
 	
-	// Revision marker coded into the asset md5 urls. Can be any format that
-	// interprets to a string. Changing the revision number changes the asset
-	// urls hard breaking the browser cache.
-	'asset-revision' => 0,
-	
 	// Enable logging of errors
 	'log-errors' => true,
 	
