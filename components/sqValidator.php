@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Validation component
+ * Validator component
  *
  * Handles validation data against prebuilt rules. Used by the framework to
  * validate models.

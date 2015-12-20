@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Controller base class
+ * Controller component base class
  * 
  * Contains method to deal with calling and filtering actions and a few 
  * default actions. Actions are methods ending in Action.

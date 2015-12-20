@@ -3,7 +3,7 @@
 /**
  * Request component
  *
- * Handles get, request and post values for urls as well as basic sanitation.
+ * Handles get, request and post values for urls and basic url sanitation.
  */
 
 abstract class sqRequest extends component {

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Base model class
+ * Model component base class
  *
  * This class forms the base for all sq models. Model classes can be specific
  * for a single data set or for broad for entire types of databases such as

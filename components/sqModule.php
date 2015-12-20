@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Module base class
+ * Module component
  *
  * Modules extend this base class which gives basic bootstrap and autoloading
  * capabilities to the module. Modules are like mini apps with packaged views,

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Abstract base view class
+ * View component
  *
  * Takes the path of a template file, puts the single passed content array into 
  * it and returns a fully formed html page for saving, displaying, etc...  Also

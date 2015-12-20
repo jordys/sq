@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Auth controller
+ * Auth controller / component
  *
  * Basic authorization controller. Handles actions like login and logout and has
  * helper methods check(), login(), logout(), hash() and user() to allow 

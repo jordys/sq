@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Email sending component
+ * Mailer component
  *
  * Sends email with the options passed to the component. Email can be sent as
  * text or html or as both in which case it is sent as multipart. Views may be
