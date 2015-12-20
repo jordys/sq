@@ -123,5 +123,34 @@ return array(
 	// Directories to upload files in to. Used by the files model.
 	'upload-directories' => array(
 		'' => 'uploads'
+	),
+	
+	// Users model
+	'users' => array(
+		'fields' => array(
+			'list' => array(
+				'created' => 'date',
+				'first' => 'text',
+				'last' => 'text',
+				'email' => 'text',
+				'level' => 'text'
+			),
+			'form' => array(
+				'first' => 'text',
+				'last' => 'text',
+				'email' => 'text',
+				'level' => 'select|users/admin-types',
+				'notes' => 'blurb'
+			)
+		),
+		'inline-actions' => array(
+			'delete' => 'Delete',
+			'password' => 'Change Password',
+			'update' => 'Edit'
+		),
+		'admin-types' => array(
+			'user' => 'User',
+			'admin' => 'Admin'
+		)
 	)
 );
