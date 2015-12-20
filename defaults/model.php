@@ -109,8 +109,9 @@ return array(
 		
 		'fields' => array(
 			'list' => array(
-				'path' => 'image',
-				'name' => 'text'
+				'name' => 'text',
+				'file' => 'text',
+				'url' => 'link'
 			),
 			'form' => array(
 				'directory' => 'select|upload-directories',

@@ -41,6 +41,11 @@ abstract class sqListing {
 	public static function currency($price) {
 		return '&#36;'.$price;
 	}
+	
+	// Returns value as a link
+	public static function link($url) {
+		return '<a href="'.$url.'">'.$url.'</a>';
+	}
 }
 
 ?>
