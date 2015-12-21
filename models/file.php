@@ -223,17 +223,38 @@ class file extends model {
 	 * Returns the url of the specified variant. The variant argument can either
 	 * be a named variant from the config or an array with w and h keys for
 	 * width and height. Variant images are cached in variants subdirectory.
+	 *
+	 * The optional 'format' key dictates the file format generated, Formats are
+	 * gif, png and jpg. By default format will match the master file.
 	 */
 	public function variant($variant) {
 		if (is_string($variant)) {
 			$variant = sq::config('variants/'.$variant);
 		}
 		
-		$variantPath = $this->options['path'].'/variants/'.$variant['w'].'x'.$variant['h'].'/'.$this->data['name'].'.jpg';
+		// If the variant format isn't specified it will match the master file
+		if (empty($variant['format'])) {
+			$variant['format'] = $this->extension;
+		}
+		
+		switch ($variant['format']) {
+			case 'gif':
+				$format = IMAGETYPE_GIF;
+				break;
+			case 'png':
+				$format = IMAGETYPE_PNG;
+				break;
+			default:
+				$format = IMAGETYPE_JPEG;
+				break;
+		}
+		
+		// Generate the variation if it doesn't already exist
+		$variantPath = $this->options['path'].'/variants/'.$variant['w'].'x'.$variant['h'].'/'.$this->data['name'].'.'.$variant['format'];
 		if (!file_exists($variantPath)) {
 			$image = new ImageManipulator($this->options['path'].'/'.$this->data['file']);
 			$image->resample($variant['w'], $variant['h']);
-			$image->save($variantPath, IMAGETYPE_JPEG);
+			$image->save($variantPath, $format);
 		}
 		
 		return $variantPath;
