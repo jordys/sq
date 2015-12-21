@@ -51,7 +51,7 @@ abstract class sqAsset extends component {
 		$assetPath = 'assets/'.$this->path;
 		$buildPath = sq::root().$this->getFilePath();
 		
-		$fragments = explode('/', $path);
+		$fragments = explode('/', $this->path);
 		$module = $fragments[0];
 		array_shift($fragments);
 		$modulePath = 'modules/'.$module.'/assets/'.implode('/', $fragments);
