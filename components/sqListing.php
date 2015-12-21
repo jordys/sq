@@ -29,7 +29,7 @@ abstract class sqListing {
 	
 	// Creates image from URL
 	public static function image($value) {
-		return '<img src="'.sq::base().$value.'"/>';
+		return '<img src="'.$value.'"/>';
 	}
 	
 	// Truncates text in listing
