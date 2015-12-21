@@ -102,6 +102,15 @@ return array(
 		'read-content' => 'single'
 	),
 	
+	// Available image variant sizes. These variations can be called on file
+	// model for images to resize them on the fly. Variations are stored once
+	// created in the variations subdirectory of the model.
+	'variants' => array(
+		'small'  => array('w' => 150, 'h' => 150),
+		'medium' => array('w' => 400, 'h' => 400),
+		'large'  => array('w' => 800, 'h' => 800)
+	),
+	
 	// Files model
 	'files' => array(
 		'type' => 'file',

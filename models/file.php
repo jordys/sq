@@ -217,6 +217,28 @@ class file extends model {
 		return $this;
 	}
 	
+	/**
+	 * Creates an image variant
+	 *
+	 * Returns the url of the specified variant. The variant argument can either
+	 * be a named variant from the config or an array with w and h keys for
+	 * width and height. Variant images are cached in variants subdirectory.
+	 */
+	public function variant($variant) {
+		if (is_string($variant)) {
+			$variant = sq::config('variants/'.$variant);
+		}
+		
+		$variantPath = $this->options['path'].'/variants/'.$variant['w'].'x'.$variant['h'].'/'.$this->data['name'].'.jpg';
+		if (!file_exists($variantPath)) {
+			$image = new ImageManipulator($this->options['path'].'/'.$this->data['file']);
+			$image->resample($variant['w'], $variant['h']);
+			$image->save($variantPath, IMAGETYPE_JPEG);
+		}
+		
+		return $variantPath;
+	}
+	
 	// Reads through a directory and returns an array of the file properties
 	private function readDirectory() {
 		$data = array();
