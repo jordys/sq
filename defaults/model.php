@@ -103,8 +103,9 @@ return array(
 	),
 	
 	// Available image variant sizes. These variations can be called on file
-	// model for images to resize them on the fly. Variations are stored once
-	// created in the variations subdirectory of the model.
+	// model for images to resize them on the fly. The variant file format is
+	// declareable as well. Formats can be gif, jpg or png. If not defined,
+	// format will be the same as the master file.
 	'variants' => array(
 		'small'  => array('w' => 150, 'h' => 150),
 		'medium' => array('w' => 400, 'h' => 400),
