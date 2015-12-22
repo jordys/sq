@@ -1,7 +1,7 @@
 <?php
 
 /**
- * sq framework
+ * sq framework core
  *
  * Provides the core framework and provides the global sq::<component> syntax
  * for initializing component objects.
@@ -119,9 +119,24 @@ class sq {
 		return self::$error;
 	}
 	
-	// Autoloader. Can be called directly. Checks for class files in the app
-	// directories then in the framework directories. The paths checked are
-	// specified in the autoload config option.
+	/**
+	 * Loads configuration, class and component files
+	 *
+	 * Includes configuration, class and component files into the application.
+	 * sq::load is called by the autoloader but can also be called directly.
+	 * If the class name contains a leading slash like a directory then the file
+	 * will be loaded directly instead of searching for a class file.
+	 *
+	 * The method searches a list of directories specified in the 'autoload'
+	 * configuration property or the directory specified in the type argument.
+	 * Application code is searched first then module code then framework code
+	 * so framework files may be overridden in the application.
+	 *
+	 * When loading components that are part of the sq framework, sq::load will,
+	 * if necessary, create stub classes without the sq prefix that extend the
+	 * framework component. This allows you to use the unprefixed versions
+	 * throughout your application code even if the file hasn't been extended.
+	 */
 	public static function load($class, $type = null) {
 		if (strpos($class, '\\')) {
 			$class = explode('\\', $class);
@@ -173,79 +188,16 @@ class sq {
 		}
 	}
 	
-	// Combines the global, module, and passed in options for use in a component
-	private static function configure($name, $options, $component = null) {
-		
-		// Explode pieces. Strings with a '/' are part of a module.
-		$pieces = explode('/', $name);
-		$name = end($pieces);
-		
-		// Load configuration
-		self::load('/config/'.$name);
-		self::load('/defaults/'.$name);
-		
-		// Merge direct config
-		if (isset($pieces[1])) {
-			$config = self::merge(self::config($pieces[0]), self::config($pieces[1]));
-		} else {
-			$config = self::config($pieces[0]);
-		}
-		
-		$type = false;
-		
-		// Get component config
-		if ($component) {
-			$component = self::config($component);
-			$config = self::merge($component, $config);
-			
-			$type = $component['default-type'];
-		}
-		
-		// Merge type options
-		if (isset($config['type'])) {
-			$type = $config['type'];
-		}
-		
-		// Merge type options
-		if ($type) {
-			$config = self::merge(self::config($type), $config);
-		}
-		
-		// Merge passed in options
-		$options = self::merge($config, $options);
-		
-		// Set name to config if it doesn't exist
-		if (!isset($options['name'])) {
-			$options['name'] = $name;
-		}
-		
-		// Set class to name if it doesn't exist
-		if (!isset($options['class'])) {
-			$options['class'] = $name;
-		}
-		
-		// Set type to config if it doesn't exist
-		if (!isset($options['type'])) {
-			$options['type'] = $type;
-		}
-		
-		return $options;
-	}
-	
-	// Maps method calls to sq::component so calling sq::mailer($arg) is the 
-	// equivalent of calling sq::component('mailer', $arg)
-	public static function __callStatic($name, $args = null) {
-		array_unshift($args, $name);
-		
-		return forward_static_call_array(array('sq', 'component'), $args);
-	}
-	
 	/**
 	 * Returns a component object
 	 *
-	 * Configures and returns the component object requested by name. For 
+	 * Configures and returns the component object requested by name. For
 	 * instance calling sq::component('mailer') returns the mailer component
 	 * object fully configured.
+	 *
+	 * Any arguments extra arguments passed in will be relayed to the component.
+	 * Using __callstatic this method is streamlined from sq::component('route')
+	 * to sq::route().
 	 */
 	public static function component() {
 		$args = func_get_args();
@@ -277,7 +229,7 @@ class sq {
 		// Force override with passed in options
 		$component->options = self::merge($component->options, $options);
 		
-		// Cache the component if configured
+		// Cache the component for reuse if specified in the config
 		if ($component->options['cache']) {
 			self::$cache[$name] = $component;
 		}
@@ -285,15 +237,24 @@ class sq {
 		return $component;
 	}
 	
+	// Maps method calls to sq::component so calling sq::mailer($arg) is the 
+	// equivalent of calling sq::component('mailer', $arg)
+	public static function __callStatic($name, $args = null) {
+		array_unshift($args, $name);
+		
+		return forward_static_call_array(array('sq', 'component'), $args);
+	}
+	
 	/**
-	 * Returns a model object
+	 * Returns a model component
 	 *
-	 * The type of model generated can be explicity passed in or specified in 
+	 * The type of model generated can be explicity passed in or specified in
 	 * the config. If no type is determined the framework default is used.
 	 */
 	public static function model($name, $options = array()) {
 		$config = self::configure($name, $options, 'model');
 		
+		// Check for namespaced model
 		$class = $config['type'];
 		if (class_exists('models\\'.$config['class'])) {
 			$class = 'models\\'.$config['class'];
@@ -310,7 +271,7 @@ class sq {
 	}
 	
 	/**
-	 * Returns a view object
+	 * Returns a view component
 	 *
 	 * Data my be initially set to the view using the data argument. Echoing the
 	 * view causes it to render. Once the view is returned values can be added
@@ -321,14 +282,15 @@ class sq {
 	}
 	
 	/**
-	 * Runs and then returns a controller object
+	 * Runs and returns a controller component
 	 *
-	 * Optionally a different action parameter may be included. If no action 
-	 * argument is given then the global action parameter will be used.
+	 * Optionally a different action argument may be included. If no action 
+	 * argument is given then the action parameter from the url will be used.
 	 */
 	public static function controller($name, $options = array()) {
 		$config = self::configure($name, $options, 'component');
 		
+		// Check for namespaced controller
 		$class = 'controllers\\'.$config['class'];
 		if (class_exists($class)) {
 			$controller = new $class($config);
@@ -350,7 +312,7 @@ class sq {
 	}
 	
 	/**
-	 * Runs and returns a module object
+	 * Runs and returns a module component
 	 *
 	 * Modules are like mini apps. They contain there own views, models and
 	 * controllers.
@@ -373,13 +335,14 @@ class sq {
 	/**
 	 * Getter / setter for framework configuration
 	 *
-	 * Returns the full config array with no arguments. With one argument
-	 * config() returns a config parameter using slash notation "sql/dbname" 
-	 * etc... Using two arguemnts the function sets a config value.
+	 * Returns the full config array with no arguments. With one string argument
+	 * sq::config() returns a config parameter using slash notation like 
+	 * 'sql/dbname'. With one array argument the array is merged into the config
+	 * array. When using two arguemnts the function sets a config value.
 	 */
 	public static function config($name = null, $change = -1) {
 		
-		// Return the entire config array with no arguments
+		// If method has no arguments return the entire config array
 		if (!$name) {
 			return self::$config;
 		}
@@ -438,7 +401,7 @@ class sq {
 			return self::config('base');
 		}
 		
-		// If no root path is set then determine from php
+		// If no root path is configured then determine from php
 		$base = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
 		$base .= $_SERVER['HTTP_HOST'];
 		
@@ -453,8 +416,8 @@ class sq {
 		return $base;
 	}
 	
-	// Recursively merge the config and defaults arrays. array1 will be
-	// overwritten by array2 where named keys match. Otherwise arrays will be
+	// Utility to recursively merge the config and defaults arrays. array1 is
+	// overwritten by array2 where named keys match. Otherwise arrays are
 	// merged.
 	public static function merge($array1, $array2) {
 		if (is_array($array2)) {
@@ -474,6 +437,65 @@ class sq {
 		}
 		
 		return $array1;
+	}
+	
+	// Combines the global, module, and passed in options for use in a component
+	private static function configure($name, $options, $component = null) {
+		
+		// Explode pieces. Strings with a '/' are part of a module.
+		$pieces = explode('/', $name);
+		$name = end($pieces);
+		
+		// Load configuration files for the component
+		self::load('/config/'.$name);
+		self::load('/defaults/'.$name);
+		
+		// Merge direct config
+		if (isset($pieces[1])) {
+			$config = self::merge(self::config($pieces[0]), self::config($pieces[1]));
+		} else {
+			$config = self::config($pieces[0]);
+		}
+		
+		$type = false;
+		
+		// Get component config
+		if ($component) {
+			$component = self::config($component);
+			$config = self::merge($component, $config);
+			
+			$type = $component['default-type'];
+		}
+		
+		// Merge type options
+		if (isset($config['type'])) {
+			$type = $config['type'];
+		}
+		
+		// Merge type options
+		if ($type) {
+			$config = self::merge(self::config($type), $config);
+		}
+		
+		// Merge passed in options
+		$options = self::merge($config, $options);
+		
+		// Set name to config if it doesn't exist
+		if (!isset($options['name'])) {
+			$options['name'] = $name;
+		}
+		
+		// Set class to name if it doesn't exist
+		if (!isset($options['class'])) {
+			$options['class'] = $name;
+		}
+		
+		// Set type to config if it doesn't exist
+		if (!isset($options['type'])) {
+			$options['type'] = $type;
+		}
+		
+		return $options;
 	}
 }
 
