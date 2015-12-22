@@ -32,7 +32,7 @@ abstract class sqController extends component {
 		
 		$action = strtolower($action);
 		
-		// Strip method name of dashes and underscores
+		// Strip action parameter of dashes and underscores
 		$method = str_replace('-', '', $action);
 		$method = str_replace('_', '', $method);
 		
@@ -53,8 +53,8 @@ abstract class sqController extends component {
 				$method = 'defaultAction';
 			}
 			
-			// Reflection allows http params to be injected as method arguments
-			// to actions
+			// Reflection allows http parameterss to be injected as method
+			// arguments to actions
 			$reflection = new ReflectionMethod(get_called_class(), $method);
 			foreach ($reflection->getParameters() as $param) {
 				if ($model = sq::request()->model($param->getName())) {
