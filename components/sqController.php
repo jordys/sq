@@ -3,17 +3,27 @@
 /**
  * Controller component base class
  * 
- * Contains method to deal with calling and filtering actions and a few 
- * default actions. Actions are methods ending in Action.
+ * This class is extended to create controllers in the application that contain
+ * actions triggered by different routes. This base class contains methods to
+ * call different actions, as well as a few default actions to inherit.
+ *
+ * Action methods end in 'Action'. If no action is specified in the route then
+ * the index action is used. If the requested action doesn't exist the request
+ * default action will be used.
+ *
+ * The filter method can be extended to create access controller for the
+ * controller. Controllers contain a layout property that is rendered when the
+ * controller is echoed to the screen completing the framework request cycle.
  */
 
 abstract class sqController extends component {
 	
 	/**
-	 * Call actions within controller
+	 * Call an action within the controller
 	 * 
-	 * Calls the action passed in. A null argument will result in the index 
-	 * action being called.
+	 * Calls the passed in action. A null argument will result in the index 
+	 * action being called. Additional arguments cann be passed to the action as
+	 * an array.
 	 */
 	public function action($action = null, $args = array()) {
 		if (!$action) {
