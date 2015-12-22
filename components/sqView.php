@@ -165,6 +165,8 @@ abstract class sqView extends component {
 	 * both in the framework and in the app the app one will be chosen.
 	 */
 	private static function getViewPath($file) {
+		$path = null;
+		
 		if (file_exists(sq::root().'/views/'.$file.'.php')) {
 			$path = sq::root().'/views/'.$file.'.php';
 		} elseif (file_exists(sq::path().'views/'.$file.'.php')) {

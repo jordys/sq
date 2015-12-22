@@ -106,7 +106,7 @@ abstract class sqController extends component {
 		$class = get_called_class();
 		
 		// Check if the file exists. If it doesn't throw a 404 error
-		if (file_exists(sq::root().'views/'.$class.'/'.$action.'.php')) {
+		if (view::exists($class.'/'.$action)) {
 			
 			// If a layout exists use the view as content
 			if (is_object($this->layout)) {

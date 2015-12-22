@@ -15,7 +15,7 @@ return array(
 		// Debug mode is used to print querries on the screen
 		'debug' => false,
 		
-		// Default type for models. Can be overridden by setting ['type'] in the 
+		// Default type for models. Can be overridden by setting 'type' in the 
 		// model config.
 		'default-type' => 'sql',
 		

@@ -1,31 +1,36 @@
 <?php
 
 /**
- * sq base static class
+ * sq framework
  *
- * The absolute first class called in the app. Handles calls to the controller 
- * and provides useful static variables and methods to the rest of the app such 
- * as config.
+ * Provides the core framework and provides the global sq::<component> syntax
+ * for initializing component objects.
  *
- * Also manages overriding defaults with config values and a few other setup 
- * tasks.
+ * The application is bootstrapped by calling sq::init(). Once the application
+ * is initialized the route component will call the correct controller and begin
+ * the rendering process. The class also sets up error handling and autoloading.
  */
 
 class sq {
 	
-	// Global static properties. $config is the merged configuration of the app
-	// and error is the current application error (404, PHP warning, etc...).
+	// $config holds the merged configuration of the app and error stores the
+	// current framework error (404, PHP warning, etc...)
 	private static $config, $error;
 	
 	// Store for components so they don't have to be realoaded from memory
 	// unnecessarily
 	private static $cache = array();
 	
-	// Startup static function for the entire app. Handles setup tasks and 
-	// starts the controller bootstrap.
+	/** 
+	 * Startup method for the framework
+	 *
+	 * Sets up error handling, autoloading, sessions and date / time defaults
+	 * then triggers the routing component and calls a controller.
+	 */
 	public static function init() {
 		
-		// Error handling function for the entire framework
+		// PHP 5.3 doesn't allow methods as error handlers so this is a function
+		// instead. It shouldn't ever be called directly
 		function sqErrorHandler($number, $string, $file, $line, $context) {
 			$trace = debug_backtrace();
 			
@@ -50,49 +55,55 @@ class sq {
 			}
 		}
 		
-		// Define framework custom error handler
+		// Define the framework's error handler
 		set_error_handler('sqErrorHandler');
 		
-		// Framework config defaults
+		// Framework configuration defaults
 		self::load('/defaults/main');
 		
-		// Set the date timezone to avoid error on some systems
+		// Set the date timezone
 		date_default_timezone_set(self::config('timezone'));
 		
-		// Start session
+		// Start a session
 		session_start();
 		
-		// Set up the autoload function to automatically include class files. 
-		// Directories checked by the autoloader are set in the global config.
+		// Set up the autoloader for component files
 		spl_autoload_register('sq::load');
 		
-		// Route urls using php config file
+		// Route urls
 		sq::route()->start();
 		
-		// If module is url parameter exists call the module instead of the
+		// If module is url parameter exists render the module instead of the
 		// controller
 		if (sq::request()->any('module')) {
 			echo self::module(sq::request()->any('module'));
 		} else {
 			
 			// Get controller parameter from the url. If no controller parameter
-			// is set then we call the default-controller from config.
+			// is set then call the configured 'default-controller'.
 			$controller = sq::request()->any('controller', self::config('default-controller'));
 			
-			// Call the currently specified controller
+			// Call the controller component
 			$controller = self::controller($controller);
 			
-			// Check for routing errors before calling controller actions
+			// Check for routing errors before calling the controller action
 			if (!self::$error) {
 				$controller->action(sq::request()->any('action'));
 			}
 			
+			// Render the controller
 			echo $controller;
 		}
 	}
 	
-	// Adds error to the error array. Can be called anywhere in the app as 
-	// self::error().
+	/**
+	 * Gets or creates an error
+	 *
+	 * Code indicates the HTTP status code to return and details contains all
+	 * the metadata about the error. This method can be called directly and is
+	 * called when PHP errors occur. When called without arguments sq::error()
+	 * returns the current framework error.
+	 */
 	public static function error($code = null, $details = array()) {
 		if ($code) {
 			$details['code'] = $code;
