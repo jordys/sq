@@ -11,9 +11,9 @@
  * the index action is used. If the requested action doesn't exist the request
  * default action will be used.
  *
- * The filter method can be extended to create access controller for the
+ * The filter method can be extended to create access restrictions for the
  * controller. Controllers contain a layout property that is rendered when the
- * controller is echoed to the screen completing the framework request cycle.
+ * echoed to the screen.
  */
 
 abstract class sqController extends component {
@@ -103,19 +103,19 @@ abstract class sqController extends component {
 	}
 	
 	// Default filter action to be overridden in controller classes. Filter 
-	// takes is passed the name of the action and returns true or false if it 
-	// should be executed. By default it always returns true.
+	// accepts the name of the action and returns true or false if it should be
+	// executed. By default there are no access restrictions.
 	public function filter($action) {
 		return true;
 	}
 	
-	// Default action is called when the specific action method doesn't exist.
-	// The action argument is the name of the unfound action. This default
-	// implementation calls renders the view in views/<controller>/<action>.
+	// Default action is called when the specified action method doesn't exist.
+	// The action argument is the name of the non-existant action. This default
+	// implementation renders the view in views/<controller>/<action>.
 	public function defaultAction($action = 'index') {
 		$class = get_called_class();
 		
-		// Check if the file exists. If it doesn't throw a 404 error
+		// Check if the file exists. If it doesn't throw a 404 error.
 		if (view::exists($class.'/'.$action)) {
 			
 			// If a layout exists use the view as content
@@ -130,7 +130,7 @@ abstract class sqController extends component {
 	}
 	
 	// Default error action that may be overridden in the controller. You can 
-	// also just create your own 404.php in the views directory and the 
+	// also just create your own 404.php in the views directory and the
 	// framework will use your view with this action.
 	public function errorAction($error) {
 		if (!headers_sent()) {
@@ -146,9 +146,9 @@ abstract class sqController extends component {
 		}
 	}
 	
-	// If config['debug'] is true this method will be used instead of the error
-	// action above. This method prints out a stack trace of php errors instead
-	// of a generic save 404 page. Again the view can be overridden like above.
+	// If debug mode is enabled this method will be used instead of the error
+	// action above. This method prints out a stack trace of the PHP error
+	// instead of a generic 404 page.
 	public function debugAction($error) {
 		if (!headers_sent()) {
 			header(':', true, $error['code']);
