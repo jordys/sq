@@ -97,26 +97,56 @@ class sq {
 	}
 	
 	/**
-	 * Gets or creates an error
+	 * Getter / setter for framework configuration
 	 *
-	 * Code indicates the HTTP status code to return and details contains all
-	 * the metadata about the error. This method can be called directly and is
-	 * called when PHP errors occur. When called without arguments sq::error()
-	 * returns the current framework error.
+	 * Returns the full config array with no arguments. With one string argument
+	 * sq::config() returns a config parameter using slash notation like 
+	 * 'sql/dbname'. With one array argument the array is merged into the config
+	 * array. When using two arguemnts the function sets a config value.
 	 */
-	public static function error($code = null, $details = array()) {
-		if ($code) {
-			$details['code'] = $code;
-			
-			// Only set error if one doesn't already exist
-			if (!self::$error) {
-				self::$error = $details;
-			}
-			
-			view::reset();
+	public static function config($name = null, $change = -1) {
+		
+		// If method has no arguments return the entire config array
+		if (!$name) {
+			return self::$config;
 		}
 		
-		return self::$error;
+		// If the first argument is an array add it to config
+		if (is_array($name)) {
+			if ($change === true) {
+				self::$config = self::merge($name, self::$config);
+			} else {
+				self::$config = self::merge(self::$config, $name);
+			}
+			
+			return self::$config;
+		}
+		
+		// Get or set the config parameter based on array path notation
+		$name = explode('/', $name);
+		
+		// Sets the changed parameter to the config array by looping  backwards
+		// over the name and creating nested arrays
+		if ($change !== -1) {
+			foreach (array_reverse($name) as $val) {
+				$change = array($val => $change);
+			}
+			
+			self::$config = self::merge(self::$config, $change);
+		}
+		
+		// Find the requested parameter by looping through the name of the
+		// requested parameter until it is found
+		$config = self::$config;
+		foreach ($name as $val) {
+			if (isset($config[$val])) {
+				$config = $config[$val];
+			} else {
+				return null;
+			}
+		}
+		
+		return $config;
 	}
 	
 	/**
@@ -186,6 +216,29 @@ class sq {
 		if (strpos($class, 'sq') !== 0 && !class_exists($class, false) && class_exists('sq'.ucfirst($class))) {
 			eval("class $class extends sq$class {}");
 		}
+	}
+	
+	/**
+	 * Gets or creates an error
+	 *
+	 * Code indicates the HTTP status code to return and details contains all
+	 * the metadata about the error. This method can be called directly and is
+	 * called when PHP errors occur. When called without arguments sq::error()
+	 * returns the current framework error.
+	 */
+	public static function error($code = null, $details = array()) {
+		if ($code) {
+			$details['code'] = $code;
+			
+			// Only set error if one doesn't already exist
+			if (!self::$error) {
+				self::$error = $details;
+			}
+			
+			view::reset();
+		}
+		
+		return self::$error;
 	}
 	
 	/**
@@ -330,59 +383,6 @@ class sq {
 		$module->options = self::merge($module->options, $options);
 		
 		return $module;
-	}
-	
-	/**
-	 * Getter / setter for framework configuration
-	 *
-	 * Returns the full config array with no arguments. With one string argument
-	 * sq::config() returns a config parameter using slash notation like 
-	 * 'sql/dbname'. With one array argument the array is merged into the config
-	 * array. When using two arguemnts the function sets a config value.
-	 */
-	public static function config($name = null, $change = -1) {
-		
-		// If method has no arguments return the entire config array
-		if (!$name) {
-			return self::$config;
-		}
-		
-		// If the first argument is an array add it to config
-		if (is_array($name)) {
-			if ($change === true) {
-				self::$config = self::merge($name, self::$config);
-			} else {
-				self::$config = self::merge(self::$config, $name);
-			}
-			
-			return self::$config;
-		}
-		
-		// Get or set the config parameter based on array path notation
-		$name = explode('/', $name);
-		
-		// Sets the changed parameter to the config array by looping  backwards
-		// over the name and creating nested arrays
-		if ($change !== -1) {
-			foreach (array_reverse($name) as $val) {
-				$change = array($val => $change);
-			}
-			
-			self::$config = self::merge(self::$config, $change);
-		}
-		
-		// Find the requested parameter by looping through the name of the
-		// requested parameter until it is found
-		$config = self::$config;
-		foreach ($name as $val) {
-			if (isset($config[$val])) {
-				$config = $config[$val];
-			} else {
-				return null;
-			}
-		}
-		
-		return $config;
 	}
 	
 	// Returns the framework path
