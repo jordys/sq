@@ -24,9 +24,6 @@ return array(
 	// attempt to derive the path.
 	'base' => false,
 	
-	// Default template if none is set
-	'default-template' => 'page',
-	
 	// Controller to call if none is requested
 	'default-controller' => 'site',
 	
