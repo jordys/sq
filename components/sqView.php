@@ -335,7 +335,7 @@ var sq = {
 	// Print out a object or array to screen with readable formatting
 	public static function debug($content) {
 		if (sq::config('debug')) {
-			echo '<pre class="sq-debug">';
+			echo '<pre class="sq-printout">';
 			echo htmlentities(print_r($content, true));
 			echo '</pre>';
 		}
