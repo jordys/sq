@@ -5,7 +5,8 @@
  *
  * Basic authorization controller. Handles actions like login and logout and has
  * helper methods authenticate(), login(), logout(), and hash() and user() to 
- * integrate into the web application.
+ * integrate into the web application. This component can also be used as a
+ * controller and provides login and logout actions.
  *
  * The login system uses the phpass library (the same one used by wordpress) to
  * securely hash and salt passwords.
