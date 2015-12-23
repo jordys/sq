@@ -5,11 +5,8 @@
  *
  * Modules extend this base class which gives basic bootstrap and autoloading
  * capabilities to the module. Modules are like mini apps with packaged views,
- * models, controllers, config and components. They can stand alone or peices of
- * them can be overridden and called outside the module. 
- *
- * Like all the core components this class can be extended by adding a class 
- * named module to your app.
+ * models, controllers, configuration and components. They can stand alone or
+ * peices of them can be overridden and called outside the module.
  */
 
 abstract class sqModule extends component {
@@ -28,9 +25,8 @@ abstract class sqModule extends component {
 		// Current class
 		$class = get_class($this);
 		
-		// Register the autoloader with php. The static name property is a hack
-		// to allow the autoloader to know the name of the module. I couldn't
-		// find a better way to do this although there probably is one.
+		// Register the autoloader with PHP. The static name property is a hack
+		// to allow the autoloader to know the name of the current module.
 		self::$name = $options['name'];
 		spl_autoload_register($class.'::load');
 		
@@ -55,7 +51,7 @@ abstract class sqModule extends component {
 	}
 	
 	/**
-	 * Module Autoloader
+	 * Module autoloader
 	 *
 	 * Add another autoloader that looks in the modules directories in addition
 	 * to the base directories. To call module assets prefix the name with a 
@@ -74,11 +70,11 @@ abstract class sqModule extends component {
 		foreach ($directories as $dir) {
 			$returned = false;
 			
-			// Look in app modules
+			// Look for application modules
 			if (file_exists(sq::root().'modules/'.$module.'/'.$dir.'/'.$class.'.php')) {
 				$returned = require_once(sq::root().'modules/'.$module.'/'.$dir.'/'.$class.'.php');
 				
-			// Look in framework modules
+			// Look for framework modules
 			} elseif (file_exists(sq::path().'modules/'.$module.'/'.$dir.'/'.$class.'.php')) {
 				$returned = require_once(sq::path().'modules/'.$module.'/'.$dir.'/'.$class.'.php');
 			}

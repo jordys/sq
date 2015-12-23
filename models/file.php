@@ -175,7 +175,7 @@ class file extends model {
 	/**
 	 * Uploads a file into the model directory
 	 *
-	 * The file can be specified by key to read from the php $_FILES superglobal
+	 * The file can be specified by key to read from the PHP $_FILES superglobal
 	 * or as a file object. A name can optionally be specified for the uploaded
 	 * file. If a name isn't specified the existing file name will be used.
 	 */

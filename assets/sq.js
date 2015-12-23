@@ -4,7 +4,7 @@
  * sq.js
  *
  * sq.js provides a handfull of javascript utilities for interacting with the sq
- * php framework. Provides methods for interacting with view contexts and forms.
+ * PHP framework. Provides methods for interacting with view contexts and forms.
  * View contexts can be set up on the backend to enable loading certain pieces
  * of UI without the performance hit of returning the entire page and without
  * the complexity of multiple urls.

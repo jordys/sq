@@ -3,13 +3,15 @@
 /**
  * Model component base class
  *
- * This class forms the base for all sq models. Model classes can be specific
- * for a single data set or for broad for entire types of databases such as
- * sql.
+ * Models represent either a list of records or a single record. Records can be
+ * related to one another in code using the has one, has many, belongs to and
+ * many many relationship types. Different types of data require type classes
+ * that implement the empty crud methods in this class.
  *
- * To make a new model extend the model class. To extend the base model, add a
- * class named model to your app's components folder. Models must implement the
- * CRUD methods (create, read, update, delete).
+ * Searching model data is implemented using an eloquent style interface using
+ * chainable methods to query the data. A model may be configured to have
+ * validation rules built in. Rendering a model yields either a list or a form
+ * of the records.
  */
 
 abstract class sqModel extends component {
@@ -37,8 +39,8 @@ abstract class sqModel extends component {
 	
 	// Called by the __tostring method to render a view of the data in the
 	// model. By default the view is a form for a single result and a listing
-	// multiple results. The default listing and form view can also be
-	// overridden in the model options.
+	// multiple results. The default listing and form view may be overridden in
+	// the model options.
 	public function render() {
 		$name = explode('/', $this->layout->view);
 		$name = array_pop($name);
@@ -73,9 +75,6 @@ abstract class sqModel extends component {
 	public function read($values = null) {}
 	public function update($data = null, $where = null) {}
 	public function delete($where = null) {}
-	
-	// Returns the number of records. Implemented in driver.
-	public function count() {}
 	
 	// Validate form using passed in rules or options in model. Shorthand for
 	// calling sq::validate().
@@ -222,7 +221,7 @@ abstract class sqModel extends component {
 		
 		if ($this->isRead) {
 			
-			// This is required to work around object contexts in php 5.3
+			// This is required to work around object contexts in PHP 5.3
 			self::$usort = $this;
 			
 			usort($this->data, function($a, $b) {

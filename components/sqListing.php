@@ -34,7 +34,7 @@ abstract class sqListing {
 	
 	// Truncates text in listing
 	public static function blurb($value) {
-		return view::blurb($value, 50);
+		return view::truncate($value, 50);
 	}
 	
 	// Returns value formatted as currency

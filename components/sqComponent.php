@@ -3,12 +3,13 @@
 /**
  * Component base class
  *
- * All types of interactions in sq derive from this base component class. This
- * class can be overridden by making a component class in your app. Controllers,
- * Modules, Models and Views are all components in sq. The class mainly deals 
- * with groundwork. It implements the iterator and countable interfaces so it 
- * can be looped like an array and has parameters for managing options and a 
- * set() method for easy mass assignment.
+ * All types of interactions in sq derive from this base component class.
+ * Controllers, modules, models and views are all components in sq. This class
+ * mainly deals with groundwork and configuration.
+ *
+ * It implements the iterator and countable interfaces so it can be iterated
+ * like an array and a set() method for mass assignment as well as methods for
+ * exporting the component data as JSON, xml or a PHP array.
  */
 
 abstract class sqComponent implements iterator, countable, arrayAccess {
@@ -129,7 +130,7 @@ abstract class sqComponent implements iterator, countable, arrayAccess {
 	 * Method implementing the countable interface
 	 *
 	 * This method and interface allow the data in the array to be counted with
-	 * the php count() function.
+	 * the PHP count() function.
 	 */
 	public function count() {
 		return count($this->data);

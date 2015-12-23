@@ -3,11 +3,18 @@
 /**
  * View component
  *
- * Takes the path of a template file, puts the single passed content array into 
- * it and returns a fully formed html page for saving, displaying, etc...  Also
- * contains a few static helper methods to streamline formatting. Views are 
- * rendered inside to outside. Specficly called views first then layouts working
- * outwards.
+ * Takes the path of a template file and an array of data values for the view
+ * and renders a html view. Views may be wrapped in layers of layouts and sub
+ * views may be included. Views are rendered inside to outside starting with the
+ * first called view and then rendering layouts. Sections of a view can be
+ * clipped into a variable for use in a layout.
+ *
+ * Contains static helper methods to streamline formatting dates, truncating
+ * text, generating pagination and printing out data for debuging.
+ *
+ * A view represents the body content of an html document. The head foot 
+ * sections can have scripts, styles and other content injected into them using
+ * various methods and properties.
  */
 
 abstract class sqView extends component {
@@ -38,10 +45,12 @@ abstract class sqView extends component {
 	protected static $styles = array(),
 		$scripts = array('foot' => array(), 'head' => array());
 	
-	// In template variables
+	// In template variables. Setting these changes the value included in the
+	// html head tag.
 	public static $description, $doctype, $title, $language, $favicon, $id,
 		$head, $foot, $top, $charset, $keywords = array();
 	
+	// Setup the view
 	public function __construct($options, $view, $data = array()) {
 		
 		// Add static data from the passed in array
@@ -60,8 +69,8 @@ abstract class sqView extends component {
 		}
 	}
 	
-	// Special overloaded setter that adds data from the layout view into views
-	// included
+	// Special overloaded setter that adds data from the layout view into
+	// included views
 	public function __set($name, $value) {
 		if (is_object($value) && !is_a($value, 'model')) {
 			$value->data += $this->data;
@@ -76,7 +85,7 @@ abstract class sqView extends component {
 		$this->data[$name] = $value;
 	}
 	
-	// Reset all the global view properties back to their default state
+	// Reset global view properties
 	public static function reset() {
 		foreach (array('description', 'keywords', 'charset', 'title', 'doctype', 'language', 'favicon', 'id') as $prop) {
 			self::$$prop = sq::config('view/'.$prop);
@@ -87,15 +96,18 @@ abstract class sqView extends component {
 		self::$jsData = array();
 	}
 	
-	// Checks if a view exists in the application
-	public static function exists($file) {
-		return (bool)self::getViewPath($file);
+	// Returns true if the view file exists, false if not.
+	public static function exists($view) {
+		return (bool)self::getViewPath($view);
 	}
 	
-	// Renders the template view file. If full is specified the template will
-	// include the auto generated header and footer sections. HTML templates 
-	// should only include content inside the body tag and omit the body tag and
-	// everything outside of it.
+	/**
+	 * Renders the specified view
+	 *
+	 * If full is specified the template will include the auto generated head
+	 * and foot sections. HTML templates should only include content inside the
+	 * body tag and omit the body tag and everything outside of it.
+	 */
 	public function render($view = null, $data = array()) {
 		if ($view) {
 			return sq::view($view, $data)
@@ -106,7 +118,8 @@ abstract class sqView extends component {
 		}
 	}
 	
-	// Utility function to render a template
+	// Utility method to render a template dealing with moving data between
+	// layouts and nested views
 	private function renderTemplate($data) {
 		$this->set($data);
 		
@@ -156,14 +169,7 @@ abstract class sqView extends component {
 		return $rendered;
 	}
 	
-	/**
-	 * Finds view file
-	 *
-	 * This method checks the framework files as well as the app view files as
-	 * well as those for any modules currently active. The method returns the
-	 * path of the file to be included. If a view file with the same name exists
-	 * both in the framework and in the app the app one will be chosen.
-	 */
+	// Utility method to find the file path from a passed in view
 	private static function getViewPath($file) {
 		$path = null;
 		
@@ -287,7 +293,7 @@ var sq = {
 	
 	// Creates / uses a content slot. Content slots are bits of content stored
 	// in a model that may be defined directly in code. Slots are editable in
-	// the Admin module or via a custom setup in your app.
+	// the Admin module or via a custom setup in your application.
 	public static function slot($id, $name, $type = 'markdown', $content = null) {
 		
 		// Create model object if one doesn't already exist and read slots and
@@ -326,16 +332,16 @@ var sq = {
 		}
 	}
 	
-	// Print out a php object or array to screen with readable formatting
+	// Print out a object or array to screen with readable formatting
 	public static function debug($content) {
 		if (sq::config('debug')) {
-			echo '<pre>';
+			echo '<pre class="sq-debug">';
 			echo htmlentities(print_r($content, true));
 			echo '</pre>';
 		}
 	}
 	
-	// Start a clip optionally saving the clip to a layout variable
+	// Start a clip, optionally saving the clip to a layout variable
 	public function clip($name = null) {
 		ob_start();
 		
@@ -387,7 +393,7 @@ var sq = {
 		}
 	}
 	
-	// Adds a script to template
+	// Adds a script include to the page
 	public static function script($path, $location = 'foot') {
 		$order = self::$current;
 		
@@ -398,7 +404,7 @@ var sq = {
 		self::$scripts[$location][$order][] = $path;
 	}
 	
-	// Adds a style to head
+	// Adds a stylesheet to the view
 	public static function style($path) {
 		$order = self::$current;
 		
@@ -431,7 +437,7 @@ var sq = {
 	}
 	
 	// Shortens text and appends a passed in ending or elipsis as default
-	public static function blurb($string, $length = 100, $closing = '&hellip;') {
+	public static function truncate($string, $length = 100, $closing = '&hellip;') {
 		$string = strip_tags($string);
 		$string = substr($string, 0, $length);
 		
@@ -442,7 +448,7 @@ var sq = {
 		return $string;
 	}
 	
-	// Generates page numbers for model
+	// Generates page numbers for a model
 	public static function pagination($model, $options = array()) {
 		$options = sq::merge(sq::config('view/pagination'), $options);
 		

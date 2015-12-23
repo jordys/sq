@@ -4,12 +4,11 @@
  * Auth controller / component
  *
  * Basic authorization controller. Handles actions like login and logout and has
- * helper methods check(), login(), logout(), hash() and user() to allow 
- * integration into a web application.
+ * helper methods authenticate(), login(), logout(), and hash() and user() to 
+ * integrate into the web application.
  *
  * The login system uses the phpass library (the same one used by wordpress) to
- * securly hash passwords. Cookie support as well as session based logins are
- * possible.
+ * securely hash and salt passwords.
  */
 
 abstract class sqAuth extends controller {
@@ -17,6 +16,8 @@ abstract class sqAuth extends controller {
 		'cache' => true
 	);
 	
+	// The user object and their status are available as properties in the
+	// component
 	public $user, $level, $isLoggedIn = false;
 	
 	public function __construct($options) {
@@ -92,6 +93,18 @@ abstract class sqAuth extends controller {
 		setcookie('sq-auth', null, time() - 10, '/');
 	}
 	
+	// Checks a password against a hashed password
+	public static function authenticate($password, $hash) {
+		$hasher = new PasswordHash(8, sq::config('auth/portable-hashes'));
+		return $hasher->checkPassword($password, $hash);
+	}
+	
+	// Returns hashed string
+	public static function hash($password) {
+		$hasher = new PasswordHash(8, sq::config('auth/portable-hashes'));
+		return $hasher->HashPassword($password);
+	}
+	
 	// Checks login posted from form
 	public function loginPostAction($username = null, $password = null, $remember = false) {
 		if (!$username || !$password) {
@@ -112,18 +125,6 @@ abstract class sqAuth extends controller {
 		if (!sq::request()->isAjax) {
 			sq::response()->redirect();
 		}
-	}
-	
-	// Checks a password against a hashed password
-	public static function authenticate($password, $hash) {
-		$hasher = new PasswordHash(8, sq::config('auth/portable-hashes'));
-		return $hasher->checkPassword($password, $hash);
-	}
-	
-	// Returns hashed string
-	public static function hash($password) {
-		$hasher = new PasswordHash(8, sq::config('auth/portable-hashes'));
-		return $hasher->HashPassword($password);
 	}
 	
 	// This function is a special action for the admin module that handles the

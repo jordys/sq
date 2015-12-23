@@ -13,8 +13,8 @@
 
 class sq {
 	
-	// $config holds the merged configuration of the app and error stores the
-	// current framework error (404, PHP warning, etc...)
+	// $config holds the merged configuration of the application and error
+	// stores the current framework error (404, PHP warning, etc...)
 	private static $config, $error;
 	
 	// Store for components so they don't have to be realoaded from memory
@@ -367,8 +367,8 @@ class sq {
 	/**
 	 * Runs and returns a module component
 	 *
-	 * Modules are like mini apps. They contain there own views, models and
-	 * controllers.
+	 * Modules are like mini applications. They contain their own views, models
+	 * and controllers.
 	 */
 	public static function module($name, $options = array()) {
 		$config = self::configure($name, $options, 'module');
@@ -401,7 +401,7 @@ class sq {
 			return self::config('base');
 		}
 		
-		// If no root path is configured then determine from php
+		// If root path isn't configured then get it from PHP
 		$base = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
 		$base .= $_SERVER['HTTP_HOST'];
 		
