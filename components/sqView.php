@@ -34,7 +34,7 @@ abstract class sqView extends component {
 	// footer
 	protected static $jsData = array();
 	
-	// Static counter. Every time a new view object is created it goes up by 
+	// Static counter. Every time a new view object is created it goes up by
 	// one. This counter allows the object to know the current position of the
 	// view in the overall render flow.
 	protected static $current;

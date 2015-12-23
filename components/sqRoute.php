@@ -3,7 +3,7 @@
 /**
  * Route component
  *
- * Handles routing and URL creation for a sq application.
+ * Handles routing and URL creation for the application.
  */
 
 abstract class sqRoute extends component {

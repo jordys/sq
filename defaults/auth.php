@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Auth defaults
+ * Auth component defaults
  */
 
 return array(

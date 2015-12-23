@@ -1,7 +1,7 @@
 <?php
 
 /**
- * View defaults
+ * View component defaults
  */
 
 return array(
@@ -31,8 +31,8 @@ return array(
 		// id attribute applied to the body tag
 		'id' => null,
 		
-		// Data passed directly to javascript as a json array. Accessed in js as
-		// the sq object.
+		// Data passed directly to javascript as a json array. Accessed in
+		// javascript in the sq.data object.
 		'js-data' => array(
 			'base' => sq::base()
 		),

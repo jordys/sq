@@ -52,7 +52,15 @@ abstract class sqValidator extends component {
 		$_SESSION['sq-form-errors'] = $this->errors;
 	}
 	
-	// Data validation methods
+	
+	/***************************************************************************
+	 * Data validation methods
+	 *
+	 * These methods are the logic for checking object data against the object
+	 * rules.
+	 **************************************************************************/
+	
+	// Data is not null
 	public static function required($value) {
 		if ((string)$value) {
 			return true;
@@ -61,18 +69,22 @@ abstract class sqValidator extends component {
 		return false;
 	}
 	
+	// Value is numeric
 	public static function numeric($value) {
 		return !$value || is_numeric($value);
 	}
 	
+	// Value is an integer
 	public static function integer($value) {
 		return !$value || is_int($value);
 	}
 	
+	// Value is a valid email address
 	public static function email($value) {
 		return !$value || filter_var($value, FILTER_VALIDATE_EMAIL);
 	}
 	
+	// Value is a valid url
 	public static function url($value) {
 		return !$value || filter_var($value, FILTER_VALIDATE_URL);
 	}

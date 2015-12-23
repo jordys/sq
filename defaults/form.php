@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Form defaults
+ * Form component defaults
  */
 
 return array(

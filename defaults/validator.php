@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Validator defaults
+ * Validator component defaults
  */
 
 return array(

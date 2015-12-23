@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Model defaults
+ * Model component defaults
  */
 
 return array(

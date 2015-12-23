@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Mailer defaults
+ * Mailer component defaults
  */
 
 return array(

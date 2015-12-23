@@ -1,14 +1,15 @@
 <?php
 
 /*******************************************************************************
- * Defaults file for all config settings in the sq framework app. It can be a 
- * good reference to view all the available properties, however NEVER edit this 
- * file directly instead override these settings in your sites index.php file.
+ * Defaults file for all configuration settings in the sq framework app. It may
+ * be a good reference to view available properties, however, NEVER edit this 
+ * file directly instead override these settings in your sites configuration.
  *
- * This list isn't necessarily complete as modules can add config defaults and 
- * templates may use custom config options.
+ * This list isn't necessarily complete as components may have their own
+ * configuration files that aren't loaded until the component is used.
  ******************************************************************************/
 
+// Load configuration for other components
 sq::load('/defaults/component');
 sq::load('/defaults/view');
 sq::load('/defaults/form');
@@ -19,8 +20,8 @@ return array(
 	// Debug mode
 	'debug' => false,
 	
-	// Parameter to manually set the root path of the app. If false the app will
-	// try to derive the path.
+	// Parameter to manually set the root path of the app. If false PHP will
+	// attempt to derive the path.
 	'base' => false,
 	
 	// Default template if none is set
