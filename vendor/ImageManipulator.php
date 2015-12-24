@@ -1,4 +1,14 @@
 <?php
+
+/**
+ * ImageManipulator class
+ *
+ * Taken from GitHub Gist by Phil Brown and slightly modified to better support
+ * png transparency.
+ *
+ * https://gist.github.com/philBrown/880506
+ */
+
 class ImageManipulator
 {
     /**
