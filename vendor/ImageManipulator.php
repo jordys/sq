@@ -111,7 +111,15 @@ class ImageManipulator
                 $height = round($width / $this->width * $this->height);
             }
         }
+        
         $temp = imagecreatetruecolor($width, $height);
+        
+        // PNG/GIF Transparency
+        imagealphablending($temp, false);
+        imagesavealpha($temp,true);
+        $transparent = imagecolorallocatealpha($temp, 255, 255, 255, 127);
+        imagefilledrectangle($temp, 0, 0, $width, $height, $transparent);
+        
         imagecopyresampled($temp, $this->image, 0, 0, 0, 0, $width, $height, $this->width, $this->height);
         return $this->_replace($temp);
     }
@@ -220,7 +228,7 @@ class ImageManipulator
         $dir = dirname($fileName);
         if (!is_dir($dir)) {
             if (!mkdir($dir, 0755, true)) {
-                throw new RuntimeException('Error creating directory ' . $dir);
+                throw new RuntimeException("Error creating directory $dir");
             }
         }
         
@@ -232,6 +240,11 @@ class ImageManipulator
                     }
                     break;
                 case IMAGETYPE_PNG  :
+                    
+                    // PNG Transparency
+                    imagealphablending($this->image, false);
+                    imagesavealpha($this->image, true);
+                    
                     if (!imagepng($this->image, $fileName)) {
                         throw new RuntimeException;
                     }
@@ -243,7 +256,7 @@ class ImageManipulator
                     }
             }
         } catch (Exception $ex) {
-            throw new RuntimeException('Error saving image file to ' . $fileName);
+            throw new RuntimeException("Error saving image file to $fileName");
         }
     }
  
