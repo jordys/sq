@@ -10,3 +10,19 @@ free software.
 The framework is currently in beta. Core features are largely done but I reserve
 the right to change the API at any time until it's out of beta. Breaking changes
 will be noted by a new release number. Full documentation coming soon.
+
+The framework contains the following components:
+
+- Model
+- View
+- Controller
+- Module
+- Request
+- Response
+- Route
+- Asset
+- Form
+- Listing
+- Auth
+- Validator
+- Mailer
