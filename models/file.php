@@ -19,7 +19,7 @@ class file extends model {
 		parent::__construct($options);
 		
 		if (!file_exists($this->options['path'])) {
-			mkdir($this->options['path'], true);
+			mkdir($this->options['path'], 0777, true);
 		}
 		
 		ini_set('memory_limit', $this->options['memory-limit']);
