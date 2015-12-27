@@ -189,12 +189,12 @@ class file extends model {
 		
 		// Get name from upload file if it isn't specified
 		if (!$name) {
-			$name .= basename($file['name']);
+			$name = basename($file['name']);
 		}
-		
+				
 		move_uploaded_file($file['tmp_name'], $this->options['path'].'/'.$name);
 		
-		$this->read($name);
+		return $this->find($name);
 	}
 	
 	/**
