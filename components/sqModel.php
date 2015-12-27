@@ -191,6 +191,13 @@ abstract class sqModel extends component {
 		
 		// Allow shorthand for searching by id
 		if (!is_array($argument)) {
+			
+			// Set the id so its available after in the model data even if it
+			// wasn't explictly set
+			if (empty($this->data['id'])) {
+				$this->data['id'] = $argument;
+			}
+			
 			$this->limit();
 			$argument = array('id' => $argument);
 		}
@@ -226,7 +233,6 @@ abstract class sqModel extends component {
 			
 			usort($this->data, function($a, $b) {
 				$ref = sqModel::$usort;
-				
 				$order = $ref->options['order'];
 				
 				if ($ref->options['order-direction'] != 'DESC') {
