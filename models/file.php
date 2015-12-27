@@ -226,8 +226,12 @@ class file extends model {
 	 *
 	 * The optional 'format' key dictates the file format generated, Formats are
 	 * gif, png and jpg. By default format will match the master file.
+	 *
+	 * By default a new variant will only be created if one doesn't already
+	 * exist but by passing true to the regenerate argument a new version will
+	 * always be created.
 	 */
-	public function variant($variant) {
+	public function variant($variant, $regenerate = false) {
 		if (is_string($variant)) {
 			$variant = sq::config('variants/'.$variant);
 		}
@@ -251,8 +255,8 @@ class file extends model {
 		
 		// Generate the variation if it doesn't already exist
 		$variantPath = $this->options['path'].'/variants/'.$variant['w'].'x'.$variant['h'].'/'.$this->data['name'].'.'.$variant['format'];
-		if (!file_exists($variantPath)) {
-			$image = new ImageManipulator($this->options['path'].'/'.$this->data['file']);
+		if (!file_exists($variantPath) || $regenerate) {
+			$image = new ImageManipulator(sq::root().$this->options['path'].'/'.$this->data['file']);
 			$image->resample($variant['w'], $variant['h']);
 			$image->save($variantPath, $format);
 		}
