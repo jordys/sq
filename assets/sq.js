@@ -63,6 +63,9 @@ sq = function(sq, $) {
 		$.ajax(options.url, {
 			method: options.method,
 			data: data,
+			async: false,
+			contentType: false,
+			processData: false,
 			success: function(data) {
 				if (options.context) {
 					$context.html(data);
@@ -134,6 +137,13 @@ sq = function(sq, $) {
 		save: function($form, context, options, callback) {
 			$form = parseElement($form);
 			
+			var data;
+			try {
+				data = new FormData($form[0]);
+			} catch (e) {
+				data = $form.serialize();
+			}
+			
 			if (typeof options === 'string') {
 				options = {url: options};
 			} else if (typeof options === 'function') {
@@ -146,7 +156,7 @@ sq = function(sq, $) {
 				url: options.url || $form.attr('action'),
 				method: options.method || $form.attr('method'),
 				slug: ('slug' in options) ? options.slug : true
-			}, $form.serialize(), function(data) {
+			}, data, function(data) {
 				triggerCallbacks('save', context, data);
 				
 				if (typeof callback === 'function') {
