@@ -182,7 +182,7 @@ abstract class sqModel extends component {
 	}
 	
 	/**
-	 * Stores a key value array of where statements
+	 * Stores a key / value array of where statements
 	 *
 	 * If a single argument is passed it is assumed to be an id and limit is
 	 * automatically imposed.

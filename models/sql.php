@@ -60,7 +60,12 @@ class sql extends model {
 		return preg_replace('/[^A-Za-z0-9_]/', '', $value);
 	}
 	
-	// Create a new record in the model
+	/**
+	 * Creates a new row in the table
+	 *
+	 * An array of data may be passed in. These values will overwrite any values
+	 * set in the model.
+	 */
 	public function create($data = null) {
 		
 		// Unset a numberic id key if one exists
@@ -95,23 +100,24 @@ class sql extends model {
 	}
 	
 	/**
-	 * Reads values from table and sets them to the model
+	 * Reads rows from table and sets them to the model object
 	 *
-	 * Accepts an optional array of columns to read from the table. Reads
-	 * records matching the where statement from the table. Results are set
-	 * directly to the model if limit is true or set as a list of model objects
-	 * if limit is false.
+	 * The columns to read from the table row may be specified in the optional
+	 * columns argument. By default every column will be read. Values from the
+	 * record are assigned to the model. If limit is true the values are
+	 * directly applied to the object otherwise a list of model objects is set
+	 * to the object.
 	 */
-	public function read($values = null) {
-		$values = $this->sanitize($values);
+	public function read($columns = null) {
+		$columns = $this->sanitize($columns);
 		
-		if (is_array($values)) {
-			$values = implode(',', $values);
+		if (is_array($columns)) {
+			$columns = implode(',', $columns);
 		} else {
-			$values = '*';
+			$columns = '*';
 		}
 		
-		$query = "SELECT $values FROM ".$this->sanitize($this->options['table']);
+		$query = "SELECT $columns FROM ".$this->sanitize($this->options['table']);
 		
 		$query .= $this->parseWhere();
 		$query .= $this->parseOrder();
@@ -120,7 +126,13 @@ class sql extends model {
 		return $this->query($query);
 	}
 	
-	// Update rows in table matching the where statement
+	/**
+	 * Updates rows in table
+	 *
+	 * Updates all rows matching the where statement with the data in the model
+	 * object. Data and a where statement values may be passed in as optional
+	 * arguments.
+	 */
 	public function update($data = null, $where = null) {
 		$this->set($data);
 		
@@ -134,7 +146,12 @@ class sql extends model {
 		return $this;
 	}
 	
-	// Delete rows in table matching where statement
+	/**
+	 * Deletes rows in table
+	 *
+	 * All rows matching the where statement in the current table are deleted.
+	 * A where statment may be passed in directly as a shorthand.
+	 */
 	public function delete($where = null) {
 		if ($where) {
 			$this->where($where);
