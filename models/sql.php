@@ -248,6 +248,10 @@ class sql extends model {
 	
 	// Returns count of records matched by the where query
 	public function count() {
+		if ($this->isRead) {
+			return count($this->data);
+		}
+		
 		$query = 'SELECT COUNT(*) FROM '.$this->sanitize($this->options['table']);
 		$query .= $this->parseWhere();
 		
