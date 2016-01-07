@@ -94,7 +94,13 @@ abstract class sqRoute extends component {
 	
 	// Handle adding url fragments to the object. If a fragment comes in without
 	// a value use the value from the current URL.
-	public function append(array $fragments) {
+	public function append($fragments) {
+		
+		// Allow shorthand with just the name of a url property
+		if (is_string($fragments)) {
+			$fragments = array($fragments);
+		}
+		
 		foreach ($fragments as $name => $value) {
 			
 			// Handle optional fragment names
