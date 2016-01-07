@@ -288,6 +288,9 @@ class sql extends model {
 				$this->showColumnsQuery($handle);
 			}
 			
+			// Mark the model in post read state
+			$this->isRead = true;
+			
 			return $this;
 		} catch (Exception $e) {
 			if (sq::config('debug')) {
@@ -327,17 +330,13 @@ class sql extends model {
 					'load-relations' => $this->options['load-relations']
 				))->where($row['id']);
 				
-				$model->data = $row;
-				
 				// Mark child model in post read state
 				$model->isRead = true;
 				
+				$model->data = $row;
 				$this->data[] = $model;
 			}
 		}
-		
-		// Mark the model in post read state
-		$this->isRead = true;
 		
 		// Call relation setup if enabled
 		if ($this->options['load-relations']) {
@@ -360,7 +359,7 @@ class sql extends model {
 	private function updateDatabase() {
 		$data = array_diff_key($this->data, array_flip(array('id', 'created', 'edited')));
 		$query = 'UPDATE '.$this->sanitize($this->options['table']);
-				
+		
 		$set = array();
 		foreach ($data as $key => $val) {
 			$key = $this->sanitize($key);
