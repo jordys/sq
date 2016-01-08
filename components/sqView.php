@@ -27,9 +27,6 @@ abstract class sqView extends component {
 	// FIFO stack of the list of current view clips
 	private $clips = array();
 	
-	// Cache of the slots model
-	protected static $slots = null;
-	
 	// Variable to store data to be turned into a javascript JSON object in the
 	// footer
 	protected static $jsData = array();
@@ -289,47 +286,6 @@ var sq = {
 		$foot .= '</body></html>'; // Close tags
 		
 		return $foot;
-	}
-	
-	// Creates / uses a content slot. Content slots are bits of content stored
-	// in a model that may be defined directly in code. Slots are editable in
-	// the Admin module or via a custom setup in your application.
-	public static function slot($id, $name, $type = 'markdown', $content = '') {
-		
-		// Create model object if one doesn't already exist and read slots and
-		// cache them to the view
-		if (!self::$slots) {
-			self::$slots = sq::model('sq_slots')->make()->read();
-		}
-		
-		// Find the requested slot and create if it doesn't exist
-		$slot = self::$slots->find($id);
-		if (!$slot) {
-			$slot = sq::model('sq_slots')->create(array(
-				'id' => $id,
-				'name' => $name,
-				'type' => $type,
-				'content' => $content
-			));
-		}
-		
-		// Special rendering for slot types
-		if ($slot->content) {
-			switch ($slot->type) {
-				case 'markdown':
-					sq::load('phpMarkdown');
-					$output = markdown($slot->content);
-					break;
-				case 'image':
-					$output = '<img src="'.sq::base().$slot->content.'" alt="'.$slot->alt_text.'"/>';
-					break;
-				default:
-					$output = $slot->content;
-					break;
-			}
-			
-			return "<div class=\"sq-slot $id\">$output</div>";
-		}
 	}
 	
 	// Print out a object or array to screen with readable formatting

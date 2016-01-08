@@ -57,7 +57,7 @@ abstract class sqValidator extends component {
 	 * Data validation methods
 	 *
 	 * These methods are the logic for checking object data against the object
-	 * rules.
+	 * rules. More can be created by extending this class.
 	 **************************************************************************/
 	
 	// Data is not null
