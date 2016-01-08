@@ -271,10 +271,12 @@ class sql extends model {
 			$handle->setFetchMode(PDO::FETCH_ASSOC);
 			
 			foreach ($data as $key => $val) {
-				if ($val === null) {
-					$handle->bindValue(":$key", null, PDO::PARAM_NULL);
-				} else {
-					$handle->bindValue(":$key", $val);
+				if (!is_array($val) && !is_object($val)) {
+					if ($val === null) {
+						$handle->bindValue(":$key", null, PDO::PARAM_NULL);
+					} else {
+						$handle->bindValue(":$key", $val);
+					}
 				}
 			}
 			
@@ -362,8 +364,12 @@ class sql extends model {
 		
 		$set = array();
 		foreach ($data as $key => $val) {
-			$key = $this->sanitize($key);
-			$set[] = "$key = :$key";
+			
+			// Avoid setting keys for related models
+			if (!is_array($val) && !is_object($val)) {
+				$key = $this->sanitize($key);
+				$set[] = "$key = :$key";
+			}
 		}
 		
 		$query .= ' SET '.implode(',', $set);
