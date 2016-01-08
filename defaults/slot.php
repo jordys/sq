@@ -6,7 +6,13 @@
 
 return array(
 	'slot' => array(
+		
+		// Array of the names of content variable eg {variable} and the values
+		// to replace them with. This allows slot content to be slightly dynamic
+		// with some passed in values.
 		'replacers' => array(),
+		
+		// Type of slot. Default is markdown if type isn't specified.
 		'type' => 'markdown'
 	),
 	
