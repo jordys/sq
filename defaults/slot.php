@@ -13,7 +13,10 @@ return array(
 		'replacers' => array(),
 		
 		// Type of slot. Default is markdown if type isn't specified.
-		'type' => 'markdown'
+		'type' => 'markdown',
+		
+		// Default content of slots
+		'content' => ''
 	),
 	
 	// Slots database config. Slots are chunks of content defined in code and

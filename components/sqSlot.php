@@ -37,7 +37,7 @@ abstract class sqSlot extends component {
 				'id' => $id,
 				'name' => $name,
 				'type' => $this->options['type'],
-				'content' => $content
+				'content' => $this->options['content']
 			));
 		}
 	}
