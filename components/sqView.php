@@ -294,7 +294,7 @@ var sq = {
 	// Creates / uses a content slot. Content slots are bits of content stored
 	// in a model that may be defined directly in code. Slots are editable in
 	// the Admin module or via a custom setup in your application.
-	public static function slot($id, $name, $type = 'markdown', $content = null) {
+	public static function slot($id, $name, $type = 'markdown', $content = '') {
 		
 		// Create model object if one doesn't already exist and read slots and
 		// cache them to the view
