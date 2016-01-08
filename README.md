@@ -26,3 +26,4 @@ The framework contains the following components:
 - Auth
 - Validator
 - Mailer
+- Slot
