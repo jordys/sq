@@ -25,7 +25,7 @@ abstract class sqAsset extends component {
 	
 	// Asset returns the file url when treated like a string
 	public function render() {
-		if ($this->check() || sq::config('debug')) {
+		if (!$this->check() || sq::config('debug')) {
 			$this->build();
 		}
 		
