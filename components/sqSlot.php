@@ -15,7 +15,7 @@
 abstract class sqSlot extends component {
 	
 	// Cache of the slots model
-	protected static $slots = null;
+	protected static $slots;
 	
 	// Model of the individual slot
 	public $slot;
@@ -79,7 +79,8 @@ abstract class sqSlot extends component {
 	public function render() {
 		
 		// Get the output from the correct type method
-		$output = self::{$this->slot->type}($this->slot);
+		$type = $this->slot->type;
+		$output = self::$type($this->slot);
 		
 		// Base is always a variable
 		$replacers = array('{base}' => sq::base());
