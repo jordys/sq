@@ -274,10 +274,12 @@ class file extends model {
 				continue;
 			}
 			
+			// Use pathinfo here because getExtendsion isn't in PHP 5.3
+			$extension = pathinfo($file->getFilename(), PATHINFO_EXTENSION);
 			$item = array(
 				'file' => $file->getFilename(),
-				'name' => $file->getBasename('.'.$file->getExtension()),
-				'extension' => $file->getExtension(),
+				'name' => $file->getBasename('.'.$extension),
+				'extension' => $extension,
 				'path' => $file->getPath(),
 				'url' => sq::base().$file->getPathname(),
 				'id' => $file->getFilename()
