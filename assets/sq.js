@@ -63,7 +63,6 @@ sq = function(sq, $) {
 		$.ajax(options.url, {
 			method: options.method,
 			data: data,
-			async: false,
 			contentType: false,
 			processData: false,
 			success: function(data) {
