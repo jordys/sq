@@ -49,6 +49,28 @@ abstract class sqSlot extends component {
 		return $this;
 	}
 	
+	// Replace the slot content variables and return the slot content wrapped
+	// in a div. The correct rendering method to use is determined by the slots
+	// type.
+	public function render() {
+		
+		// Get the output from the correct type method
+		$type = $this->slot->type;
+		$output = self::$type($this->slot);
+		
+		// Base is always a variable
+		$replacers = array('{base}' => sq::base());
+		
+		// Replace the content variables in the outputted slot content
+		foreach ($this->options['replacers'] as $key => $val) {
+    		$replacers['{'.$key.'}'] = $val;
+		}
+		
+		$output = strtr($output, $replacers);
+		
+		return "<div class=\"sq-slot {$this->slot->id}\">$output</div>";
+	}
+	
 	
 	/***************************************************************************
 	 * Slot type methods
@@ -71,28 +93,6 @@ abstract class sqSlot extends component {
 	// Return the slot content as the url of an image
 	public static function image($slot) {
 		return '<img src="'.sq::base().$slot->content.'" alt="'.$slot->alt_text.'"/>';
-	}
-	
-	// Replace the slot content variables and return the slot content wrapped
-	// in a div. The correct rendering method to use is determined by the slots
-	// type.
-	public function render() {
-		
-		// Get the output from the correct type method
-		$type = $this->slot->type;
-		$output = self::$type($this->slot);
-		
-		// Base is always a variable
-		$replacers = array('{base}' => sq::base());
-		
-		// Replace the content variables in the outputted slot content
-		foreach ($this->options['replacers'] as $key => $val) {
-    		$replacers['{'.$key.'}'] = $val;
-		}
-		
-		$output = strtr($output, $replacers);
-		
-		return "<div class=\"sq-slot {$this->slot->id}\">$output</div>";
 	}
 }
 
