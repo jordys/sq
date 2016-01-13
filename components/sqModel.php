@@ -235,7 +235,7 @@ abstract class sqModel extends component {
 				$ref = sqModel::$usort;
 				$order = $ref->options['order'];
 				
-				if ($ref->options['order-direction'] != 'DESC') {
+				if ($ref->options['order-direction'] == 'DESC') {
 					return $a->$order < $b->$order;
 				} else {
 					return $a->$order > $b->$order;
