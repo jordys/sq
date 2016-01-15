@@ -25,10 +25,6 @@ abstract class sqModel extends component {
 	// Cache of many many relations to avoid double reads
 	protected static $manyManyCache = array();
 	
-	// Workaround to avoid object content rules when using usort. Should be
-	// considered private.
-	public static $_usort;
-	
 	// Setup initial replacer layout so it is available always
 	public function __construct($options = array()) {
 		parent::__construct($options);
@@ -229,11 +225,10 @@ abstract class sqModel extends component {
 		
 		if ($this->isRead) {
 			
-			// This is required to work around object contexts in PHP 5.3
-			self::$_usort = $this;
+			// $this can't be passed directly
+			$ref = $this;
 			
-			usort($this->data, function($a, $b) {
-				$ref = sqModel::$_usort;
+			usort($this->data, function($a, $b) use ($ref) {
 				$order = $ref->options['order'];
 				
 				if ($ref->options['order-direction'] == 'DESC') {
