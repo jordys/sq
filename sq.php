@@ -427,7 +427,7 @@ class sq {
 				// arrays and is every key is a string
 				if (is_array($val)
 					&& isset($array1[$key]) && is_array($array1[$key])
-					&& array_unique(array_map("is_string", array_keys($val))) === array(true)
+					&& array_unique(array_map('is_string', array_keys($val))) === array(true)
 				) {
 					$val = self::merge($array1[$key], $val);
 				}
