@@ -22,10 +22,13 @@ abstract class sqView extends component {
 	// If full is true the framework will generate header and footer sections.
 	// View is the path of the view going to be generated with the view data.
 	// Both of these values can be changed at any time.
-	public $full, $view, $parent;
+	public $full, $view;
 	
 	// FIFO stack of the list of current view clips
 	private $clips = array();
+	
+	// Implementation detail for mapping data into a layout
+	private $parent;
 	
 	// Variable to store data to be turned into a javascript JSON object in the
 	// footer

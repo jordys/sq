@@ -14,6 +14,8 @@
  */
 
 abstract class sqAsset extends component {
+	
+	// Stores the asset path
 	private $path = null;
 	
 	// Checks to see if the asset is already built and builds it if necessary

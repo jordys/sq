@@ -8,8 +8,8 @@
 
 abstract class sqRoute extends component {
 	
-	// Array fragments for the url to be generated
-	public $fragments = array();
+	// Array fragments for the url to be generated from
+	protected $fragments = array();
 	
 	// Triggered by sq to initialize routing
 	public function start() {

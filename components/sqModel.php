@@ -16,17 +16,18 @@
 
 abstract class sqModel extends component {
 	
-	// Gets set to true after a database read
-	public $isRead = false;
-	
-	// Set to true if the model is valid
+	// Set to true if the model is validated
 	public $isValid = null;
 	
-	// Cache of many many relations to avoid double reads
-	public static $manyManyCache = array();
+	// Set to true after a database read
+	protected $isRead = false;
 	
-	// Workaround to avoid object content rules when using usort
-	public static $usort;
+	// Cache of many many relations to avoid double reads
+	protected static $manyManyCache = array();
+	
+	// Workaround to avoid object content rules when using usort. Should be
+	// considered private.
+	public static $_usort;
 	
 	// Setup initial replacer layout so it is available always
 	public function __construct($options = array()) {
@@ -229,10 +230,10 @@ abstract class sqModel extends component {
 		if ($this->isRead) {
 			
 			// This is required to work around object contexts in PHP 5.3
-			self::$usort = $this;
+			self::$_usort = $this;
 			
 			usort($this->data, function($a, $b) {
-				$ref = sqModel::$usort;
+				$ref = sqModel::$_usort;
 				$order = $ref->options['order'];
 				
 				if ($ref->options['order-direction'] == 'DESC') {

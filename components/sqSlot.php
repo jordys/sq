@@ -14,11 +14,11 @@
 
 abstract class sqSlot extends component {
 	
-	// Cache of the slots model
-	protected static $slots;
-	
 	// Model of the individual slot
 	public $slot;
+	
+	// Cache of the slots model
+	protected static $slots;
 	
 	// Extended controller sets up the slot model
 	public function __construct($id, $name, $options = array()) {
@@ -63,7 +63,7 @@ abstract class sqSlot extends component {
 		
 		// Replace the content variables in the outputted slot content
 		foreach ($this->options['replacers'] as $key => $val) {
-    		$replacers['{'.$key.'}'] = $val;
+			$replacers['{'.$key.'}'] = $val;
 		}
 		
 		$output = strtr($output, $replacers);

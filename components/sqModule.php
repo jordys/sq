@@ -11,13 +11,13 @@
 
 abstract class sqModule extends component {
 	
-	// Name is a bit of a hack to allow the load function to know the name of 
-	// module
-	private static $name;
-	
 	// The controller called by the module that can be rendered by the render
 	// method
 	private $controller;
+	
+	// Name is a bit of a hack to allow the load function to know the name of 
+	// module
+	private static $name;
 	
 	// Basic module setup
 	public function __construct($options) {
@@ -44,8 +44,7 @@ abstract class sqModule extends component {
 			->action(sq::request()->any('action'));
 	}
 	
-	// Renders and returns the current controller. Also called via the 
-	// __tostring method when the controller is echoed.
+	// Renders the current controller. Called via __tostring.
 	public function render() {
 		return $this->controller;
 	}

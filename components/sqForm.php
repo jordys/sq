@@ -9,7 +9,12 @@
  */
 
 abstract class sqForm extends model {
-	protected static $model, $mark;
+	
+	// Stores toptional model that may be passed into the form
+	protected static $model;
+	
+	// Stores a unique string to avoid duplicating html ids
+	protected static $mark;
 	
 	// Populates form model object from the post parameters in the URL
 	public function __construct($options) {
@@ -19,7 +24,7 @@ abstract class sqForm extends model {
 		unset($this->data['sq-model']);
 	}
 	
-	// Open a new form
+	// Opens a new form
 	public static function open($attrs = array(), $attrs2 = array()) {
 		if (is_object($attrs)) {
 			self::$model = $attrs;
@@ -34,7 +39,7 @@ abstract class sqForm extends model {
 			$attrs['method'] = 'post';
 		}
 		
-		// Hash string added to input ids to avoid two elements with the same id
+		// Set a unique string for the model to avoid duplicating html ids
 		self::$mark = uniqid();
 		
 		$form = '<form '.self::parseAttrs($attrs).'>';

@@ -8,8 +8,15 @@
  */
 
 abstract class sqValidator extends component {
-	public $rules, $isValid = true, $errors = array();
 	
+	// Public property storing the validitiy of the validator
+	public $isValid = true;
+	
+	// Array of validation errors
+	public $errors = array();
+	
+	// Constructs the validator object and checks the current data against the
+	// passed in rules array
 	public function __construct($data, $rules, $options = array()) {
 		$this->data = $data;
 		
@@ -17,12 +24,11 @@ abstract class sqValidator extends component {
 		if (is_string($rules)) {
 			$rules = sq::config($rules);
 		}
-		$this->rules = $rules;
 		
 		parent::__construct($options);
 		
 		// Loop through the rules and fields and add the errors to the session
-		foreach ($this->rules as $field => $rules) {
+		foreach ($rules as $field => $rules) {
 			if (is_string($rules)) {
 				$rules = array($rules);
 			}
