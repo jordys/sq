@@ -29,14 +29,16 @@ class sq {
 	 */
 	public static function init() {
 		
-		// PHP 5.3 doesn't allow methods as error handlers so this is a function
-		// instead. It shouldn't ever be called directly
-		function sqErrorHandler($number, $string, $file, $line, $context) {
+		// Define the framework's error handler
+		set_error_handler(function($number, $string, $file, $line, $context) {
+			
+			// Remove this function from the trace
 			$trace = debug_backtrace();
 			
 			// Remove this function from the trace
 			array_shift($trace);
 			
+			// Trigger the framework error method
 			if (sq::config('debug') || $number == E_USER_ERROR) {
 				sq::error('500', array(
 					'debug'   => 'A PHP error has occured.',
@@ -53,10 +55,7 @@ class sq {
 			if (sq::config('log-errors')) {
 				error_log('PHP '.sq::config('error-labels/'.$number).':  '.$string.' in '.$file.' on line '.$line);
 			}
-		}
-		
-		// Define the framework's error handler
-		set_error_handler('sqErrorHandler');
+		});
 		
 		// Framework configuration defaults
 		self::load('/defaults/main');

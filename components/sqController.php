@@ -83,23 +83,27 @@ abstract class sqController extends component {
 	
 	// Renders the controller layout
 	public function render() {
+		if (is_object($this->layout) && !sq::request()->isAjax) {
+			$this->layout->full = true;
+		}
+		
+		$output = (string)$this->layout;
+		
 		if (sq::error()) {
 			if (sq::config('debug')) {
 				$this->action('debug', array(sq::error()));
 			} else {
 				$this->action('error', array(sq::error()));
 			}
+			
+			if (is_object($this->layout) && !sq::request()->isAjax) {
+				$this->layout->full = true;
+			}
+			
+			$output = (string)$this->layout;
 		}
 		
-		if (is_object($this->layout) && !sq::request()->isAjax) {
-			$this->layout->full = true;
-		}
-		
-		if (is_object($this->layout)) {
-			return $this->layout->render();
-		}
-		
-		return $this->layout;
+		return $output;
 	}
 	
 	// Default filter action to be overridden in controller classes. Filter 
