@@ -378,12 +378,13 @@ abstract class sqModel extends component {
 	// hasOne, hasMany, belongsTo and manyMany methods.
 	protected function relate($name, $options, $type) {
 		
-		// Manage calling this function on a list object. Loop through and call
-		// the same method on the contained model objects.
+		// Set the relation options to the model for later use
 		if (!$this->isRead) {
 			$this->options[$type][$name] = $options;
 		}
 		
+		// Manage calling this function on a list object. Loop through and call
+		// the same method on the contained model objects.
 		if (!$this->isSingle()) {
 			foreach ($this->data as $item) {
 				$item->relate($name, $options, $type);
@@ -392,6 +393,8 @@ abstract class sqModel extends component {
 			return $this;
 		}
 		
+		// Skip execution for unread models. Relations will be triggered again
+		// after a read.
 		if (!$this->isRead) {
 			return $this;
 		}

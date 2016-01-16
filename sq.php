@@ -31,8 +31,6 @@ class sq {
 		
 		// Define the framework's error handler
 		set_error_handler(function($number, $string, $file, $line, $context) {
-			
-			// Remove this function from the trace
 			$trace = debug_backtrace();
 			
 			// Remove this function from the trace
