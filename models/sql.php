@@ -191,6 +191,8 @@ class sql extends model {
 	 * making create forms or other actions where having null data is necessary.
 	 */
 	public function schema() {
+		$this->limit();
+		
 		return $this->query('SHOW COLUMNS FROM '.$this->sanitize($this->options['table']));
 	}
 	
