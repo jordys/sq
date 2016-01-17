@@ -1,5 +1,5 @@
 <section class="sq-form">
-	<h2><?=ucwords(sq::request()->get('action')) ?></h2>
+	<h2><?=$title ?></h2>
 	<?=form::open($model, array('enctype' => 'multipart/form-data')) ?>
 
 <? foreach ($fields as $name => $type):

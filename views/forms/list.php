@@ -1,5 +1,5 @@
 <section class="sq-list">
-	<h2><?=ucwords($model->options['name']) ?></h2>
+	<h2><?=$title ?></h2>
 	<span class="sq-list-count"><?=count($model) ?> Results</span>
 	
 	<?=view::pagination($model) ?>
@@ -49,7 +49,7 @@ endforeach ?>
 			endif;
 		endif;
 	endforeach;
-	if (isset($item->$name)): ?>
+	if (isset($item->id)): ?>
 						<td class="sq-actions sq-inline-actions">
 		<? foreach ($model->options['inline-actions'] as $key => $val):
 			$action = $val;

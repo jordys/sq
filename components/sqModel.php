@@ -57,10 +57,16 @@ abstract class sqModel extends component {
 		
 		// Check for view specific fields
 		if (isset($this->options['fields'][$name])) {
-			$fields = $this->options['fields'][$name];
+			$this->layout->fields = $this->options['fields'][$name];
 		}
 		
-		$this->layout->fields = $fields;
+		// Set the friendly model title. If the title option doesn't exist use
+		// the name as the title.
+		$this->layout->title = ucwords($this->options['name']);
+		if (isset($this->options['title'])) {
+			$this->layout->title = $this->options['title'];
+		}
+		
 		$this->layout->model = $this;
 		
 		return $this->layout;
