@@ -12,7 +12,7 @@
 	$type = $type[0];
 ?>	
 		<div class="sq-form-row sq-<?=$type ?>-form-row">
-			<?=form::label($baseName.'['.$name.']', ucwords(str_replace('_', ' ', $name)), $type) ?>
+			<?=form::label($name, ucwords(str_replace('_', ' ', $name)), $type) ?>
 			<? if ($arg):
 				echo form::$type($name, $arg);
 			else:

@@ -74,6 +74,8 @@ abstract class sqForm extends model {
 			$class .= ' sq-error sq-error-label';
 		}
 		
+		// Set the labels of the fields to the session for later use by the
+		// validator
 		if (preg_match('!\[([^\)]+)\]!', $for, $match)) {
 			$name = array_pop($match);
 		} else {
