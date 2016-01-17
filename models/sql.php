@@ -321,7 +321,7 @@ class sql extends model {
 			$row = $handle->fetch();
 			
 			if ($row) {
-				$this->data = $row;
+				$this->data = array_map('stripcslashes', $row);
 			}
 		} else {
 			while ($row = $handle->fetch()) {
@@ -335,7 +335,7 @@ class sql extends model {
 				// Mark child model in post read state
 				$model->isRead = true;
 				
-				$model->data = $row;
+				$model->data = array_map('stripcslashes', $row);
 				$this->data[] = $model;
 			}
 		}
