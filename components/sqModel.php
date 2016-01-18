@@ -26,7 +26,7 @@ abstract class sqModel extends component {
 	protected static $manyManyCache = array();
 	
 	// Setup initial replacer layout so it is available always
-	public function __construct($options = array()) {
+	public function __construct($options) {
 		parent::__construct($options);
 		
 		if (!$this->layout && $this->options['use-layout']) {

@@ -328,7 +328,7 @@ class sq {
 	 * to it.
 	 */
 	public static function view($file, $data = array()) {
-		return new view(self::config('view'), $file, $data);
+		return new view($file, $data, self::config('view'));
 	}
 	
 	/**

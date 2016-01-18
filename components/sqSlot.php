@@ -21,7 +21,7 @@ abstract class sqSlot extends component {
 	protected static $slots;
 	
 	// Extended controller sets up the slot model
-	public function __construct($id, $name, $options = array()) {
+	public function __construct($id, $name, $options) {
 		parent::__construct($options);
 		
 		// Create model object if one doesn't already exist and read slots and

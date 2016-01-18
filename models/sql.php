@@ -13,7 +13,7 @@ class sql extends model {
 	protected static $conn = false;
 	
 	// Override component constructor to add database connection code
-	public function __construct($options = array()) {
+	public function __construct($options) {
 		parent::__construct($options);
 		
 		// Assume the name of the table is the same as the name of the model

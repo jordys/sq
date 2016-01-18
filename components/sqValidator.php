@@ -17,7 +17,7 @@ abstract class sqValidator extends component {
 	
 	// Constructs the validator object and checks the current data against the
 	// passed in rules array
-	public function __construct($data, $rules, $options = array()) {
+	public function __construct($data, $rules, $options) {
 		$this->data = $data;
 		
 		// Handle rules as a config string

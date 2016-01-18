@@ -19,7 +19,7 @@ abstract class sqAsset extends component {
 	private $path = null;
 	
 	// Checks to see if the asset is already built and builds it if necessary
-	public function __construct($path, $options = array()) {
+	public function __construct($path, $options) {
 		$this->path = $path;
 		
 		parent::__construct($options);

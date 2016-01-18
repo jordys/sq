@@ -51,7 +51,7 @@ abstract class sqView extends component {
 		$head, $foot, $top, $charset, $keywords = array();
 	
 	// Setup the view
-	public function __construct($options, $view, $data = array()) {
+	public function __construct($view, $data = array(), $options = array()) {
 		
 		// Add static data from the passed in array
 		$this->data = $data + $this->data;

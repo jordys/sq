@@ -15,7 +15,7 @@ class file extends model {
 	
 	// Set memory limit to the value in model config and make sure the model
 	// directory exists
-	public function __construct($options = array()) {
+	public function __construct($options) {
 		parent::__construct($options);
 		
 		if (!file_exists($this->options['path'])) {
