@@ -2,7 +2,9 @@
 	<h2><?=$title ?></h2>
 	<span class="sq-list-count"><?=count($model) ?> Results</span>
 	
-	<?=view::pagination($model) ?>
+	<?=sq::widget('pagination', array(
+		'model' => $model
+	)) ?>
 	
 	<?=form::open() ?>
 		<div class="sq-actions sq-list-actions">
@@ -78,5 +80,5 @@ endforeach ?>
 		<? endif ?>
 	<?=form::close() ?>
 	
-	<?=view::pagination($model) ?>
+	<?=sq::widget('pagination', array('model' => $model)) ?>
 </section>

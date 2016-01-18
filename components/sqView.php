@@ -406,40 +406,6 @@ var sq = {
 		
 		return $string;
 	}
-	
-	// Generates page numbers for a model
-	public static function pagination($model, $options = array()) {
-		$options = sq::merge(sq::config('view/pagination'), $options);
-		
-		// Show nothing if there aren't enough items to paginate. This can be
-		// disabled by enabling the always-show option.
-		if (!$options['show-always'] && $model->options['pages'] <= 1) {
-			return;
-		}
-		
-		$currentPage = sq::request()->get('page', 1);
-		
-		// Generate SEO links in document head
-		if ($options['seo-links']) {
-			if ($currentPage < $model->options['pages']) {
-				self::$head .= '<link rel="next" href="'.sq::route()->current()->append(array('page' => $currentPage + 1)).'"/>';
-			}
-			
-			if ($currentPage > 1) {
-				self::$head .= '<link rel="prev" href="'.sq::route()->current()->append(array('page' => $currentPage - 1)).'"/>';
-			}
-		}
-		
-		$options['first'] = str_replace('{number}', 1, $options['first']);
-		$options['last'] = str_replace('{number}', $model->options['pages'], $options['last']);
-		
-		return sq::view('widgets/pagination', array(
-			'currentPage' => $currentPage,
-			'options' => $options,
-			'url' => sq::route()->current(),
-			'pageCount' => $model->options['pages']
-		));
-	}
 }
 
 ?>

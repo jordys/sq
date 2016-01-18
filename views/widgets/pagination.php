@@ -32,6 +32,8 @@
 	endif;
 	
 	// Setup URL objects
+	$url = sq::route()->current();
+	
 	$firstUrl = clone($url);
 	$lastUrl = clone($url);
 	$prevUrl = clone($url);
