@@ -389,6 +389,29 @@ class sq {
 		return $module;
 	}
 	
+	/**
+	 * Creates a widget
+	 * 
+	 * Widgets are wrappers for presentation functionality stored in the widgets
+	 * directory.
+	 */
+	public static function widget($name, $params = array(), $options = array()) {
+		$config = self::configure($name, $options);
+		
+		// Check for namespaced widget
+		$class = $config['class'];
+		if (class_exists('widgets\\'.$config['class'])) {
+			$class = 'widgets\\'.$config['class'];
+		}
+		
+		$widget = new $class($params, $config);
+		
+		// Force override with passed in options
+		$widget->options = self::merge($widget->options, $options);
+		
+		return $widget;
+	}
+	
 	// Returns the framework path
 	public static function path() {
 		return dirname(__FILE__).'/';
