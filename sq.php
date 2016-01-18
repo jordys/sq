@@ -345,7 +345,7 @@ class sq {
 	 * argument is given then the action parameter from the url will be used.
 	 */
 	public static function controller($name, $options = array()) {
-		$config = self::configure($name, $options, 'controller');
+		$config = self::configure($name, $options);
 		
 		// Check for namespaced controller
 		$class = 'controllers\\'.$config['class'];

@@ -33,7 +33,7 @@ return array(
 	// Directories to look in for autoloading classes. The order determines what
 	// directories are searched first. As soon as a class is found the script
 	// stops looking.
-	'autoload' => array('components', 'modules', 'controllers', 'models', 'vendor'),
+	'autoload' => array('components', 'controllers', 'models', 'vendor'),
 	
 	// Enable logging of errors
 	'log-errors' => true,

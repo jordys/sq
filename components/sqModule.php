@@ -22,13 +22,10 @@ abstract class sqModule extends component {
 	// Basic module setup
 	public function __construct($options) {
 		
-		// Current class
-		$class = get_class($this);
-		
 		// Register the autoloader with PHP. The static name property is a hack
 		// to allow the autoloader to know the name of the current module.
 		self::$name = $options['name'];
-		spl_autoload_register($class.'::load');
+		spl_autoload_register('module::load');
 		
 		// Load the module configuration defaults
 		sq::load('/modules/'.self::$name.'/defaults/main');
