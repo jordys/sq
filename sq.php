@@ -267,13 +267,20 @@ class sq {
 		$reflection = new ReflectionClass($class);
 		$paramCount = $reflection->getConstructor()->getNumberOfParameters();
 		
+		if ($paramCount > count($args)) {
+			foreach ($reflection->getConstructor()->getParameters() as $key => $param) {
+				if (!isset($args[$key]) && $param->isOptional()) {
+					$args[$key] = $param->getDefaultValue();
+				}
+			}
+		}
+		
 		$options = array();
 		if (isset($args[$paramCount - 1])) {
 			$options = array_pop($args);
 		}
 		
-		$args[$paramCount - 1] = self::configure($name, $options, 'component');
-		
+		$args[$paramCount - 1] = self::configure($name, $options);
 		$component = $reflection->newInstanceArgs($args);
 		
 		// Force override with passed in options
@@ -338,7 +345,7 @@ class sq {
 	 * argument is given then the action parameter from the url will be used.
 	 */
 	public static function controller($name, $options = array()) {
-		$config = self::configure($name, $options, 'component');
+		$config = self::configure($name, $options, 'controller');
 		
 		// Check for namespaced controller
 		$class = 'controllers\\'.$config['class'];
@@ -454,25 +461,20 @@ class sq {
 			$config = self::config($pieces[0]);
 		}
 		
-		$type = false;
-		
 		// Get component config
 		if ($component) {
-			$component = self::config($component);
-			$config = self::merge($component, $config);
+			$config = self::merge(self::config($component), $config);
+		}
+		
+		if (isset($config['default-type']) || isset($config['type'])) {
+			if (!isset($config['type'])) {
+				$config['type'] = $config['default-type'];
+			}
 			
-			$type = $component['default-type'];
+			$config = self::merge(self::config($config['type']), $config);
 		}
 		
-		// Merge type options
-		if (isset($config['type'])) {
-			$type = $config['type'];
-		}
-		
-		// Merge type options
-		if ($type) {
-			$config = self::merge(self::config($type), $config);
-		}
+		$config = self::merge(self::config('component'), $config);
 		
 		// Merge passed in options
 		$options = self::merge($config, $options);
@@ -485,11 +487,6 @@ class sq {
 		// Set class to name if it doesn't exist
 		if (!isset($options['class'])) {
 			$options['class'] = $name;
-		}
-		
-		// Set type to config if it doesn't exist
-		if (!isset($options['type'])) {
-			$options['type'] = $type;
 		}
 		
 		return $options;

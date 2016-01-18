@@ -9,9 +9,6 @@ return array(
 	// General configuration for all models
 	'model' => array(
 		
-		// Model objects aren't cached in framework by default
-		'cache' => false,
-		
 		// Debug mode is used to print querries on the screen
 		'debug' => false,
 		
