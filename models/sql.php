@@ -323,15 +323,7 @@ class sql extends model {
 			$data = $handle->fetch();
 			
 			if ($data) {
-				
-				// Strip slashes only for strings
-				$data = array_map(function($item) {
-					if (is_string($item)) {
-						return stripcslashes($item);
-					}
-				}, $data);
-				
-				$this->data = $data;
+				$this->data = $this->cleanData($data);
 			}
 		} else {
 			while ($row = $handle->fetch()) {
@@ -345,7 +337,7 @@ class sql extends model {
 				// Mark child model in post read state
 				$model->isRead = true;
 				
-				$model->data = array_map('stripcslashes', $row);
+				$model->data = $this->cleanData($row);
 				$this->data[] = $model;
 			}
 		}
@@ -365,6 +357,15 @@ class sql extends model {
 		}
 		
 		$this->set($columns);
+	}
+	
+	// Removes slashes from data
+	private function cleanData($data) {
+		return array_map(function($item) {
+			if (is_string($item)) {
+				return stripcslashes($item);
+			}
+		}, $data);
 	}
 	
 	// Utility function to update data in the database from what is in the model
