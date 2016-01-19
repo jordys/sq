@@ -320,10 +320,18 @@ class sql extends model {
 	// as a list.
 	private function selectQuery($handle) {
 		if ($this->isSingle()) {
-			$row = $handle->fetch();
+			$data = $handle->fetch();
 			
-			if ($row) {
-				$this->data = array_map('stripcslashes', $row);
+			if ($data) {
+				
+				// Strip slashes only for strings
+				$data = array_map(function($item) {
+					if (is_string($item)) {
+						return stripcslashes($item);
+					}
+				}, $data);
+				
+				$this->data = $data;
 			}
 		} else {
 			while ($row = $handle->fetch()) {
