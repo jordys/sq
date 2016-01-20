@@ -297,14 +297,7 @@ class sql extends model {
 			
 			return $this;
 		} catch (Exception $e) {
-			if (sq::config('debug')) {
-				echo $e;
-				echo 'DIED!';
-				echo $query;
-				print_r($data);
-			} else {
-				sq::error('404');
-			}
+			sq::error('500', $e);
 		}
 	}
 	

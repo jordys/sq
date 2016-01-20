@@ -30,7 +30,7 @@ class sq {
 	public static function init() {
 		
 		// Define the framework's error handler
-		set_error_handler(function($number, $string, $file, $line, $context) {
+		set_error_handler(function($number, $string, $file, $line) {
 			$trace = debug_backtrace();
 			
 			// Remove this function from the trace
@@ -39,13 +39,11 @@ class sq {
 			// Trigger the framework error method
 			if (sq::config('debug') || $number == E_USER_ERROR) {
 				sq::error('500', array(
-					'debug'   => 'A PHP error has occured.',
-					'number'  => $number,
-					'string'  => $string,
-					'file'    => $file,
-					'line'    => $line,
-					'context' => $context,
-					'trace'   => $trace
+					'debug'  => 'A PHP error has occured.',
+					'string' => $string,
+					'file'   => $file,
+					'line'   => $line,
+					'trace'  => $trace
 				));
 			}
 			
@@ -225,6 +223,15 @@ class sq {
 	 */
 	public static function error($code = null, $details = array()) {
 		if ($code) {
+			if ($details instanceof Exception) {
+				$details = array(
+					'string' => $details->getMessage(),
+					'file'   => $details->getFile(),
+					'line'   => $details->getLine(),
+					'trace'  => $details->getTrace()
+				);
+			}
+			
 			$details['code'] = $code;
 			
 			// Only set error if one doesn't already exist

@@ -143,8 +143,7 @@ abstract class sqController extends component {
 		
 		// If a layout exists use the view as content
 		if (is_object($this->layout)) {
-			$this->layout->content = sq::view('error', array(
-				'error' => $error));
+			$this->layout->content = sq::view('error', array('error' => $error));
 		} else {
 			return sq::view('error', array('error' => $error));
 		}
@@ -159,8 +158,7 @@ abstract class sqController extends component {
 		}
 		
 		if (is_object($this->layout)) {
-			$this->layout->content = sq::view('debug', array(
-				'error' => $error));
+			$this->layout->content = sq::view('debug', array('error' => $error));
 		} else {
 			return sq::view('debug', array('error' => $error));
 		}
