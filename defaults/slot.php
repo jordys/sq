@@ -19,8 +19,7 @@ return array(
 		'content' => ''
 	),
 	
-	// Slots database config. Slots are chunks of content defined in code and
-	// editable via the Admin module or via a custom setup in your app.	
+	// Slots model config
 	'sq_slots' => array(
 		'schema' => array(
 			'id'       => 'VARCHAR(100) NOT NULL',

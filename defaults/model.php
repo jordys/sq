@@ -71,7 +71,7 @@ return array(
 		'inline-actions' => array('delete' => 'Delete', 'update' => 'Update')
 	),
 	
-	// MySQL database connection information
+	// SQL model type configuration
 	'sql' => array(
 		
 		// PDO database credentials
@@ -107,58 +107,5 @@ return array(
 		'small'  => array('w' => 150, 'h' => 150),
 		'medium' => array('w' => 400, 'h' => 400),
 		'large'  => array('w' => 800, 'h' => 800)
-	),
-	
-	// Files model
-	'files' => array(
-		'type' => 'file',
-		'path' => 'uploads',
-		
-		'fields' => array(
-			'list' => array(
-				'name' => 'text',
-				'file' => 'text',
-				'url' => 'link'
-			),
-			'form' => array(
-				'directory' => 'select|upload-directories',
-				'image' => 'file'
-			)
-		),
-		'prevent-duplicates' => false
-	),
-	
-	// Directories to upload files in to. Used by the files model.
-	'upload-directories' => array(
-		'' => 'uploads'
-	),
-	
-	// Users model
-	'users' => array(
-		'fields' => array(
-			'list' => array(
-				'created' => 'date',
-				'first' => 'text',
-				'last' => 'text',
-				'email' => 'text',
-				'level' => 'text'
-			),
-			'form' => array(
-				'first' => 'text',
-				'last' => 'text',
-				'email' => 'text',
-				'level' => 'select|users/admin-types',
-				'notes' => 'blurb'
-			)
-		),
-		'inline-actions' => array(
-			'delete' => 'Delete',
-			'password' => 'Change Password',
-			'update' => 'Edit'
-		),
-		'admin-types' => array(
-			'user' => 'User',
-			'admin' => 'Admin'
-		)
 	)
 );
