@@ -36,7 +36,15 @@
 				endif;
 				
 				?>
-				<p><strong>Line #<?=$line['line'] ?></strong> <?=$line['file'].' '.$line['class'].$line['type'].$line['function'].$line['args'] ?></p>
+				<p>
+					<? if (isset($line['line']) && isset($line['file'])): ?>
+						<strong>Line #<?=$line['line'] ?></strong>
+						<?=$line['file'] ?>
+					<? else: ?>
+						<strong>No Line #</strong>
+					<? endif ?>
+					<?=$line['class'].$line['type'].$line['function'].$line['args'] ?>
+				</p>
 			<? endforeach ?>
 		</div>
 	<? endif ?>
