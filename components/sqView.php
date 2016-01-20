@@ -291,15 +291,6 @@ var sq = {
 		return $foot;
 	}
 	
-	// Print out a object or array to screen with readable formatting
-	public static function debug($content) {
-		if (sq::config('debug')) {
-			echo '<pre class="sq-printout">';
-			echo htmlentities(print_r($content, true));
-			echo '</pre>';
-		}
-	}
-	
 	// Start a clip, optionally saving the clip to a layout variable
 	public function clip($name = null) {
 		ob_start();
@@ -381,6 +372,11 @@ var sq = {
 		} elseif (is_string($data) && $val) {
 			view::$jsData[$data] = $val;
 		}
+	}
+	
+	// Print out a object or array to screen with readable formatting
+	public static function debug($content) {
+		return '<pre class="sq-printout">'.htmlentities(print_r($content, true)).'</pre>';
 	}
 	
 	// Returns a formatted date. If no date is passed to the function now will
