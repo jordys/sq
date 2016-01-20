@@ -177,8 +177,8 @@ abstract class sqRoute extends component {
 		}
 	}
 	
-	// Converts a string into a clean url
-	public static function format($url, $separator = '-') {
+	// Converts a string into a clean url slug
+	public static function slug($url, $separator = '-') {
 		$url = str_replace('&', 'and', $url);
 		$url = preg_replace('/[^0-9a-zA-Z ]/', '', $url);
 		$url = preg_replace('!\s+!', ' ', $url);
