@@ -394,9 +394,9 @@ var sq = {
 	// Shortens text and appends a passed in ending or elipsis as default
 	public static function truncate($string, $length = 100, $closing = '&hellip;') {
 		$string = strip_tags($string);
-		$string = substr($string, 0, $length);
 		
-		if (strlen($string) > $length - 1) {
+		if (strlen($string) > $length) {
+			$string = substr($string, 0, strrpos(substr($string, 0, $length), ' '));
 			$string .= $closing;
 		}
 		
