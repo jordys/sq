@@ -33,7 +33,7 @@ class sql extends model {
 			
 			// Turn on error reporting for pdo if framework debug is enabled
 			if (sq::config('debug')) {
-				self::$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+				self::$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 			}
 		}
 	}
@@ -263,37 +263,40 @@ class sql extends model {
 	// Execute a straight mySQL query. Used behind the scenes by all the CRUD
 	// interactions.
 	public function query($query, $data = array()) {
-		try {
-			$handle = self::$conn->prepare($query);
-			$handle->setFetchMode(PDO::FETCH_ASSOC);
-			
-			foreach ($data as $key => $val) {
-				if (!is_array($val) && !is_object($val)) {
-					if ($val === null) {
-						$handle->bindValue(":$key", null, PDO::PARAM_NULL);
-					} else {
-						$handle->bindValue(":$key", $val);
-					}
+		$handle = self::$conn->prepare($query);
+		
+		// Guard against bad query
+		if (!$handle) {
+			return $this;
+		}
+		
+		// Bind the data values to the query
+		foreach ($data as $key => $val) {
+			if (!is_array($val) && !is_object($val)) {
+				if ($val === null) {
+					$handle->bindValue(":$key", null, PDO::PARAM_NULL);
+				} else {
+					$handle->bindValue(":$key", $val);
 				}
 			}
-			
-			$handle->execute();
-			
-			if (strpos($query, 'SELECT') !== false) {
-				$this->selectQuery($handle);
-			} elseif (strpos($query, 'INSERT') !== false) {
-				$this->insertQuery();
-			} elseif (strpos($query, 'SHOW COLUMNS') !== false) {
-				$this->showColumnsQuery($handle);
-			}
-			
-			// Mark the model in post read state
-			$this->isRead = true;
-			
-			return $this;
-		} catch (Exception $e) {
-			sq::error('500', $e);
 		}
+		
+		$handle->setFetchMode(PDO::FETCH_ASSOC);
+		$handle->execute();
+		
+		// Call the appropriate method to handle the query result 
+		if (strpos($query, 'SELECT') !== false) {
+			$this->selectQuery($handle);
+		} elseif (strpos($query, 'INSERT') !== false) {
+			$this->insertQuery();
+		} elseif (strpos($query, 'SHOW COLUMNS') !== false) {
+			$this->showColumnsQuery($handle);
+		}
+		
+		// Mark the model in post read state
+		$this->isRead = true;
+		
+		return $this;
 	}
 	
 	// Update some basic data to the model after inserting into SQL
