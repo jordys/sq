@@ -9,7 +9,7 @@
 
 class sql extends model {
 	
-	// Static pdo database connection
+	// Static PDO database connection
 	protected static $conn = false;
 	
 	// Override component constructor to add database connection code
@@ -22,7 +22,7 @@ class sql extends model {
 			$this->options['table'] = $this->options['name'];
 		}
 		
-		// Set up new pdo connection if it doesn't already exist
+		// Set up new PDO connection if it doesn't already exist
 		if (!self::$conn) {
 			self::$conn = new PDO(
 				$this->options['dbtype'].':host='.$this->options['host'].';dbname='.$this->options['dbname'].';port='.$this->options['port'],
@@ -30,11 +30,7 @@ class sql extends model {
 				$this->options['password']);
 			
 			self::$conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-			
-			// Turn on error reporting for pdo if framework debug is enabled
-			if (sq::config('debug')) {
-				self::$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
-			}
+			self::$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 		}
 	}
 	
