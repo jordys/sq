@@ -40,7 +40,7 @@ class sq {
 			if (sq::config('debug') || $number == E_USER_ERROR) {
 				sq::error('500', array(
 					'debug'  => 'A PHP error occured.',
-					'string' => $string,
+					'string' => strip_tags($string),
 					'file'   => $file,
 					'line'   => $line,
 					'trace'  => $trace
