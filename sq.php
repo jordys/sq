@@ -39,7 +39,7 @@ class sq {
 			// Trigger the framework error method
 			if (sq::config('debug') || $number == E_USER_ERROR) {
 				sq::error('500', array(
-					'debug'  => 'A PHP error has occured.',
+					'debug'  => 'A PHP error occured.',
 					'string' => $string,
 					'file'   => $file,
 					'line'   => $line,
@@ -222,27 +222,37 @@ class sq {
 	 * returns the current framework error.
 	 */
 	public static function error($code = null, $details = array()) {
-		if ($code) {
-			if ($details instanceof Exception) {
-				$details = array(
-					'string' => $details->getMessage(),
-					'file'   => $details->getFile(),
-					'line'   => $details->getLine(),
-					'trace'  => $details->getTrace()
-				);
-			}
-			
-			$details['code'] = $code;
-			
-			// Only set error if one doesn't already exist
-			if (!self::$error) {
-				self::$error = $details;
-			}
-			
-			view::reset();
+		
+		// No arguments gets the current error
+		if (!$code) {
+			return self::$error;
 		}
 		
-		return self::$error;
+		// String shorthand for details array
+		if (is_string($details)) {
+			$details = array('debug' => $details);
+		}
+		
+		// Details can also be an exception object
+		if ($details instanceof Exception) {
+			$details = array(
+				'debug'  => 'A PHP exception occured.',
+				'string' => $details->getMessage(),
+				'file'   => $details->getFile(),
+				'line'   => $details->getLine(),
+				'trace'  => $details->getTrace()
+			);
+		}
+		
+		// Add the http status code to the details
+		$details['code'] = $code;
+		
+		// Only set the error details if there isn't already an error. This
+		// prevents errors in the error rendering from masking the initial
+		// error.
+		if (!self::$error) {
+			self::$error = $details;
+		}
 	}
 	
 	/**
