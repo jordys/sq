@@ -20,9 +20,7 @@ abstract class sqWidget extends component {
 		// Set the properties in the params array to the widget
 		foreach ($params as $key => $val) {
 			if (!property_exists($this, $key)) {
-				sq::error('404', array(
-					'debug' => "Unsupported argument '{$key}' passed to ".get_class($this).' widget.'
-				));
+				sq::error('404', "Unsupported argument '{$key}' passed to ".get_class($this).' widget.');
 			}
 			
 			$this->$key = $val;

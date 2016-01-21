@@ -64,9 +64,7 @@ abstract class sqController extends component {
 				} elseif ($param->isOptional()) {
 					$args[] = $param->getDefaultValue();
 				} else {
-					sq::error('404', array(
-						'debug' => "Query parameter '{$param->getName()}' required for $action action."
-					));
+					sq::error('404', "Query parameter '{$param->getName()}' required for $action action.");
 				}
 			}
 			
@@ -81,15 +79,25 @@ abstract class sqController extends component {
 		return $this;
 	}
 	
-	// Renders the controller layout
+	// Renders the controller layout checking for php errors as it goes
 	public function render() {
+		
+		// Show head and foot sections in the top level layout
 		if (is_object($this->layout) && !sq::request()->isAjax) {
 			$this->layout->full = true;
 		}
 		
 		$output = (string)$this->layout;
 		
+		// If there is an error in the initial rendering render the error
+		// instead of the content
 		if (sq::error()) {
+			
+			// Reset the view back to default
+			view::reset();
+			
+			// In debug mode call the debug action otherwise call the error
+			// action
 			if (sq::config('debug')) {
 				$this->action('debug', array(sq::error()));
 			} else {
