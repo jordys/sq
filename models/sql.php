@@ -263,11 +263,6 @@ class sql extends model {
 	// Execute a straight mySQL query. Used behind the scenes by all the CRUD
 	// interactions.
 	public function query($query, $data = array()) {
-		if ($this->options['debug']) {
-			view::debug($query);
-			view::debug($data);
-		}
-		
 		try {
 			$handle = self::$conn->prepare($query);
 			$handle->setFetchMode(PDO::FETCH_ASSOC);

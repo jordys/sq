@@ -9,9 +9,6 @@ return array(
 	// General configuration for all models
 	'model' => array(
 		
-		// Debug mode is used to print querries on the screen
-		'debug' => false,
-		
 		// Default type for models. Can be overridden by setting 'type' in the 
 		// model config.
 		'default-type' => 'sql',
@@ -39,18 +36,12 @@ return array(
 		// field
 		'user-specific' => false,
 		
-		// Fields for admin module
-		'fields' => array(
-			'list' => array(),
-			'form' => array()
-		),
+		// Set to false to disable model layout views
+		'use-layout' => true,
 		
 		// Validation rules. Either a string to another config object or an 
 		// array with the various validation rules.
 		'rules' => array(),
-		
-		// Number of items to show per page when paginating
-		'items-per-page' => 10,
 		
 		// Model manipulation defaults
 		'order' => false,
@@ -63,8 +54,14 @@ return array(
 		// Number of pages of results to show
 		'pages' => 1,
 		
-		// Set to false to disable model layout views
-		'use-layout' => true,
+		// Number of items to show per page when paginating
+		'items-per-page' => 10,
+		
+		// Fields for admin module
+		'fields' => array(
+			'list' => array(),
+			'form' => array()
+		),
 		
 		// Actions for admin modules
 		'actions' => array('create' => 'Create'),
@@ -101,8 +98,8 @@ return array(
 	
 	// Available image variant sizes. These variations can be called on file
 	// model for images to resize them on the fly. The variant file format is
-	// declareable as well. Formats can be gif, jpg or png. If not defined,
-	// format will be the same as the master file.
+	// declarable as well. Formats can be gif, jpg or png. If not defined format
+	// will match the base file format.
 	'variants' => array(
 		'small'  => array('w' => 150, 'h' => 150),
 		'medium' => array('w' => 400, 'h' => 400),
