@@ -127,30 +127,6 @@ abstract class sqAuth extends controller {
 			sq::response()->redirect();
 		}
 	}
-	
-	// This function is a special action for the admin module that handles the
-	// changing of passwords in the admin interface
-	public function passwordGetAction($model, $id) {
-		if (sq::config('admin/require-login') || !self::check('admin')) {
-			return sq::view('admin/login');
-		}
-		
-		$users = sq::model($model, array('load-relations' => false))
-			->find($id);
-				
-		return sq::view('admin/forms/password', array(
-			'model' => $users
-		));
-	}
-	
-	public function passwordPostAction($password, $confirm, $model) {
-		if ($password == $confirm) {
-			$users->{$this->options['password-field']} = self::hash($password);
-			$users->update();
-			
-			sq::response()->redirect(sq::base().'admin/'.$model);
-		}
-	}
 }
 
 ?>
