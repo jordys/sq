@@ -75,6 +75,8 @@ abstract class sqAsset extends component {
 		} elseif (file_exists(sq::path().$modulePath)) {
 			self::recursiveCopy(sq::path().$modulePath, $buildPath);
 		}
+		
+		return $this;
 	}
 	
 	// Returns the md5 path of an asset
