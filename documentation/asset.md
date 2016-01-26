@@ -23,6 +23,9 @@ Example
 	// Asset returns the built asset path when used as a string
 	view::script($asset);
 
+Methods
+---
+
 ### constructor
 
 	asset sq::asset(string assetPath [, array options])
@@ -33,7 +36,7 @@ directories are searched in the usual loading precedence. Application first,
 then modules, then the framework core.
 
 #### options
-Component options
+Component options:
 
 `int revision : 1` - This marker is coded into built asset path. It may be
 incremented to break browser caches or force rebuilds.
