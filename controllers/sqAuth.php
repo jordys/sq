@@ -7,9 +7,6 @@
  * helper methods authenticate(), login(), logout(), and hash() and user() to 
  * integrate into the web application. This component can also be used as a
  * controller and provides login and logout actions.
- *
- * The login system uses the phpass library (the same one used by wordpress) to
- * securely hash and salt passwords.
  */
 
 abstract class sqAuth extends controller {
@@ -32,7 +29,7 @@ abstract class sqAuth extends controller {
 			
 		// If no session than check for a cookie if cookie login is enabled
 		} elseif (isset($_COOKIE['sq-auth']) && $this->options['remember-me']) {
-			$this->user->find(array($this->options['hashkey-field'] => $_COOKIE['sq-auth']));
+			$this->user->find(array($this->options['hash-field'] => $_COOKIE['sq-auth']));
 			
 			// If a user is found log the user in again to increase the length
 			// of the cookie
@@ -55,7 +52,7 @@ abstract class sqAuth extends controller {
 			->find(array($this->options['username-field'] => $username));
 		
 		// Guard against invalid login
-		if ($password !== false && (!isset($user->id) || !self::authenticate($password, $user->{$this->options['password-field']}))) {
+		if ($password !== false && !self::authenticate($password, $user->{$this->options['password-field']})) {
 			sq::response()->flash($this->options['login-failed-message']);
 			
 			return false;
@@ -65,16 +62,22 @@ abstract class sqAuth extends controller {
 		$_SESSION['sq-username'] = $user->{$this->options['username-field']};
 		$_SESSION['sq-level'] = $user->level;
 		
+		// Check if the hash is outdated and update it if it is
+		if ($this->options['rehash-passwords'] && password_needs_rehash($user->{$this->options['password-field']}, $this->options['algorithm'], array('cost' => $this->options['cost']))) {
+			$user->{$this->options['password-field']} = self::hash($password);
+			$user->save();
+		}
+		
 		if ($remember && $this->options['remember-me']) {
 			$timeout = time() + $this->options['cookie-timeout'];
 			
-			// A hashkey is saved to the user and into a cookie. If these two
+			// A hash is saved to the user and into a cookie. If these two
 			// parameters match the user will be allowed to log in.
 			$hash = self::hash($user->{$this->options['username-field']}.$user->{$this->options['password-field']});
 			
 			setcookie('sq-auth', $hash, $timeout, '/');
 			
-			$user->{$this->options['hashkey-field']} = $hash;
+			$user->{$this->options['hash-field']} = $hash;
 			$user->update();
 		}
 		
@@ -96,14 +99,14 @@ abstract class sqAuth extends controller {
 	
 	// Checks a password against a hashed password
 	public static function authenticate($password, $hash) {
-		$hasher = new PasswordHash(8, sq::config('auth/portable-hashes'));
-		return $hasher->checkPassword($password, $hash);
+		return password_verify($password, $hash);
 	}
 	
 	// Returns hashed string
 	public static function hash($password) {
-		$hasher = new PasswordHash(8, sq::config('auth/portable-hashes'));
-		return $hasher->HashPassword($password);
+		return password_hash($password, sq::config('auth/algorithm'), array(
+			'cost' => sq::config('auth/cost')
+		));
 	}
 	
 	// Checks login posted from form
