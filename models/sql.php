@@ -352,6 +352,8 @@ class sql extends model {
 			if (is_string($item)) {
 				return stripcslashes($item);
 			}
+			
+			return $item;
 		}, $data);
 	}
 	
