@@ -33,12 +33,12 @@ abstract class sqSlot extends component {
 		// Find the requested slot and create if it doesn't exist
 		$this->slot = self::$slots->find($id);
 		if (!$this->slot) {
-			$this->slot = sq::model('sq_slots')->create(array(
+			$this->slot = sq::model('sq_slots')->create([
 				'id' => $id,
 				'name' => $name,
 				'type' => $this->options['type'],
 				'content' => $this->options['content']
-			));
+			]);
 		}
 	}
 	
@@ -59,7 +59,7 @@ abstract class sqSlot extends component {
 		$output = self::$type($this->slot);
 		
 		// Base is always a variable
-		$replacers = array('{base}' => sq::base());
+		$replacers = ['{base}' => sq::base()];
 		
 		// Replace the content variables in the outputted slot content
 		foreach ($this->options['replacers'] as $key => $val) {

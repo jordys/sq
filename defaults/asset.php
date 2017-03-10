@@ -4,8 +4,8 @@
  * Asset component defaults
  */
 
-return array(
-	'asset' => array(
+return [
+	'asset' => [
 		
 		// Revision marker coded into the asset md5 urls. Can be any format that
 		// interprets to a string. Changing the revision number changes the
@@ -17,7 +17,7 @@ return array(
 		
 		// Location where built assets are placed
 		'path' => 'built'
-	)
-);
+	]
+];
 
 ?>

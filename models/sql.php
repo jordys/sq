@@ -40,7 +40,7 @@ class sql extends model {
 	
 	// Returns only alphanumeric characters and underscores. A whitelist of
 	// values to not sanitize can be passed in as a second argument.
-	public function sanitize($value, $whitelist = array()) {
+	public function sanitize($value, $whitelist = []) {
 		
 		// If an array is passed in sanitize every key
 		if (is_array($value)) {
@@ -81,7 +81,7 @@ class sql extends model {
 			$this->data['users_id'] = sq::auth()->user->id;
 		}
 		
-		$values = array();
+		$values = [];
 		foreach ($this->sanitize(array_keys($this->data)) as $key) {
 			$values[] = ":$key";
 		}
@@ -164,7 +164,7 @@ class sql extends model {
 		
 		$this->limit()->onRelated('delete');
 		$this->query($query);
-		$this->data = array();
+		$this->data = [];
 		
 		return $this;
 	}
@@ -262,7 +262,7 @@ class sql extends model {
 	
 	// Execute a straight mySQL query. Used behind the scenes by all the CRUD
 	// interactions.
-	public function query($query, $data = array()) {
+	public function query($query, $data = []) {
 		$handle = self::$conn->prepare($query);
 		
 		// Guard against bad query
@@ -320,10 +320,10 @@ class sql extends model {
 			while ($row = $handle->fetch()) {
 				
 				// Create child model
-				$model = sq::model($this->options['name'], array(
+				$model = sq::model($this->options['name'], [
 					'use-layout' => false,
 					'load-relations' => $this->options['load-relations']
-				))->where($row['id']);
+				])->where($row['id']);
 				
 				// Mark child model in post read state
 				$model->isRead = true;
@@ -342,7 +342,7 @@ class sql extends model {
 	// Sets the model to the equivelent of an empty record with the columns as
 	// keys but no values
 	private function showColumnsQuery($handle) {
-		$columns = array();
+		$columns = [];
 		while ($row = $handle->fetch()) {
 			$columns[$row['Field']] = null;
 		}
@@ -363,10 +363,10 @@ class sql extends model {
 	
 	// Utility function to update data in the database from what is in the model
 	private function updateDatabase() {
-		$data = array_diff_key($this->data, array_flip(array('id', 'created', 'edited')));
+		$data = array_diff_key($this->data, array_flip(['id', 'created', 'edited']));
 		$query = 'UPDATE '.$this->sanitize($this->options['table']);
 		
-		$set = array();
+		$set = [];
 		foreach ($data as $key => $val) {
 			
 			// Avoid setting keys for related models
@@ -404,7 +404,7 @@ class sql extends model {
 		$query = null;
 		
 		if ($this->options['user-specific']) {
-			$this->options['where'] += array('users_id' => sq::auth()->user->id);
+			$this->options['where'] += ['users_id' => sq::auth()->user->id];
 		}
 		
 		if ($this->options['where']) {

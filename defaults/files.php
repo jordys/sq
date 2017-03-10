@@ -4,27 +4,27 @@
  * Files model defaults
  */
 
-return array(
-	'files' => array(
+return [
+	'files' => [
 		'type' => 'file',
 		'path' => 'uploads',
 		
-		'fields' => array(
-			'list' => array(
+		'fields' => [
+			'list' => [
 				'name' => 'text',
 				'file' => 'text',
 				'url' => 'link'
-			),
-			'form' => array(
+			],
+			'form' => [
 				'directory' => 'select|files/upload-directories',
 				'image' => 'file'
-			)
-		),
+			]
+		],
 		
 		// Directories available to upload files to in admin module
-		'upload-directories' => array(
+		'upload-directories' => [
 			'' => 'uploads'
-		)
+		]
 	)
 );
 

@@ -15,7 +15,7 @@
 abstract class sqComponent implements iterator, countable, arrayAccess {
 	
 	// Array of component options
-	public $options = array();
+	public $options = [];
 	
 	// Optional layout view that is automatically used when the component is 
 	// rendered. Variables can be added to it by the component and when the 
@@ -23,7 +23,7 @@ abstract class sqComponent implements iterator, countable, arrayAccess {
 	public $layout;
 	
 	// Array all model data is stored in
-	protected $data = array();
+	protected $data = [];
 	
 	// Constructor to set options
 	public function __construct($options) {
@@ -170,7 +170,7 @@ abstract class sqComponent implements iterator, countable, arrayAccess {
 	
 	// Returns component data as an array
 	public function toArray($recursive = true) {
-		$data = array();
+		$data = [];
 		
 		// Do some recursive shnanigians to get relations into a proper array
 		foreach ($this->data as $key => $val) {
@@ -233,7 +233,7 @@ abstract class sqComponent implements iterator, countable, arrayAccess {
 		$out = '';
 		
 		foreach ($this->data as $item) {
-			$itemClean = array();
+			$itemClean = [];
 			
 			foreach ($item as $key => $val) {
 				if (!is_array($val) && !is_object($val)) {

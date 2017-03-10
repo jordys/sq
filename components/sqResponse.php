@@ -7,9 +7,9 @@
  */
 
 abstract class sqResponse extends component {
-	public $options = array(
+	public $options = [
 		'cache' => true
-	);
+	];
 	
 	// Redirect to another page
 	public function redirect($url = null, $code = 302) {

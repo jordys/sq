@@ -30,22 +30,22 @@ abstract class sqPagination extends widget {
 		// Generate SEO links in document head
 		if ($this->options['seo-links']) {
 			if ($currentPage < $this->model->options['pages']) {
-				view::$head .= '<link rel="next" href="'.sq::route()->current()->append(array('page' => $currentPage + 1)).'"/>';
+				view::$head .= '<link rel="next" href="'.sq::route()->current()->append(['page' => $currentPage + 1]).'"/>';
 			}
 			
 			if ($currentPage > 1) {
-				view::$head .= '<link rel="prev" href="'.sq::route()->current()->append(array('page' => $currentPage - 1)).'"/>';
+				view::$head .= '<link rel="prev" href="'.sq::route()->current()->append(['page' => $currentPage - 1]).'"/>';
 			}
 		}
 		
 		$this->options['first'] = str_replace('{number}', 1, $this->options['first']);
 		$this->options['last'] = str_replace('{number}', $this->model->options['pages'], $this->options['last']);
 		
-		$this->layout->set(array(
+		$this->layout->set([
 			'currentPage' => $currentPage,
 			'options' => $this->options,
 			'pageCount' => $this->model->options['pages']
-		));
+		]);
 	}
 }
 

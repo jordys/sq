@@ -13,7 +13,7 @@ abstract class sqValidator extends component {
 	public $isValid = true;
 	
 	// Array of validation errors
-	public $errors = array();
+	public $errors = [];
 	
 	// Constructs the validator object and checks the current data against the
 	// passed in rules array
@@ -30,7 +30,7 @@ abstract class sqValidator extends component {
 		// Loop through the rules and fields and add the errors to the session
 		foreach ($rules as $field => $rules) {
 			if (is_string($rules)) {
-				$rules = array($rules);
+				$rules = [$rules];
 			}
 			
 			foreach ($rules as $rule => $message) {
@@ -44,10 +44,10 @@ abstract class sqValidator extends component {
 				}
 				
 				if (self::$rule($this->$field) === false) {
-					$this->errors[$field][] = array(
+					$this->errors[$field][] = [
 						'rule' => $rule,
 						'message' => $this->message($message, $field, $this->$field)
-					);
+					];
 					
 					$this->isValid = false;
 				}
@@ -106,10 +106,10 @@ abstract class sqValidator extends component {
 			$label = $_SESSION['sq-form-labels'][$name];
 		}
 		
-		return strtr($message, array(
+		return strtr($message, [
 			'{label}' => $label,
 			'{value}' => $value
-		));
+		]);
 	}
 }
 

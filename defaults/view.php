@@ -4,14 +4,14 @@
  * View component defaults
  */
 
-return array(
-	'view' => array(
+return [
+	'view' => [
 		
 		// Meta description string
 		'description' => null,
 		
 		// Array of meta keywords
-		'keywords' => array(),
+		'keywords' => [],
 		
 		// Website default html title
 		'title' => null,
@@ -33,10 +33,10 @@ return array(
 		
 		// Data passed directly to javascript as a json array. Accessed in
 		// javascript in the sq.data object.
-		'js-data' => array(
+		'js-data' => [
 			'base' => sq::base()
-		)
-	)
-);
+		]
+	]
+];
 
 ?>

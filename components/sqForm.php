@@ -25,14 +25,14 @@ abstract class sqForm extends model {
 	}
 	
 	// Opens a new form
-	public static function open($attrs = array(), $attrs2 = array()) {
+	public static function open($attrs = [], $attrs2 = []) {
 		if (is_object($attrs)) {
 			self::$model = $attrs;
 			$attrs = $attrs2;
 		}
 		
 		if (is_string($attrs)) {
-			$attrs = array('action' => $attrs);
+			$attrs = ['action' => $attrs];
 		}
 		
 		if (empty($attrs['method'])) {
@@ -88,7 +88,7 @@ abstract class sqForm extends model {
 	}
 	
 	// General form input
-	public static function element($name, $value = null, $attrs = array()) {
+	public static function element($name, $value = null, $attrs = []) {
 		if (self::inputError($name)) {
 			if (isset($attrs['class'])) {
 				$attrs['class'] .= ' sq-error sq-error-field';
@@ -101,14 +101,14 @@ abstract class sqForm extends model {
 	}
 	
 	// Basic text input
-	public static function text($name, $value = null, $attrs = array()) {
+	public static function text($name, $value = null, $attrs = []) {
 		$attrs['type'] = 'text';
 		
 		return self::element($name, $value, $attrs);
 	}
 	
 	// Date input fields with processing
-	public static function date($name, $value = null, $attrs = array()) {
+	public static function date($name, $value = null, $attrs = []) {
 		$attrs['type'] = 'date';
 		
 		if (empty($attrs['placeholder'])) {
@@ -119,28 +119,28 @@ abstract class sqForm extends model {
 	}
 	
 	// Password input
-	public static function password($name, $value = null, $attrs = array()) {
+	public static function password($name, $value = null, $attrs = []) {
 		$attrs['type'] = 'password';
 		
 		return self::element($name, $value, $attrs);
 	}
 	
 	// Hidden filed
-	public static function hidden($name, $value = null, $attrs = array()) {
+	public static function hidden($name, $value = null, $attrs = []) {
 		$attrs['type'] = 'hidden';
 		
 		return self::element($name, $value, $attrs);
 	}
 	
 	// Basic file input
-	public static function file($name = 'upload', $value = null, $attrs = array()) {
+	public static function file($name = 'upload', $value = null, $attrs = []) {
 		$attrs['type'] = 'file';
 		
 		return self::element($name, $value, $attrs);
 	}
 	
 	// Textarea
-	public static function textarea($name, $value = null, $attrs = array()) {
+	public static function textarea($name, $value = null, $attrs = []) {
 		$attrs = self::getAttrs($name, $attrs, $value);
 		$value = $attrs['value'];
 		unset($attrs['value']);
@@ -150,21 +150,21 @@ abstract class sqForm extends model {
 	
 	// Similar to textarea but with a richtext class presumably to use tinyMCE
 	// or suchlike
-	public static function richtext($name, $value = null, $attrs = array()) {
+	public static function richtext($name, $value = null, $attrs = []) {
 		$attrs['class'] = 'sq-input-richtext';
 		
 		return self::textarea($name, $value, $attrs);
 	}
 	
 	// Textarea with sq-input-blurb class
-	public static function blurb($name, $value = null, $attrs = array()) {
+	public static function blurb($name, $value = null, $attrs = []) {
 		$attrs['class'] = 'sq-input-blurb';
 		
 		return self::textarea($name, $value, $attrs);
 	}
 	
 	// Money input
-	public static function currency($name, $value = null, $attrs = array()) {
+	public static function currency($name, $value = null, $attrs = []) {
 		$attrs['class'] = 'sq-input-currency';
 		
 		if (empty($attrs['symbol'])) {
@@ -176,7 +176,7 @@ abstract class sqForm extends model {
 	
 	// Displays an image upload widget. If a value is set the image will be
 	// shown beside the file input. Labels are included in the widget.
-	public static function image($name = 'upload', $value = null, $attrs = array()) {
+	public static function image($name = 'upload', $value = null, $attrs = []) {
 		$attrs['type'] = 'file';
 		$attrs = self::getAttrs($name, $attrs, $value);
 		
@@ -214,16 +214,16 @@ abstract class sqForm extends model {
 	}
 	
 	// Choose from a list of related entries
-	public static function single($name, $model, $value = null, $attrs = array()) {
+	public static function single($name, $model, $value = null, $attrs = []) {
 		$model = sq::model($model);
 		$model->options['load-relations'] = false;
-		$model->read(array('name', 'id'));
+		$model->read(['name', 'id']);
 		
 		$emptyLabel = '';
 		if (isset($attrs['empty-label'])) {
 			$emptyLabel = $attrs['empty-label'];
 		}
-		$items = array('' => $emptyLabel);
+		$items = ['' => $emptyLabel];
 		
 		foreach ($model as $item) {
 			$items[$item->id] = $item->name;
@@ -233,7 +233,7 @@ abstract class sqForm extends model {
 	}
 	
 	// Prints a checkbox. Optionally checked
-	public static function checkbox($name, $value = null, $attrs = array()) {
+	public static function checkbox($name, $value = null, $attrs = []) {
 		$attrs['type'] = 'checkbox';
 		$attrs = self::getAttrs($name, $attrs, $value);
 		
@@ -249,7 +249,7 @@ abstract class sqForm extends model {
 	}
 	
 	// Prints a select box with an array of data
-	public static function select($name, $data, $default = null, $attrs = array()) {
+	public static function select($name, $data, $default = null, $attrs = []) {
 		if (is_string($data)) {
 			$data = sq::config($data);
 		}
@@ -289,10 +289,10 @@ abstract class sqForm extends model {
 		}
 		
 		if ($flash) {
-			return sq::view('forms/flash', array(
+			return sq::view('forms/flash', [
 				'status' => $status,
 				'flash' => $flash
-			));
+			]);
 		}
 	}
 	
@@ -369,7 +369,7 @@ abstract class sqForm extends model {
 		$string = '';
 		
 		if (is_string($attrs)) {
-			$attrs = array('class' => $attrs);
+			$attrs = ['class' => $attrs];
 		}
 		
 		foreach ($attrs as $key => $val) {

@@ -15,7 +15,7 @@
 abstract class sqWidget extends component {
 	
 	// Handle setting parameters to defined widget properties
-	public function __construct($params = array(), $options = array()) {
+	public function __construct($params = [], $options = []) {
 		
 		// Set the properties in the params array to the widget
 		foreach ($params as $key => $val) {

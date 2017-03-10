@@ -19,7 +19,7 @@ class sq {
 	
 	// Store for components so they don't have to be realoaded from memory
 	// unnecessarily
-	private static $cache = array();
+	private static $cache = [];
 	
 	/** 
 	 * Startup method for the framework
@@ -38,13 +38,13 @@ class sq {
 			
 			// Trigger the framework error method
 			if (sq::config('debug') || $number == E_USER_ERROR) {
-				sq::error('500', array(
+				sq::error('500', [
 					'debug'  => 'A PHP error occured.',
 					'string' => strip_tags($string),
 					'file'   => $file,
 					'line'   => $line,
 					'trace'  => $trace
-				));
+				]);
 			}
 			
 			// Logging can be disabled
@@ -124,7 +124,7 @@ class sq {
 		// over the name and creating nested arrays
 		if ($change !== -1) {
 			foreach (array_reverse($name) as $val) {
-				$change = array($val => $change);
+				$change = [$val => $change];
 			}
 			
 			self::$config = self::merge(self::$config, $change);
@@ -173,18 +173,18 @@ class sq {
 			$class = array_pop($class);
 		}
 		
-		$directories = array($type);
+		$directories = [$type];
 		$direct = false;
 		
 		if (!$type) {
 			if ($class[0] == '/') {
-				$directories = array(substr($class, 1));
+				$directories = [substr($class, 1)];
 				
 				$direct = true;
 			} elseif (self::config('autoload')) {
 				$directories = self::config('autoload');
 			} else {
-				$directories = array('config');
+				$directories = ['config'];
 			}
 		}
 		
@@ -221,7 +221,7 @@ class sq {
 	 * called when PHP errors occur. When called without arguments sq::error()
 	 * returns the current framework error.
 	 */
-	public static function error($code = null, $details = array()) {
+	public static function error($code = null, $details = []) {
 		
 		// No arguments gets the current error
 		if (!$code) {
@@ -230,18 +230,18 @@ class sq {
 		
 		// String shorthand for details array
 		if (is_string($details)) {
-			$details = array('debug' => $details);
+			$details = ['debug' => $details];
 		}
 		
 		// Details can also be an exception object
 		if ($details instanceof Exception) {
-			$details = array(
+			$details = [
 				'debug'  => 'A PHP exception occured.',
 				'string' => $details->getMessage(),
 				'file'   => $details->getFile(),
 				'line'   => $details->getLine(),
 				'trace'  => $details->getTrace()
-			);
+			];
 		}
 		
 		// Add the http status code to the details
@@ -292,7 +292,7 @@ class sq {
 			}
 		}
 		
-		$options = array();
+		$options = [];
 		if (isset($args[$paramCount - 1])) {
 			$options = array_pop($args);
 		}
@@ -316,7 +316,7 @@ class sq {
 	public static function __callStatic($name, $args = null) {
 		array_unshift($args, $name);
 		
-		return forward_static_call_array(array('sq', 'component'), $args);
+		return forward_static_call_array(['sq', 'component'], $args);
 	}
 	
 	/**
@@ -325,7 +325,7 @@ class sq {
 	 * The type of model generated can be explicity passed in or specified in
 	 * the config. If no type is determined the framework default is used.
 	 */
-	public static function model($name, $options = array()) {
+	public static function model($name, $options = []) {
 		$config = self::configure($name, $options, 'model');
 		
 		// Check for namespaced model
@@ -351,7 +351,7 @@ class sq {
 	 * view causes it to render. Once the view is returned values can be added
 	 * to it.
 	 */
-	public static function view($file, $data = array()) {
+	public static function view($file, $data = []) {
 		return new view($file, $data, self::config('view'));
 	}
 	
@@ -361,7 +361,7 @@ class sq {
 	 * Optionally a different action argument may be included. If no action 
 	 * argument is given then the action parameter from the url will be used.
 	 */
-	public static function controller($name, $options = array()) {
+	public static function controller($name, $options = []) {
 		$config = self::configure($name, $options);
 		
 		// Check for namespaced controller
@@ -391,7 +391,7 @@ class sq {
 	 * Modules are like mini applications. They contain their own views, models
 	 * and controllers.
 	 */
-	public static function module($name, $options = array()) {
+	public static function module($name, $options = []) {
 		$config = self::configure($name, $options, 'module');
 		
 		if (!isset($config['default-controller'])) {
@@ -412,7 +412,7 @@ class sq {
 	 * Widgets are wrappers for presentation functionality stored in the widgets
 	 * directory.
 	 */
-	public static function widget($name, $params = array(), $options = array()) {
+	public static function widget($name, $params = [], $options = []) {
 		$config = self::configure($name, $options);
 		
 		// Check for namespaced widget
@@ -471,7 +471,7 @@ class sq {
 				// arrays and is every key is a string
 				if (is_array($val)
 					&& isset($array1[$key]) && is_array($array1[$key])
-					&& array_unique(array_map('is_string', array_keys($val))) === array(true)
+					&& array_unique(array_map('is_string', array_keys($val))) === [true]
 				) {
 					$val = self::merge($array1[$key], $val);
 				}

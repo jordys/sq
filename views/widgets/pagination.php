@@ -39,10 +39,10 @@
 	$prevUrl = clone($url);
 	$nextUrl = clone($url);
 	
-	$firstUrl->append(array('page' => 1));
-	$lastUrl->append(array('page' => $pageCount));
-	$prevUrl->append(array('page' => $prev));
-	$nextUrl->append(array('page' => $next));
+	$firstUrl->append(['page' => 1]);
+	$lastUrl->append(['page' => $pageCount]);
+	$prevUrl->append(['page' => $prev]);
+	$nextUrl->append(['page' => $next]);
 	
 	// First and prev links
 	$class = null;
@@ -64,7 +64,7 @@
 	
 	// Page numbers
 	for ($i = $first; $i <= $last; $i++):
-		$url->append(array('page' => $i));
+		$url->append(['page' => $i]);
 		
 		$class = null;
 		if ($i == $currentPage):

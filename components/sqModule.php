@@ -55,7 +55,7 @@ abstract class sqModule extends component {
 	 * because module views can be overridden in the base views directory.
 	 */
 	public static function load($class, $type = null) {
-		$directories = array($type);
+		$directories = [$type];
 		if (!$type) {
 			$directories = sq::config('autoload');
 		}

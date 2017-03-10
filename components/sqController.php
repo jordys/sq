@@ -25,7 +25,7 @@ abstract class sqController extends component {
 	 * action being called. Additional arguments cann be passed to the action as
 	 * an array.
 	 */
-	public function action($action = null, $args = array()) {
+	public function action($action = null, $args = []) {
 		if (!$action) {
 			$action = 'index';
 		}
@@ -99,9 +99,9 @@ abstract class sqController extends component {
 			// In debug mode call the debug action otherwise call the error
 			// action
 			if (sq::config('debug')) {
-				$this->action('debug', array(sq::error()));
+				$this->action('debug', [sq::error()]);
 			} else {
-				$this->action('error', array(sq::error()));
+				$this->action('error', [sq::error()]);
 			}
 			
 			if (is_object($this->layout) && !sq::request()->isAjax) {
@@ -151,9 +151,9 @@ abstract class sqController extends component {
 		
 		// If a layout exists use the view as content
 		if (is_object($this->layout)) {
-			$this->layout->content = sq::view('error', array('error' => $error));
+			$this->layout->content = sq::view('error', ['error' => $error]);
 		} else {
-			return sq::view('error', array('error' => $error));
+			return sq::view('error', ['error' => $error]);
 		}
 	}
 	
@@ -166,9 +166,9 @@ abstract class sqController extends component {
 		}
 		
 		if (is_object($this->layout)) {
-			$this->layout->content = sq::view('debug', array('error' => $error));
+			$this->layout->content = sq::view('debug', ['error' => $error]);
 		} else {
-			return sq::view('debug', array('error' => $error));
+			return sq::view('debug', ['error' => $error]);
 		}
 	}
 }

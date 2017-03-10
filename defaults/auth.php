@@ -4,8 +4,8 @@
  * Auth component defaults
  */
 
-return array(
-	'auth' => array(
+return [
+	'auth' => [
 		
 		// Default group of user if none is set. This is whay all unreconized 
 		// visitors to your site will be
@@ -28,7 +28,7 @@ return array(
 		
 		// Message to be flashed when a login fails
 		'login-failed-message' => 'Username or password not recognized.'
-	)
-);
+	]
+];
 
 ?>

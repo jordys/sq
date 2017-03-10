@@ -9,7 +9,7 @@
 abstract class sqRoute extends component {
 	
 	// Array fragments for the url to be generated from
-	protected $fragments = array();
+	protected $fragments = [];
 	
 	// Triggered by sq to initialize routing
 	public function start() {
@@ -21,7 +21,7 @@ abstract class sqRoute extends component {
 		$uriParts = explode('/', trim($uriParts[0], '/'));
 		
 		foreach ($this->options['definitions'] as $route => $val) {
-			$params = array();
+			$params = [];
 			
 			if (is_numeric($route)) {
 				$route = $val;
@@ -73,7 +73,7 @@ abstract class sqRoute extends component {
 	// Clears the current arguments and replaces them with the passed in
 	// fragments.
 	public function to(array $fragments) {
-		$this->fragments = array();
+		$this->fragments = [];
 		
 		return $this->append($fragments);
 	}
@@ -98,7 +98,7 @@ abstract class sqRoute extends component {
 		
 		// Allow shorthand with just the name of a url property
 		if (is_string($fragments)) {
-			$fragments = array($fragments);
+			$fragments = [$fragments];
 		}
 		
 		foreach ($fragments as $name => $value) {
@@ -131,7 +131,7 @@ abstract class sqRoute extends component {
 		foreach (array_reverse($this->options['definitions']) as $route => $params) {
 			if (is_numeric($route)) {
 				$route = $params;
-				$params = array();
+				$params = [];
 			}
 			
 			// Remove default values from rule string because they aren't needed

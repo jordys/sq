@@ -23,7 +23,7 @@ abstract class sqModel extends component {
 	protected $isRead = false;
 	
 	// Cache of many many relations to avoid double reads
-	protected static $manyManyCache = array();
+	protected static $manyManyCache = [];
 	
 	// Setup initial replacer layout so it is available always
 	public function __construct($options) {
@@ -101,7 +101,7 @@ abstract class sqModel extends component {
 		}
 		
 		if (!is_array($where)) {
-			$where = array('id' => $where);
+			$where = ['id' => $where];
 		}
 		
 		foreach ($this->data as $item) {
@@ -129,7 +129,7 @@ abstract class sqModel extends component {
 			return $this->where($where, $operation)->limit(false)->read();
 		}
 		
-		$results = array();
+		$results = [];
 		
 		foreach ($this->data as $item) {
 			foreach ($where as $key => $val) {
@@ -151,16 +151,16 @@ abstract class sqModel extends component {
 	
 	// Shorthand for read with no where statement
 	public function all() {
-		$this->options['where'] = array();
+		$this->options['where'] = [];
 		
 		return $this->read();
 	}
 	
 	// Shorthand method to create a new entry or update and existing one based
 	// on the existance of an id property or where statment.
-	public function save($data = array()) {
+	public function save($data = []) {
 		if (!empty($this->options['where']) && !$this->isRead) {
-			$this->limit()->read(array('id'));
+			$this->limit()->read(['id']);
 		}
 		
 		if (isset($this->id) && $this->id !== null) {
@@ -172,7 +172,7 @@ abstract class sqModel extends component {
 	
 	// Returns all of signle property from a model list as an array
 	public function column($column) {
-		$data = array();
+		$data = [];
 		
 		foreach ($this->data as $item) {
 			if (isset($item->data[$column])) {
@@ -201,7 +201,7 @@ abstract class sqModel extends component {
 			}
 			
 			$this->limit();
-			$argument = array('id' => $argument);
+			$argument = ['id' => $argument];
 		}
 		
 		$this->options['where-operation'] = $operation;
@@ -214,7 +214,7 @@ abstract class sqModel extends component {
 	 * Sets the number of results that will be returned 
 	 *
 	 * If limit is set to boolean true the model will only contain the model 
-	 * data. Limit 1 will result in an array of models with only one entry. If 
+	 * data. Limit 1 will result in an array of models with only one entry. If
 	 * limit() is called with no arguments then it will default to true.
 	 */
 	public function limit($limit = true) {
@@ -299,7 +299,7 @@ abstract class sqModel extends component {
 			$this->options['pages'] = ceil($this->count() / $perPage);
 		}
 		
-		$this->options['limit'] = array($offset, $perPage);
+		$this->options['limit'] = [$offset, $perPage];
 		
 		return $this;
 	}
@@ -311,7 +311,7 @@ abstract class sqModel extends component {
 	}
 	
 	// Creates a belongs to model relationship
-	public function belongsTo($model, array $options = array()) {
+	public function belongsTo($model, array $options = []) {
 		if (empty($options['from'])) {
 			$options['from'] = $model.'_id';
 		}
@@ -330,7 +330,7 @@ abstract class sqModel extends component {
 	}
 	
 	// Creates a has one model relationship
-	public function hasOne($model, array $options = array()) {
+	public function hasOne($model, array $options = []) {
 		if (empty($options['from'])) {
 			$options['from'] = 'id';
 		}
@@ -345,7 +345,7 @@ abstract class sqModel extends component {
 	}
 	
 	// Creates a has many model relationship
-	public function hasMany($model, array $options = array()) {
+	public function hasMany($model, array $options = []) {
 		if (empty($options['to'])) {
 			$options['to'] = $this->options['name'].'_id';
 		}
@@ -363,9 +363,9 @@ abstract class sqModel extends component {
 		// Allow a shorthand of just passing a string instead of options to
 		// set the bridge table
 		if (is_string($options)) {
-			$options = array(
+			$options = [
 				'bridge' => $options
-			);
+			];
 		}
 		
 		if (empty($options['to'])) {
@@ -405,15 +405,15 @@ abstract class sqModel extends component {
 		}
 		
 		if ($type == 'many-many') {
-			$model = sq::model($options['bridge'], array(
+			$model = sq::model($options['bridge'], [
 				'class' => $name,
 				'user-specific' => false
-			));
+			]);
 		} else {
 			$model = sq::model($name, $options);
 		}
 		
-		$where = array($options['to'] => $this->data[$options['from']]);
+		$where = [$options['to'] => $this->data[$options['from']]];
 		if (isset($options['where'])) {
 			$where += $options['where'];
 		}
@@ -440,7 +440,7 @@ abstract class sqModel extends component {
 				}
 				
 				// Flatten bridge with the related model
-				$relation->set($item->toArray());
+				$relation->set($item->to[]);
 				
 				$model[$key] = $relation;
 			}
@@ -448,7 +448,7 @@ abstract class sqModel extends component {
 		
 		if (isset($options['flatten']) && $options['flatten'] && isset($options['limit']) && $options['limit'] === true) {
 			unset($model->id);
-			$this->set($model->toArray());
+			$this->set($model->to[]);
 		} else {
 			if (isset($options['mount'])) {
 				$name = $options['mount'];
@@ -463,13 +463,13 @@ abstract class sqModel extends component {
 	
 	// Utility method that creates model relationships from config after a read
 	protected function relateModel() {
-		foreach (array('belongs-to', 'has-one', 'has-many', 'many-many') as $relation) {
+		foreach (['belongs-to', 'has-one', 'has-many', 'many-many'] as $relation) {
 			foreach ($this->options[$relation] as $name => $options) {
 				
 				// Allows the shorthand relation with just the name of the model
 				if (is_numeric($name)) {
 					$name = $options;
-					$options = array();
+					$options = [];
 				}
 				
 				$method = str_replace('-', '', $relation);

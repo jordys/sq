@@ -16,7 +16,7 @@ sq::load('/defaults/form');
 sq::load('/defaults/model');
 sq::load('/defaults/auth');
 
-return array(
+return [
 	
 	// Debug mode
 	'debug' => false,
@@ -34,14 +34,14 @@ return array(
 	// Directories to look in for autoloading classes. The order determines what
 	// directories are searched first. As soon as a class is found the script
 	// stops looking.
-	'autoload' => array('components', 'controllers', 'models', 'vendor'),
+	'autoload' => ['components', 'controllers', 'models', 'vendor'],
 	
 	// Enable logging of errors
 	'log-errors' => true,
 	
 	// Friendly labels for PHP errors used for in the log instead of the useless
 	// numbers
-	'error-labels' => array(
+	'error-labels' => [
 		1    => 'FATAL ERROR',
 		2    => 'WARNING',
 		4    => 'PARSE ERROR',
@@ -56,7 +56,7 @@ return array(
 		6143 => 'ALL',
 		2048 => 'STRICT',
 		4096 => 'RECOVERABLE ERROR'
-	)
-);
+	]
+];
 
 ?>

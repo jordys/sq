@@ -4,8 +4,8 @@
  * Pagination widget defaults
  */
 
-return array(
-	'pagination' => array(
+return [
+	'pagination' => [
 		
 		// Number of page numbers to show before hiding them
 		'visible-numbers' => 9,
@@ -26,7 +26,7 @@ return array(
 		
 		// Show rel="next" / rel="prev" links in the header for Google
 		'seo-links' => true
-	)
-);
+	]
+];
 
 ?>

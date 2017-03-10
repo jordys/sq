@@ -73,10 +73,10 @@ class file extends model {
 			}
 			
 			// Set the data to a model and place that model into the collection
-			$model = sq::model($this->options['name'], array(
+			$model = sq::model($this->options['name'], [
 				'use-layout' => false,
 				'load-relations' => $this->options['load-relations']
-			))->where($item['id'])->limit()->set($item);
+			])->where($item['id'])->limit()->set($item);
 			
 			$model->isRead = true;
 			
@@ -110,7 +110,7 @@ class file extends model {
 		
 		// Handle shorthand to update only file content
 		if (is_string($data)) {
-			$data = array('content' => $data);
+			$data = ['content' => $data];
 		}
 		
 		if ($where) {
@@ -156,7 +156,7 @@ class file extends model {
 			}
 		}
 		
-		$this->data = array();
+		$this->data = [];
 		
 		return $this;
 	}
@@ -204,7 +204,7 @@ class file extends model {
 	 * implementations. The properties to set to the model are specified below.
 	 */
 	public function schema() {
-		$this->data = array(
+		$this->data = [
 			'content' => null,
 			'file' => null,
 			'name' => null,
@@ -212,7 +212,7 @@ class file extends model {
 			'path' => null,
 			'url' => null,
 			'id' => null
-		);
+		];
 		
 		return $this;
 	}
@@ -266,7 +266,7 @@ class file extends model {
 	
 	// Reads through a directory and returns an array of the file properties
 	private function readDirectory() {
-		$data = array();
+		$data = [];
 		foreach (new DirectoryIterator($this->options['path']) as $file) {
 			
 			// Skip directories
@@ -276,14 +276,14 @@ class file extends model {
 			
 			// Use pathinfo here because getExtendsion isn't in PHP 5.3
 			$extension = pathinfo($file->getFilename(), PATHINFO_EXTENSION);
-			$item = array(
+			$item = [
 				'file' => $file->getFilename(),
 				'name' => $file->getBasename('.'.$extension),
 				'extension' => $extension,
 				'path' => $file->getPath(),
 				'url' => sq::base().$file->getPathname(),
 				'id' => $file->getFilename()
-			);
+			];
 			
 			// Skip if where statment isn't a match
 			if ($this->checkWhereStatement($item)) {
@@ -305,7 +305,7 @@ class file extends model {
 		}
 		
 		if (is_int($limit)) {
-			$limit = array(0, $limit);
+			$limit = [0, $limit];
 		}
 		
 		return array_slice($items, $limit[0], $limit[1]);

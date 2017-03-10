@@ -25,14 +25,14 @@ abstract class sqView extends component {
 	public $full, $view;
 	
 	// FIFO stack of the list of current view clips
-	private $clips = array();
+	private $clips = [];
 	
 	// Implementation detail for mapping data into a layout
 	private $parent;
 	
 	// Variable to store data to be turned into a javascript JSON object in the
 	// footer
-	protected static $jsData = array();
+	protected static $jsData = [];
 	
 	// Static counter. Every time a new view object is created it goes up by
 	// one. This counter allows the object to know the current position of the
@@ -42,16 +42,16 @@ abstract class sqView extends component {
 	// Scripts and styles arrays use the current property to reverse the render
 	// flow. So scripts and styles included in the inner most view appear last;
 	// the reverse of the normal flow.
-	protected static $styles = array(),
-		$scripts = array('foot' => array(), 'head' => array());
+	protected static $styles = [],
+		$scripts = ['foot' => [], 'head' => []];
 	
 	// In template variables. Setting these changes the value included in the
 	// html head tag.
 	public static $description, $doctype, $title, $language, $favicon, $id,
-		$head, $foot, $top, $charset, $keywords = array();
+		$head, $foot, $top, $charset, $keywords = [];
 	
 	// Setup the view
-	public function __construct($view, $data = array(), $options = array()) {
+	public function __construct($view, $data = [], $options = []) {
 		
 		// Add static data from the passed in array
 		$this->data = $data + $this->data;
@@ -62,7 +62,7 @@ abstract class sqView extends component {
 		parent::__construct($options);
 		
 		// Set defult options for description title doctype and such
-		foreach (array('description', 'keywords', 'charset', 'title', 'doctype', 'language', 'favicon', 'id') as $prop) {
+		foreach (['description', 'keywords', 'charset', 'title', 'doctype', 'language', 'favicon', 'id'] as $prop) {
 			if (!self::$$prop) {
 				self::$$prop = $this->options[$prop];
 			}
@@ -87,13 +87,13 @@ abstract class sqView extends component {
 	
 	// Reset global view properties
 	public static function reset() {
-		foreach (array('description', 'keywords', 'charset', 'title', 'doctype', 'language', 'favicon', 'id') as $prop) {
+		foreach (['description', 'keywords', 'charset', 'title', 'doctype', 'language', 'favicon', 'id'] as $prop) {
 			self::$$prop = sq::config('view/'.$prop);
 		}
 		
-		self::$styles = array();
-		self::$scripts = array('foot' => array(), 'head' => array());
-		self::$jsData = array();
+		self::$styles = [];
+		self::$scripts = ['foot' => [], 'head' => []];
+		self::$jsData = [];
 	}
 	
 	// Returns true if the view file exists, false if not.
@@ -108,7 +108,7 @@ abstract class sqView extends component {
 	 * and foot sections. HTML templates should only include content inside the
 	 * body tag and omit the body tag and everything outside of it.
 	 */
-	public function render($view = null, $data = array()) {
+	public function render($view = null, $data = []) {
 		if ($view) {
 			return sq::view($view, $data)
 				->set($data + $this->data)
@@ -348,7 +348,7 @@ var sq = {
 		$order = self::$current;
 		
 		if (!isset(self::$scripts[$location][$order])) {
-			self::$scripts[$location][$order] = array();
+			self::$scripts[$location][$order] = [];
 		}
 		
 		self::$scripts[$location][$order][] = $path;
@@ -359,7 +359,7 @@ var sq = {
 		$order = self::$current;
 		
 		if (!isset(self::$styles[$order])) {
-			self::$styles[$order] = array();
+			self::$styles[$order] = [];
 		}
 		
 		self::$styles[$order][] = $path;

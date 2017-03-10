@@ -1,6 +1,6 @@
 <section class="sq-form">
 	<h2><?=$title ?></h2>
-	<?=form::open($model, array('enctype' => 'multipart/form-data')) ?>
+	<?=form::open($model, ['enctype' => 'multipart/form-data']) ?>
 
 <? foreach ($fields as $name => $type):
 	$type = explode('|', $type);

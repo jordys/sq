@@ -14,7 +14,7 @@
  */
 
 abstract class sqAsset extends component {
-	
+
 	// Stores the asset path
 	private $path = null;
 	

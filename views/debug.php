@@ -19,7 +19,7 @@
 				endif;
 				
 				if (isset($line['args'])):
-					$args = array();
+					$args = [];
 					foreach ($line['args'] as $arg):
 						if (is_object($arg) && get_class($arg) == 'view'):
 							$args[] = "[$arg->view]";

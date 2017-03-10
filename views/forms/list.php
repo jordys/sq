@@ -2,9 +2,9 @@
 	<h2><?=$title ?></h2>
 	<span class="sq-list-count"><?=count($model) ?> Results</span>
 	
-	<?=sq::widget('pagination', array(
+	<?=sq::widget('pagination', [
 		'model' => $model
-	)) ?>
+	]) ?>
 	
 	<?=form::open() ?>
 		<div class="sq-actions sq-list-actions">
@@ -16,9 +16,9 @@
 		$display = $val;
 	endif;	
 	
-	$url = sq::route()->current()->append(array(
+	$url = sq::route()->current()->append([
 		'action' => $action
-	))->remove('page');
+	])->remove('page');
 	
 	echo '<a class="sq-action sq-'.$action.'-action" href="'.$url.'">'.$display.'</a>';
 endforeach ?>
@@ -61,10 +61,10 @@ endforeach ?>
 				$display = $val;
 			endif;
 			
-			$url = sq::route()->current()->append(array(
+			$url = sq::route()->current()->append([
 				'action' => $action,
 				'id' => $item->id
-			))->remove('page');
+			])->remove('page');
 			
 			echo '<a href="'.$url.'" class="sq-action sq-'.$action.'-action">'.$display.'</a>';
 		endforeach ?>
@@ -80,5 +80,5 @@ endforeach ?>
 		<? endif ?>
 	<?=form::close() ?>
 	
-	<?=sq::widget('pagination', array('model' => $model)) ?>
+	<?=sq::widget('pagination', ['model' => $model]) ?>
 </section>
