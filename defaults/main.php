@@ -14,6 +14,7 @@ sq::load('/defaults/component');
 sq::load('/defaults/view');
 sq::load('/defaults/form');
 sq::load('/defaults/model');
+sq::load('/defaults/auth');
 
 return array(
 	
