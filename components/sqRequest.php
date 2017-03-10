@@ -65,7 +65,7 @@ abstract class sqRequest extends component {
 	
 	// Implementation for the get() post() and request() methods above
 	private function param($type, $param, $default) {
-		if (!empty($this->{$type}[$param])) {
+		if (isset($this->{$type}[$param])) {
 			return $this->{$type}[$param];
 		} else {
 			return $default;

@@ -52,7 +52,7 @@ abstract class sqAuth extends controller {
 			->find(array($this->options['username-field'] => $username));
 		
 		// Guard against invalid login
-		if ($password === false || empty($user->{$this->options['password-field']}) || !self::authenticate($password, $user->{$this->options['password-field']})) {
+		if ($password === false || !$user->count() || !self::authenticate($password, $user->{$this->options['password-field']})) {
 			sq::response()->flash($this->options['login-failed-message']);
 			
 			return false;

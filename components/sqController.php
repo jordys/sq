@@ -59,7 +59,7 @@ abstract class sqController extends component {
 			foreach ($reflection->getParameters() as $param) {
 				if ($model = sq::request()->model($param->getName())) {
 					$args[] = $model;
-				} elseif ($request = sq::request()->any($param->getName())) {
+				} elseif (($request = sq::request()->any($param->getName())) !== null) {
 					$args[] = $request;
 				} elseif ($param->isOptional()) {
 					$args[] = $param->getDefaultValue();
