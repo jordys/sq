@@ -68,7 +68,6 @@ abstract class sqModel extends component {
 		}
 		
 		$this->layout->model = $this;
-		
 		return $this->layout;
 	}
 	
@@ -164,7 +163,7 @@ abstract class sqModel extends component {
 			$this->limit()->read(array('id'));
 		}
 		
-		if (isset($this->id) && $this->id) {
+		if (isset($this->id) && $this->id !== null) {
 			return $this->update($data);
 		} else {
 			return $this->create($data);

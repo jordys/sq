@@ -51,7 +51,7 @@ class sq {
 			if (sq::config('log-errors')) {
 				error_log('PHP '.sq::config('error-labels/'.$number).':  '.$string.' in '.$file.' on line '.$line);
 			}
-		});
+		}, E_ALL & E_NOTICE & E_USER_NOTICE);
 		
 		// Framework configuration defaults
 		self::load('/defaults/main');

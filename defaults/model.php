@@ -22,6 +22,9 @@ return array(
 		'has-many' => array(),
 		'many-many' => array(),
 		
+		// Automatically create table based on schema in model config array
+		'autogenerate-table' => true,
+		
 		// When cascade is true when models are deleted their related models
 		// will be deleted as well
 		'cascade' => true,

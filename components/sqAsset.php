@@ -23,14 +23,14 @@ abstract class sqAsset extends component {
 		$this->path = $path;
 		
 		parent::__construct($options);
+		
+		if (!$this->check() || sq::config('debug')) {
+			$this->build();
+		}
 	}
 	
 	// Asset returns the file url when treated like a string
 	public function render() {
-		if (!$this->check() || sq::config('debug')) {
-			$this->build();
-		}
-		
 		return sq::base().$this->getFilePath();
 	}
 	

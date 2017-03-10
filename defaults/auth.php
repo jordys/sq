@@ -26,11 +26,6 @@ return array(
 		// Automatically rehash passwords using no security standards
 		'rehash-passwords' => true,
 		
-		// Fields to use for authentication methods
-		'username-field' => 'email',
-		'password-field' => 'password',
-		'hash-field'  => 'hash',
-		
 		// Message to be flashed when a login fails
 		'login-failed-message' => 'Username or password not recognized.'
 	)
