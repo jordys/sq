@@ -25,16 +25,16 @@ abstract class sqAuth extends controller {
 		
 		// Check session for login
 		if (isset($_SESSION['sq-username'])) {
-			$this->user->find(array($this->options['username-field'] => $_SESSION['sq-username']));
+			$this->user->find(array('email' => $_SESSION['sq-username']));
 			
 		// If no session than check for a cookie if cookie login is enabled
 		} elseif (isset($_COOKIE['sq-auth']) && $this->options['remember-me']) {
-			$this->user->find(array($this->options['hash-field'] => $_COOKIE['sq-auth']));
+			$this->user->find(array('hash' => $_COOKIE['sq-auth']));
 			
 			// If a user is found log the user in again to increase the length
 			// of the cookie
 			if (isset($this->user->level)) {
-				$this->login($this->user->{$this->options['username-field']}, $this->user->{$this->options['password-field']}, true);
+				$this->login($this->user->email, $this->user->password, true);
 			}
 		}
 		
@@ -49,22 +49,22 @@ abstract class sqAuth extends controller {
 	// option is true a cookie will be set as well.
 	public function login($username, $password = false, $remember = false) {
 		$user = sq::model('users')
-			->find(array($this->options['username-field'] => $username));
+			->find(array('email' => $username));
 		
 		// Guard against invalid login
-		if ($password === false || !$user->count() || !self::authenticate($password, $user->{$this->options['password-field']})) {
+		if ($password === false || !$user->count() || !self::authenticate($password, $user->password)) {
 			sq::response()->flash($this->options['login-failed-message']);
 			
 			return false;
 		}
 		
 		// Set the user info to the session
-		$_SESSION['sq-username'] = $user->{$this->options['username-field']};
+		$_SESSION['sq-username'] = $user->email;
 		$_SESSION['sq-level'] = $user->level;
 		
 		// Check if the hash is outdated and update it if it is
-		if ($this->options['rehash-passwords'] && password_needs_rehash($user->{$this->options['password-field']}, $this->options['algorithm'], array('cost' => $this->options['cost']))) {
-			$user->{$this->options['password-field']} = self::hash($password);
+		if ($this->options['rehash-passwords'] && password_needs_rehash($user->password, $this->options['algorithm'], array('cost' => $this->options['cost']))) {
+			$user->password = self::hash($password);
 			$user->save();
 		}
 		
@@ -73,11 +73,11 @@ abstract class sqAuth extends controller {
 			
 			// A hash is saved to the user and into a cookie. If these two
 			// parameters match the user will be allowed to log in.
-			$hash = self::hash($user->{$this->options['username-field']}.$user->{$this->options['password-field']});
+			$hash = self::hash($user->email.$user->password);
 			
 			setcookie('sq-auth', $hash, $timeout, '/');
 			
-			$user->{$this->options['hash-field']} = $hash;
+			$user->hash = $hash;
 			$user->update();
 		}
 		
