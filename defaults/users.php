@@ -6,6 +6,17 @@
 
 return array(
 	'users' => array(
+		'schema' => array(
+			'id'       => 'INT(100) NOT NULL',
+			'email'    => 'VARCHAR(100) NOT NULL',
+			'first'    => 'VARCHAR(100) NOT NULL',
+			'last'     => 'VARCHAR(100) NOT NULL',
+			'level'    => 'ENUM("user", "admin") NOT NULL DEFAULT "admin"',
+			'notes'    => 'TEXT NOT NULL',
+			'hashkey'  => 'VARCHAR(255) NOT NULL',
+			'password' => 'VARCHAR(255) NOT NULL',
+			'created'  => 'TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP'
+		),
 		'fields' => array(
 			'list' => array(
 				'created' => 'date',

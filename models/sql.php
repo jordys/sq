@@ -30,7 +30,11 @@ class sql extends model {
 				$this->options['password']);
 			
 			self::$conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-			self::$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+			self::$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		}
+		
+		if ($this->options['autogenerate-table'] && $this->options['schema']) {
+			$this->make();
 		}
 	}
 	
