@@ -21,7 +21,7 @@ class sq {
 	// unnecessarily
 	private static $cache = [];
 	
-	/** 
+	/**
 	 * Startup method for the framework
 	 *
 	 * Sets up error handling, autoloading, sessions and date / time defaults
@@ -311,7 +311,7 @@ class sq {
 		return $component;
 	}
 	
-	// Maps method calls to sq::component so calling sq::mailer($arg) is the 
+	// Maps method calls to sq::component so calling sq::mailer($arg) is the
 	// equivalent of calling sq::component('mailer', $arg)
 	public static function __callStatic($name, $args = null) {
 		array_unshift($args, $name);

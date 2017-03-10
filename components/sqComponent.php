@@ -17,7 +17,7 @@ abstract class sqComponent implements iterator, countable, arrayAccess {
 	// Array of component options
 	public $options = [];
 	
-	// Optional layout view that is automatically used when the component is 
+	// Optional layout view that is automatically used when the component is
 	// rendered. Variables can be added to it by the component and when the 
 	// component is echoed the layout is rendered.
 	public $layout;
@@ -73,13 +73,13 @@ abstract class sqComponent implements iterator, countable, arrayAccess {
 	/**
 	 * Methods implementing the iterator interface
 	 *
-	 * Allows a model object to be used directly in a foreach loop. If the 
+	 * Allows a model object to be used directly in a foreach loop. If the
 	 * object is a list object with multple entries each ineration will be an
 	 * object. If the model represents a single entry (limit is set) it will 
 	 * loop through the values of the object as key, value.
 	 */
 	public function rewind() {
-		reset($this->data);	
+		reset($this->data);
 	}
 	
 	public function current() {
@@ -145,7 +145,7 @@ abstract class sqComponent implements iterator, countable, arrayAccess {
 	// Returns content to screen. Called by component __tostring.
 	public function render() {}
 	
-	// Mass assignment method for class data. All the usual mass assignment 
+	// Mass assignment method for class data. All the usual mass assignment
 	// security warnings apply.
 	public function set($data, $overwrite = true) {
 		

@@ -9,7 +9,7 @@ return [
 	// General configuration for all models
 	'model' => [
 		
-		// Default type for models. Can be overridden by setting 'type' in the 
+		// Default type for models. Can be overridden by setting 'type' in the
 		// model config.
 		'default-type' => 'sql',
 		

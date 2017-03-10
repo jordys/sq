@@ -2,7 +2,7 @@
 
 /*******************************************************************************
  * Defaults file for all configuration settings in the sq framework app. It may
- * be a good reference to view available properties, however, NEVER edit this 
+ * be a good reference to view available properties, however, NEVER edit this
  * file directly instead override these settings in your sites configuration.
  *
  * This list isn't necessarily complete as components may have their own
