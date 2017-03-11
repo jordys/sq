@@ -268,7 +268,7 @@ abstract class sqModel extends component {
 			unset($this->$key);
 		}
 		
-		if (isset($data)) {	
+		if (isset($data)) {
 			$this->set($data);
 		}
 		
