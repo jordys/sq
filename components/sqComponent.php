@@ -215,7 +215,7 @@ abstract class sqComponent implements iterator, countable, arrayAccess {
 	private static function processXML($array, &$xml) {
 		foreach ($array as $key => $val) {
 			if (is_array($val)) {
-				if (!is_numeric($key)){
+				if (!is_numeric($key)) {
 					$node = $xml->addChild($key);
 					self::processXML($val, $node);
 				} else {
