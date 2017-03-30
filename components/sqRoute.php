@@ -46,9 +46,9 @@ abstract class sqRoute extends component {
 					$adjust--;
 				} elseif (strpos($routePart, '?') && isset($uriParts[$index]) && in_array($uriParts[$index], $routeParts)) {
 					$adjust++;
-				} elseif (!empty($uriParts[$index]) && $routePart[0] == '{') {
+				} elseif (array_key_exists($index, $uriParts) && $routePart[0] == '{') {
 					$params[$this->getKey($routePart)] = $uriParts[$index];
-				} elseif (empty($uriParts[$index]) && strpos($routePart, '=') !== false) {
+				} elseif (!array_key_exists($index, $uriParts) && strpos($routePart, '=') !== false) {
 					$params[$this->getKey($routePart)] = $this->getValue($routePart);
 				} elseif (isset($uriParts[$index]) && $uriParts[$index] !== $routePart && $routePart[0] != '{') {
 					continue 2;
