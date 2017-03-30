@@ -227,7 +227,7 @@ class sql extends model {
 		}
 		
 		if (!$schema) {
-			$schema = $this->options['schema'];
+			$schema = $this->schema();
 		} elseif (is_string($schema)) {
 			$schema = sq::config($schema);
 		}

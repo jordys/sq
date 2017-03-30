@@ -34,6 +34,12 @@ abstract class sqModel extends component {
 		}
 	}
 	
+	// Overridable method for setting up the schema of the model. The schema is
+	// used for creating the database record.
+	public function schema() {
+		return $this->options['schema'];
+	}
+	
 	// Called by the __tostring method to render a view of the data in the
 	// model. By default the view is a form for a single result and a listing
 	// multiple results. The default listing and form view may be overridden in
