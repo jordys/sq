@@ -203,7 +203,7 @@ class file extends model {
 	 * The properties of the model are well defined unlike other model
 	 * implementations. The properties to set to the model are specified below.
 	 */
-	public function schema() {
+	public function columns() {
 		$this->data = [
 			'content' => null,
 			'file' => null,
