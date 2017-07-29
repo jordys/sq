@@ -17,6 +17,7 @@ return [
 			'password' => 'VARCHAR(255) NOT NULL',
 			'created'  => 'TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP'
 		],
+		
 		'fields' => [
 			'list' => [
 				'created' => 'date',
