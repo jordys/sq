@@ -168,11 +168,13 @@ abstract class sqModel extends component {
 		if (!empty($this->options['where']) && !$this->isRead) {
 			$this->limit()->read(['id']);
 		}
-		
-		if (isset($this->id) && $this->id !== null) {
-			return $this->update($data);
-		} else {
+				
+		if (empty($this->id)) {
+			unset($this->id);
+
 			return $this->create($data);
+		} else {
+			return $this->update($data);
 		}
 	}
 	
