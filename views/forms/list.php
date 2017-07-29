@@ -39,12 +39,9 @@ endforeach ?>
 	<? foreach ($fields as $name => $type):
 		if (isset($item->$name)):
 			if ($type == 'sort'):
-				if (!$item->$name):
-					$item->$name = null;
-				endif;
 				echo '
 					<td class="sq-sort-item">
-						<input name="save['.$type.']['.$item->id.']" type="text" autocomplete="off" inputmode="numeric" maxlength="3" value="'.$item->$name.'"/>
+						<input name="save['.$name.']['.$item->id.']" type="text" autocomplete="off" inputmode="numeric" maxlength="3" value="'.$item->$name.'"/>
 					</td>';
 			else:
 				echo '<td class="sq-'.$type.'-item">'.listing::$type($item->$name).'</td>';
