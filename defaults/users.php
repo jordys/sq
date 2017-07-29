@@ -7,7 +7,7 @@
 return [
 	'users' => [
 		'schema' => [
-			'id'       => 'INT(100) NOT NULL',
+			'id'       => 'INT(100) UNSIGNED NOT NULL AUTO_INCREMENT',
 			'email'    => 'VARCHAR(100) NOT NULL',
 			'first'    => 'VARCHAR(100) NOT NULL',
 			'last'     => 'VARCHAR(100) NOT NULL',
