@@ -13,6 +13,10 @@ return [
 		// model config.
 		'default-type' => 'sql',
 		
+		// When true the model will be displayed as a hierarchy in the admin
+		// module
+		'hierarchy' => false,
+		
 		// Load relationships from config on read
 		'load-relations' => true,
 		
@@ -67,8 +71,8 @@ return [
 		],
 		
 		// Actions for admin modules
-		'actions' => ['create' => 'Create'],
-		'inline-actions' => ['delete' => 'Delete', 'update' => 'Update']
+		'actions' => ['create' => 'New'],
+		'inline-actions' => ['delete' => 'Delete', 'update' => 'Edit']
 	],
 	
 	// SQL model type configuration
@@ -87,7 +91,7 @@ return [
 	'file' => [
 		
 		// Base directory where the files are stored
-		'path' => 'files',
+		'path' => 'uploads',
 		
 		// Amount of memory allowed to be used for the image transformation
 		// process
