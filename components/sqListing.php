@@ -46,6 +46,14 @@ abstract class sqListing {
 	public static function link($url) {
 		return '<a href="'.$url.'">'.$url.'</a>';
 	}
+	
+	// Displays model as a list of items
+	public static function list($model) {
+		if ($model->count()) {
+			$model->layout->subList = true;
+			return $model;
+		}
+	}
 }
 
 ?>
