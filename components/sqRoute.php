@@ -71,8 +71,8 @@ abstract class sqRoute extends component {
 	}
 	
 	// Clears the current arguments and replaces them with the passed in
-	// fragments.
-	public function to(array $fragments) {
+	// fragments
+	public function to($fragments) {
 		$this->fragments = [];
 		
 		return $this->append($fragments);
@@ -136,7 +136,7 @@ abstract class sqRoute extends component {
 			
 			// Remove default values from rule string because they aren't needed
 			// and mess matching up
-			$route = preg_replace('/\=[^)]+\}/U', '?}', $route);
+			$route = preg_replace('/\=[^{)]+?}/U', '?}', $route);
 			
 			// If the rule has more sections than the supplied url fragments
 			// then skip the rule
