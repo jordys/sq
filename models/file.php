@@ -47,7 +47,7 @@ class file extends model {
 	 * returned. The values argument accepts an optional array to specify what
 	 * file properties to add to the record object.
 	 */
-	public function read($values = null) {
+	public function read($type = null) {
 		
 		// If no where statement is applied and data is set assume the record
 		// being altered is the current one
@@ -56,14 +56,7 @@ class file extends model {
 		}
 		
 		// Loop through the items in the directory
-		foreach ($this->readDirectory() as $item) {
-			if ($this->options['read-content'] == 'always' || ($this->isSingle() && $this->options['read-content'])) {
-				$item['content'] = file_get_contents($this->options['path'].'/'.$item['file']);
-			}
-			
-			if (is_array($values)) {
-				$item = array_intersect_key($item, array_flip($values));
-			}
+		foreach ($this->readDirectory($type) as $item) {
 			
 			// If this is a single record break out of the loop and set the data
 			// directly to the model
@@ -204,6 +197,8 @@ class file extends model {
 	 * implementations. The properties to set to the model are specified below.
 	 */
 	public function columns() {
+		$this->limit();
+		
 		$this->data = [
 			'content' => null,
 			'file' => null,
@@ -265,29 +260,46 @@ class file extends model {
 	}
 	
 	// Reads through a directory and returns an array of the file properties
-	private function readDirectory() {
+	private function readDirectory($readType = null) {
 		$data = [];
-		foreach (new DirectoryIterator($this->options['path']) as $file) {
+		
+		$path = $this->options['path'];
+		if (!empty($this->options['where']['path'])) {
+			$path = $this->options['where']['path'];
+		}
+		
+		
+		foreach (new DirectoryIterator($path) as $file) {
 			
-			// Skip directories
-			if (!$file->isFile()) {
+			// Skip hidden files
+			if ($file->getFilename()[0] == '.') {
 				continue;
 			}
 			
-			// Use pathinfo here because getExtendsion isn't in PHP 5.3
-			$extension = pathinfo($file->getFilename(), PATHINFO_EXTENSION);
-			$item = [
-				'file' => $file->getFilename(),
-				'name' => $file->getBasename('.'.$extension),
-				'extension' => $extension,
-				'path' => $file->getPath(),
-				'url' => sq::base().$file->getPathname(),
-				'id' => $file->getFilename()
-			];
-			
-			// Skip if where statment isn't a match
-			if ($this->checkWhereStatement($item)) {
-				$data[] = $item;
+			if (!$readType || $file->getType() == $readType) {
+				$extension = pathinfo($file->getFilename(), PATHINFO_EXTENSION);
+				
+				// Use pathinfo here because getExtendsion isn't in PHP 5.3
+				$item = [
+					'file' => $file->getFilename(),
+					'name' => $file->getBasename('.'.$extension),
+					'url' => sq::base().$file->getPathname(),
+					'id' => $file->getFilename(),
+					'path' => $file->getPath(),
+					'type' => $file->getType()
+				];
+				
+				if ($file->isFile()) {
+					if ($this->options['read-content'] == 'always' || ($this->isSingle() && $this->options['read-content'])) {
+						$item['content'] = file_get_contents($file->getPathname());
+					}
+					$item['extension'] = $extension;
+				}
+				
+				// Skip if where statment isn't a match
+				if ($this->checkWhereStatement($item)) {
+					$data[] = $item;
+				}
 			}
 		}
 		
