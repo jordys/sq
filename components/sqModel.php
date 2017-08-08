@@ -40,6 +40,11 @@ abstract class sqModel extends component {
 		return $this->options['schema'];
 	}
 	
+	// Returns the model name
+	public function modelName() {
+		return $this->options['name'];
+	}
+	
 	// Called by the __tostring method to render a view of the data in the
 	// model. By default the view is a form for a single result and a listing
 	// multiple results. The default listing and form view may be overridden in
@@ -66,13 +71,6 @@ abstract class sqModel extends component {
 			$this->layout->fields = $this->options['fields'][$name];
 		}
 		
-		// Set the friendly model title. If the title option doesn't exist use
-		// the name as the title.
-		$this->layout->title = ucwords($this->options['name']);
-		if (isset($this->options['title'])) {
-			$this->layout->title = $this->options['title'];
-		}
-		
 		$this->layout->model = $this;
 		return $this->layout;
 	}
@@ -91,7 +89,9 @@ abstract class sqModel extends component {
 			$rules = $this->options['rules'];
 		}
 		
-		$this->isValid = sq::validator($this->data, $rules)->isValid;
+		$validator = sq::validator($this->data, $rules);
+		$this->isValid = $validator->isValid;
+		$this->set($validator->data);
 		return $this->isValid;
 	}
 	
