@@ -50,6 +50,7 @@ class sql extends model {
 			
 			return $value;
 		}
+
 		
 		// If value is in whitelist return whitelisted value
 		if (in_array($value, $whitelist)) {
@@ -372,7 +373,13 @@ class sql extends model {
 			// Avoid setting keys for related models
 			if (!is_array($val) && !is_object($val)) {
 				$key = $this->sanitize($key);
-				$set[] = "$key = :$key";
+				
+				if ($val === null || $val === '') {
+					unset($data[$key]);
+					$set[] = "$key = NULL";
+				} else {
+					$set[] = "$key = :$key";
+				}
 			}
 		}
 		
@@ -426,10 +433,19 @@ class sql extends model {
 							$query .= ' OR ';
 						}
 						
-						$query .= $this->sanitize($key).' = '.self::$conn->quote($param);
+						// Support explicit null in sql querries
+						if ($param === null) {
+							$query .= $this->sanitize($key).' IS NULL';
+						} else {
+							$query .= $this->sanitize($key).' = '.self::$conn->quote($param);
+						}
 					}
 					
 					$query .= ')';
+				
+				// Support explicit null in sql querries
+				} elseif ($val === null) {
+					$query .= $this->sanitize($key).' IS NULL';
 				} else {
 					$query .= $this->sanitize($key).' = '.self::$conn->quote($val);
 				}
