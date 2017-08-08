@@ -391,6 +391,11 @@ var sq = {
 		return $date->format($formatOut);
 	}
 	
+	// Converts line breaks to <br/> tags
+	public static function break($string, $replace = '<br/>') {
+		return str_replace(PHP_EOL, $replace, $string);
+	}
+	
 	// Shortens text and appends a passed in ending or elipsis as default
 	public static function truncate($string, $length = 100, $closing = '&hellip;') {
 		$string = strip_tags($string);
