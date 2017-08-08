@@ -1,28 +1,6 @@
-<section class="sq-list">
-	<h2><?=$title ?></h2>
-	<span class="sq-list-count"><?=count($model) ?> Results</span>
-	
-	<?=sq::widget('pagination', [
-		'model' => $model
-	]) ?>
-	
-	<?=form::open() ?>
-		<div class="sq-actions sq-list-actions">
-<? foreach ($model->options['actions'] as $key => $val):
-	$action = $val;
-	$display = ucwords($action);
-	if (!is_numeric($key)):
-		$action = $key;
-		$display = $val;
-	endif;	
-	
-	$url = sq::route()->current()->append([
-		'action' => $action
-	])->remove('page');
-	
-	echo '<a class="sq-action sq-'.$action.'-action" href="'.$url.'">'.$display.'</a>';
-endforeach ?>
-		</div>
+<? if (empty($subList) || !$subList): ?>
+		<?=form::open() ?>
+		
 		<div class="sq-table sq-list-table">
 			<table>
 				<thead>
@@ -34,8 +12,9 @@ endforeach ?>
 					</tr>
 				</thead>
 				<tbody>
+				<? endif ?>
 <? foreach ($model as $item): ?>
-					<tr>
+					<tr <?=!empty($subList) ? 'class="indent"' : '' ?>>
 	<? foreach ($fields as $name => $type):
 		if (isset($item->$name)):
 			if ($type == 'sort'):
@@ -50,25 +29,16 @@ endforeach ?>
 	endforeach;
 	if (isset($item->id)): ?>
 						<td class="sq-actions sq-inline-actions">
-		<? foreach ($model->options['inline-actions'] as $key => $val):
-			$action = $val;
-			$display = ucwords($action);
-			if (!is_numeric($key)):
-				$action = $key;
-				$display = $val;
-			endif;
-			
-			$url = sq::route()->current()->append([
-				'action' => $action,
-				'id' => $item->id
-			])->remove('page');
-			
-			echo '<a href="'.$url.'" class="sq-action sq-'.$action.'-action">'.$display.'</a>';
-		endforeach ?>
+							<?=$this->render('admin/forms/actions', ['item' => $item]) ?>
 						</td>
 	<? endif ?>
 					</tr>
+					<? if ($model->options['hierarchy'] && !empty($item->{$model->options['hierarchy']})): ?>
+						<?=listing::list($item->{$model->options['hierarchy']}) ?>
+					<? endif ?>
 <? endforeach ?>
+		<? if (empty($subList) || !$subList): ?>
+
 				</tbody>
 			</table>
 		</div>
@@ -76,6 +46,4 @@ endforeach ?>
 			<button class="sq-action sq-sort-action" name="action" value="sort">Update</button>
 		<? endif ?>
 	<?=form::close() ?>
-	
-	<?=sq::widget('pagination', ['model' => $model]) ?>
-</section>
+<? endif ?>
