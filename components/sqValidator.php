@@ -43,7 +43,15 @@ abstract class sqValidator extends component {
 					}
 				}
 				
-				if (self::$rule($this->$field) === false) {
+				$result = self::$rule($this->$field);
+				
+				// If result isn't a simple boolean update the data with the
+				// result of the validation
+				if ($result !== true) {
+					$this->$field = $result;
+				}
+				
+				if ($result === false) {
 					$this->errors[$field][] = [
 						'rule' => $rule,
 						'message' => $this->message($message, $field, $this->$field)
@@ -93,6 +101,17 @@ abstract class sqValidator extends component {
 	// Value is a valid url
 	public static function url($value) {
 		return !$value || filter_var($value, FILTER_VALIDATE_URL);
+	}
+	
+	// Validate that the date is valid and sanatizes it into SQL compatible
+	// format
+	public static function date($value) {
+		if (!$value) {
+			return true;
+		}
+		
+		$value = new DateTime($value);
+		return $value->format('Y-m-d');
 	}
 	
 	// Utility function to generate user friendly error messages
