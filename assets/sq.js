@@ -33,7 +33,7 @@ sq = function(sq, $) {
 		}
 		
 		
-		/*** sq.slug public object ***/
+		/** sq.slug public object **/
 		
 		return {
 			get: function() {
@@ -105,7 +105,7 @@ sq = function(sq, $) {
 	}
 	
 	
-	/*** sq public object ***/
+	/** sq public object **/
 	
 	return {
 		
