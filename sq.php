@@ -208,7 +208,7 @@ class sq {
 			}
 		}
 		
-		if (strpos($class, 'sq') !== 0 && !class_exists($class, false) && class_exists('sq'.ucfirst($class))) {
+		if ($class && strpos($class, 'sq') !== 0 && !class_exists($class, false) && class_exists('sq'.ucfirst($class))) {
 			eval("class $class extends sq$class {}");
 		}
 	}
