@@ -7,25 +7,18 @@
 return [
 	'files' => [
 		'type' => 'file',
-		'path' => 'uploads',
+		
+		'actions' => ['upload'],
+		'inline-actions' => ['delete'],
 		
 		'fields' => [
 			'list' => [
 				'name' => 'text',
 				'file' => 'text',
 				'url' => 'link'
-			],
-			'form' => [
-				'directory' => 'select|files/upload-directories',
-				'image' => 'file'
 			]
-		],
-		
-		// Directories available to upload files to in admin module
-		'upload-directories' => [
-			'' => 'uploads'
 		]
-	)
-);
+	]
+];
 
 ?>
