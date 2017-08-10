@@ -174,27 +174,6 @@ abstract class sqForm extends model {
 		return htmlentities($attrs['symbol']).' '.self::element($name, $value, $attrs);
 	}
 	
-	// Displays an image upload widget. If a value is set the image will be
-	// shown beside the file input. Labels are included in the widget.
-	public static function image($name = 'upload', $value = null, $attrs = []) {
-		$attrs['type'] = 'file';
-		$attrs = self::getAttrs($name, $attrs, $value);
-		
-		if ($value) {
-			$content = '
-				<div class="sq-input-image-current">
-					<span style="background-image: url('.sq::base().$value.')"></span>
-					<img src="'.sq::base().$value.'"/>
-				</div>
-				<label class="sq-input-image-label" for="'.$attrs['id'].'">Replace Image</label>
-			';
-		} else {
-			$content = '<label class="sq-input-image-label" for="'.$attrs['id'].'">Upload Image</label>';
-		}
-		
-		return $content.'<input '.self::parseAttrs($attrs).'/>'.self::inputError($name);
-	}
-	
 	// Desplays a related model inline as a form within the form
 	public static function inline($name, $model, $value) {
 		$model = sq::model($model);
@@ -211,6 +190,21 @@ abstract class sqForm extends model {
 		$model->options['inline-view'] = true;
 		
 		return $model;
+	}
+	
+	// File picker
+	public static function picker($name, $model, $value = null, $attrs = []) {
+		$input = self::text($name, $value, $attrs);
+		$model = sq::model($model, [
+			'inline-view' => true
+		])->paginate(20)->all();
+		
+		return '<div class="sq-picker">'
+			.$input.
+			'<button class="sq-picker-toggle">Pick Image</button>
+			<a href="clear" class="sq-picker-clear">Clear</a>'
+			.$model.
+		'</div>';
 	}
 	
 	// Choose from a list of related entries
