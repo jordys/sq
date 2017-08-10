@@ -20,7 +20,7 @@ return [
 	'list' => [
 		
 		// Format for dates
-		'date-format' => 'M d, Y'
+		'date-format' => 'M j, Y'
 	]
 ];
 
