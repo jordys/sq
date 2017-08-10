@@ -511,7 +511,7 @@ class sq {
 				$config['type'] = $config['default-type'];
 			}
 			
-			$config = self::merge(self::config($config['type']), $config);
+			$config = self::merge($config, self::config($config['type']));
 		}
 		
 		$config = self::merge(self::config('component'), $config);
