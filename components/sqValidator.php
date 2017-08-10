@@ -33,6 +33,11 @@ abstract class sqValidator extends component {
 				$rules = [$rules];
 			}
 			
+			$value = null;
+			if (isset($this->$field)) {
+				$value = $this->$field;
+			}
+			
 			foreach ($rules as $rule => $message) {
 				if (is_numeric($rule)) {
 					$rule = $message;
@@ -43,15 +48,15 @@ abstract class sqValidator extends component {
 					}
 				}
 				
-				$result = self::$rule($this->$field);
+				$value = self::$rule($value);
 				
 				// If result isn't a simple boolean update the data with the
 				// result of the validation
-				if ($result !== true) {
-					$this->$field = $result;
+				if ($value !== true) {
+					$this->$field = $value;
 				}
 				
-				if ($result === false) {
+				if ($value === false) {
 					$this->errors[$field][] = [
 						'rule' => $rule,
 						'message' => $this->message($message, $field, $this->$field)
@@ -101,6 +106,16 @@ abstract class sqValidator extends component {
 	// Value is a valid url
 	public static function url($value) {
 		return !$value || filter_var($value, FILTER_VALIDATE_URL);
+	}
+	
+	// Marks a field as having a NULL state in the database and handles form
+	// parsing so the correct type is used
+	public static function nullable($value) {
+		if (!$value) {
+			return null;
+		}
+		
+		return true;
 	}
 	
 	// Validate that the date is valid and sanatizes it into SQL compatible
