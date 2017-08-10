@@ -26,12 +26,19 @@ return [
 		'has-many' => [],
 		'many-many' => [],
 		
+		// Specifies the default type used when creating a new model record
+		'default-item-type' => null,
+		
 		// Automatically create table based on schema in model config array
 		'autogenerate-table' => true,
 		
 		// When cascade is true when models are deleted their related models
 		// will be deleted as well
 		'cascade' => true,
+		
+		// Views used for rendering model when rendered directly
+		'list-view' => 'forms/list',
+		'item-view' => 'forms/form',
 		
 		// Use inline view in admin
 		'inline-view' => false,
@@ -89,6 +96,9 @@ return [
 	
 	// File model type configuration
 	'file' => [
+		
+		// File listings render in grid view by default
+		'list-view' => 'forms/grid',
 		
 		// Base directory where the files are stored
 		'path' => 'uploads',

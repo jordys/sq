@@ -40,35 +40,24 @@ abstract class sqModel extends component {
 		return $this->options['schema'];
 	}
 	
-	// Returns the model name
-	public function modelName() {
-		return $this->options['name'];
-	}
-	
 	// Called by the __tostring method to render a view of the data in the
 	// model. By default the view is a form for a single result and a listing
 	// multiple results. The default listing and form view may be overridden in
 	// the model options.
 	public function render() {
-		$name = explode('/', $this->layout->view);
-		$name = array_pop($name);
 		
 		// If the current layout is generic replace it with a either form or
 		// list depending on if we are looking at a single model.
-		if ($name == '_sqReplace') {
-			$name = $this->isSingle() ? 'form' : 'list';
-			
-			// Check for a view in forms/{model}/{list|form} that would replace
-			// the default if it exists
-			$this->layout->view = 'forms/'.$name;
-			if (view::exists('forms/'.$this->options['name'].'/'.$name)) {
-				$this->layout->view = 'forms/'.$this->options['name'].'/'.$name;
+		if ($this->layout->view == '_sqReplace') {
+			$this->layout->view = $this->options['list-view'];
+			if ($this->isSingle()) {
+				$this->layout->view = $this->options['item-view'];
 			}
 		}
 		
-		// Check for view specific fields
-		if (isset($this->options['fields'][$name])) {
-			$this->layout->fields = $this->options['fields'][$name];
+		$this->layout->fields = $this->options['fields']['list'];
+		if ($this->isSingle()) {
+			$this->layout->fields = $this->options['fields']['form'];
 		}
 		
 		$this->layout->model = $this;

@@ -24,7 +24,16 @@ abstract class sqListing {
 	
 	// Formats date string
 	public static function date($value) {
+		if (!$value) {
+			return null;
+		}
+		
 		return view::date(sq::config('list/date-format'), $value);
+	}
+	
+	// Displays sort control
+	public static function sort($value, $options) {
+		return '<input name="save['.$options['field-id'].']['.$options['item-id'].']" type="text" autocomplete="off" inputmode="numeric" maxlength="3" value="'.$value.'"/>';
 	}
 	
 	// Creates image from URL
@@ -48,9 +57,9 @@ abstract class sqListing {
 	}
 	
 	// Displays model as a list of items
-	public static function list($model) {
+	public static function inline($model) {
 		if ($model->count()) {
-			$model->layout->subList = true;
+			$model->options['inline-view'] = true;
 			return $model;
 		}
 	}

@@ -1,27 +1,56 @@
-<?=form::open($model, ['enctype' => 'multipart/form-data']) ?>
+<? if (!$model->options['inline-view']): ?>
+	<?=form::open($model, ['enctype' => 'multipart/form-data']) ?>
+<? endif ?>
 
-	<? foreach ($fields as $name => $type):
-		$type = explode('|', $type);
-		
-		$arg = false;
-		if (isset($type[1])):
-			$arg = $type[1];
-		endif;
-		$type = $type[0];
-	?>	
-		<div class="sq-form-row sq-<?=$type ?>-form-row">
-			<?=form::label($name, ucwords(str_replace('_', ' ', $name)), $type) ?>
-			<? if ($arg):
-				echo form::$type($name, $arg);
-			else:
-				echo form::$type($name);
-			endif ?>
-		</div>
-	<? endforeach ?>
+<div class="sq-form <?=$model->options['inline-view'] ? 'sq-inline' : '' ?>">
 
-	<div class="sq-actions sq-form-actions">
-		<input class="sq-action sq-save-action" type="submit" name="button" value="Save"/>
-		<a class="sq-cancel" href="<?=$_SERVER['HTTP_REFERER'] ?>">Cancel</a>
-	</div>
+<? foreach ($fields as $id => $field):
+	if (is_int($id)) {
+		$field = [
+			'format' => 'heading',
+			'label' => $field
+		];
+	}
+	
+	if (is_string($field)) {
+		$field = ['format' => $field];
+	}
+	
+	if (empty($field['label'])) {
+		$field['label'] = ucwords(str_replace('_', ' ', $id));
+	}
+	
+	if (isset($field['type']) && is_string($field['type'])) {
+		$field['type'] = [$field['type']];
+	}
+	
+	if (!empty($field['type']) && !empty($model->type) && !in_array($model->type, $field['type'])) {
+		continue;
+	}
+	
+	$format = $field['format'];
+	if ($format == 'heading'):
+		echo '<h3 class="sq-form-heading">'.$field['label'].'</h3>';
+		continue;
+	endif;
 
-<?=form::close() ?>
+	echo '<div class="sq-form-row sq-'.$format.'-form-row">';
+	echo form::label($id, $field['label'], $field['format']);
+	if (!empty($field['options'])):
+		echo form::$format($id, $field['options']);
+	else:
+		echo form::$format($id);
+	endif;
+	echo '</div>';
+endforeach ?>
+
+<div class="sq-actions sq-form-actions">
+	<input class="sq-action sq-save-action" type="submit" name="button" value="Save"/>
+	<a class="sq-cancel" href="<?=sq::route()->to(['module' => 'admin', 'model' => $model->options['name']]) ?>">Cancel</a>
+</div>
+
+<? if (!$model->options['inline-view']): ?>
+	<?=form::close() ?>
+<? endif ?>
+
+</div>
