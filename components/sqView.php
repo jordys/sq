@@ -113,9 +113,9 @@ abstract class sqView extends component {
 			return sq::view($view, $data)
 				->set($data + $this->data)
 				->render();
-		} else {
-			return $this->renderTemplate($data);
 		}
+		
+		return $this->renderTemplate($data);
 	}
 	
 	// Utility method to render a template dealing with moving data between
@@ -392,7 +392,7 @@ var sq = {
 	}
 	
 	// Converts line breaks to <br/> tags
-	public static function break($string, $replace = '<br/>') {
+	public static function breakText($string, $replace = '<br/>') {
 		return str_replace(PHP_EOL, $replace, $string);
 	}
 	

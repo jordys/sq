@@ -3,7 +3,7 @@
 /**
  * Response component
  *
- * Handles setting headers and redirecting
+ * Handles setting headers and redirecting.
  */
 
 abstract class sqResponse extends component {
@@ -28,13 +28,20 @@ abstract class sqResponse extends component {
 	}
 	
 	// Show a quick message to the user
-	public function flash($flash, $status = 'info') {
+	public function flash($flash, $status = 'error') {
 		
 		// Save flash to session for form to interpret
 		$_SESSION['sq-form-status'] = $status;
 		$_SESSION['sq-form-flash'] = $flash;
 		
 		return $this;
+	}
+	
+	// Set status code
+	public function status($code) {
+		if (!headers_sent()) {
+			header('HTTP/1.1 401 Unauthorized', true, $code);
+		}
 	}
 	
 	// Reviews last page showing errors

@@ -193,18 +193,41 @@ abstract class sqForm extends model {
 	}
 	
 	// File picker
-	public static function picker($name, $model, $value = null, $attrs = []) {
-		$input = self::text($name, $value, $attrs);
-		$model = sq::model($model, [
-			'inline-view' => true
-		])->paginate(20)->all();
+	public static function picker($name, $options, $value = null, $attrs = []) {
+		if (is_string($options)) {
+			$options = ['model' => $options];
+		}
 		
-		return '<div class="sq-picker">'
-			.$input.
-			'<button class="sq-picker-toggle">Pick Image</button>
-			<a href="clear" class="sq-picker-clear">Clear</a>'
-			.$model.
-		'</div>';
+		$attrs['class'] = 'sq-picker-input';
+		
+		$options['button-text'] = isset($options['button-text']) ? $options['button-text'] : 'Pick '.ucwords($options['model']);
+		$options['fields'] = isset($options['fields']) ? $options['fields'] : ['id' => 'checkbox', 'name' => 'text'];
+		
+		$input = self::text($name, $value, $attrs);
+		
+		$data = '<div class="sq-picker '.(!empty($options['open']) ? 'is-open' : '').'">';
+		
+		if (!isset($options['show-field']) || $options['show-field'] == true) {
+			$data .= '
+				'.self::text($name, $value, $attrs).'
+				<button class="sq-picker-toggle">'.$options['button-text'].'</button>
+				<a href="clear" class="sq-picker-clear">Clear</a>';
+		} else {
+			$data .= self::hidden($name, $value, $attrs);
+		}
+		
+		$model = sq::model($options['model'], ['picker' => true]);
+		
+		if (isset($options['where'])) {
+			$model->where($options['where']);
+		}
+		
+		$model->order('type', 'ASC')->read();
+		
+		$model->options['fields']['list'] = $options['fields'];
+		$model->options['inline-actions'] = [];
+		
+		return $data.$model.'</div>';
 	}
 	
 	// Choose from a list of related entries
@@ -331,7 +354,7 @@ abstract class sqForm extends model {
 			$attrs['id'] = self::parseId($name);
 		}
 		
-		if (self::$model && !$value) {
+		if (self::$model && $value === null) {
 			$attrs['name'] = self::$model->options['name'].'['.$name.']';
 		} else {
 			$attrs['name'] = $name;

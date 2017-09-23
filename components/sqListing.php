@@ -56,6 +56,11 @@ abstract class sqListing {
 		return '<a href="'.$url.'">'.$url.'</a>';
 	}
 	
+	// Checkbox data
+	public static function checkbox($value) {
+		return form::checkbox('checkbox['.$value.']', false);
+	}
+	
 	// Displays model as a list of items
 	public static function inline($model) {
 		if ($model->count()) {

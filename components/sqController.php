@@ -145,9 +145,7 @@ abstract class sqController extends component {
 	// also just create your own 404.php in the views directory and the
 	// framework will use your view with this action.
 	public function errorAction($error) {
-		if (!headers_sent()) {
-			header(':', true, $error['code']);
-		}
+		sq::response()->status($error['code']);
 		
 		// If a layout exists use the view as content
 		if (is_object($this->layout)) {
@@ -161,9 +159,7 @@ abstract class sqController extends component {
 	// action above. This method prints out a stack trace of the PHP error
 	// instead of a generic 404 page.
 	public function debugAction($error) {
-		if (!headers_sent()) {
-			header(':', true, $error['code']);
-		}
+		sq::response()->status($error['code']);
 		
 		if (is_object($this->layout)) {
 			$this->layout->content = sq::view('debug', ['error' => $error]);

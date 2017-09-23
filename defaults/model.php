@@ -43,6 +43,9 @@ return [
 		// Use inline view in admin
 		'inline-view' => false,
 		
+		// Use picker view in admin
+		'picker' => false,
+		
 		// Checks for form double submits and prevents them
 		'prevent-duplicates' => true,
 		
@@ -91,7 +94,10 @@ return [
 		'port' => 3306,
 		'username' => 'root',
 		'password' => 'root',
-		'dbname' => 'database'
+		'dbname' => 'database',
+		
+		// Table schema array
+		'schema' => null
 	],
 	
 	// File model type configuration

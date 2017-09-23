@@ -8,8 +8,9 @@ return [
 	'files' => [
 		'type' => 'file',
 		
-		'actions' => ['upload'],
+		'actions' => ['upload', 'folder' => 'New Folder'],
 		'inline-actions' => ['delete'],
+		'items-per-page' => 20,
 		
 		'fields' => [
 			'list' => [

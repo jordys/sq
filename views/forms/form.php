@@ -16,7 +16,7 @@
 		$field = ['format' => $field];
 	}
 	
-	if (empty($field['label'])) {
+	if (!isset($field['label'])) {
 		$field['label'] = ucwords(str_replace('_', ' ', $id));
 	}
 	
@@ -35,12 +35,19 @@
 	endif;
 
 	echo '<div class="sq-form-row sq-'.$format.'-form-row">';
-	echo form::label($id, $field['label'], $field['format']);
-	if (!empty($field['options'])):
+	if (!isset($field['label']) || $field['label']) {
+		echo form::label($id, $field['label'], $field['format']);
+	}
+	
+	if (!empty($field['options'])) {
 		echo form::$format($id, $field['options']);
-	else:
+	} else {
 		echo form::$format($id);
-	endif;
+	}
+	
+	if (!empty($field['help'])) {
+		echo '<span class="sq-help-text">'.$field['help'].'</span>';
+	}
 	echo '</div>';
 endforeach ?>
 

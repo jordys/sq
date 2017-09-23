@@ -2,10 +2,14 @@
 
 $sort = false;
 
-if (!$model->options['inline-view']): ?>
-	<?=form::open() ?>
-	
-	<table class="sq-list <?=$model->options['inline-view'] ? 'sq-inline' : '' ?>">
+if (!$model->options['inline-view']):
+	if (!$model->options['picker']):
+		echo form::open();
+	endif;
+
+?>	
+<div class="sq-list <?=$model->options['inline-view'] ? 'sq-inline' : '' ?>">
+	<table>
 		<thead>
 			<tr>
 				<? foreach ($fields as $name => $type):
@@ -84,6 +88,9 @@ if (!$model->options['inline-view']): ?>
 	<? if ($sort): ?>
 		<button class="sq-action sq-sort-action" name="action" value="sort">Update</button>
 	<? endif ?>
+</div>
 	
-	<?=form::close() ?>
+	<? if (!$model->options['picker']):
+		echo form::close();
+	endif ?>
 <? endif ?>
