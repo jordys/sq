@@ -30,7 +30,10 @@ return [
 				'first' => 'text',
 				'last' => 'text',
 				'email' => 'text',
-				'level' => 'select|users/admin-types',
+				'level' => [
+					'format' => 'select',
+					'options' => 'users/user-types'
+				],
 				'notes' => 'blurb'
 			]
 		],
@@ -44,7 +47,7 @@ return [
 		],
 		
 		// Types of users selectable in admin module
-		'admin-types' => [
+		'user-types' => [
 			'user' => 'User',
 			'admin' => 'Admin'
 		]
