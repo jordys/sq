@@ -2,7 +2,7 @@
 
 /**
  * Controller component base class
- * 
+ *
  * This class is extended to create controllers in the application that contain
  * actions triggered by different routes. This base class contains methods to
  * call different actions, as well as a few default actions to inherit.
@@ -17,11 +17,11 @@
  */
 
 abstract class sqController extends component {
-	
+
 	/**
 	 * Call an action within the controller
-	 * 
-	 * Calls the passed in action. A null argument will result in the index 
+	 *
+	 * Calls the passed in action. A null argument will result in the index
 	 * action being called. Additional arguments cann be passed to the action as
 	 * an array.
 	 */
@@ -29,19 +29,19 @@ abstract class sqController extends component {
 		if (!$action) {
 			$action = 'index';
 		}
-		
+
 		$action = strtolower($action);
-		
+
 		// Strip action parameter of dashes and underscores
 		$method = str_replace('-', '', $action);
 		$method = str_replace('_', '', $method);
-		
+
 		// Filter can return a view such as a login screen or true indicating
 		// it's ok to proceed calling an action
 		$data = $this->filter($action);
-		
+
 		if ($data === true) {
-			
+
 			// Call the action method or the default action
 			if (method_exists($this, $method.$_SERVER['REQUEST_METHOD'].'Action')) {
 				$method = $method.$_SERVER['REQUEST_METHOD'].'Action';
@@ -52,7 +52,7 @@ abstract class sqController extends component {
 			} else {
 				$method = 'defaultAction';
 			}
-			
+
 			// Reflection allows http parameterss to be injected as method
 			// arguments to actions
 			$reflection = new ReflectionMethod(get_called_class(), $method);
@@ -67,35 +67,35 @@ abstract class sqController extends component {
 					sq::error('404', "Query parameter '{$param->getName()}' required for $action action.");
 				}
 			}
-			
+
 			$data = $reflection->invokeArgs($this, $args);
 		}
-		
+
 		// If something was returned set it as a new layout
 		if ($data) {
 			$this->layout = $data;
 		}
-		
+
 		return $this;
 	}
-	
+
 	// Renders the controller layout checking for php errors as it goes
 	public function render() {
-		
+
 		// Show head and foot sections in the top level layout
 		if (is_object($this->layout) && !sq::request()->isAjax) {
 			$this->layout->full = true;
 		}
-		
+
 		$output = (string)$this->layout;
-		
+
 		// If there is an error in the initial rendering render the error
 		// instead of the content
 		if (sq::error()) {
-			
+
 			// Reset the view back to default
 			view::reset();
-			
+
 			// In debug mode call the debug action otherwise call the error
 			// action
 			if (sq::config('debug')) {
@@ -103,33 +103,33 @@ abstract class sqController extends component {
 			} else {
 				$this->action('error', [sq::error()]);
 			}
-			
+
 			if (is_object($this->layout) && !sq::request()->isAjax) {
 				$this->layout->full = true;
 			}
-			
+
 			$output = (string)$this->layout;
 		}
-		
+
 		return $output;
 	}
-	
-	// Default filter action to be overridden in controller classes. Filter 
+
+	// Default filter action to be overridden in controller classes. Filter
 	// accepts the name of the action and returns true or false if it should be
 	// executed. By default there are no access restrictions.
 	public function filter($action) {
 		return true;
 	}
-	
+
 	// Default action is called when the specified action method doesn't exist.
 	// The action argument is the name of the non-existant action. This default
 	// implementation renders the view in views/<controller>/<action>.
 	public function defaultAction($action = 'index') {
 		$class = get_called_class();
-		
+
 		// Check if the file exists. If it doesn't throw a 404 error.
 		if (view::exists($class.'/'.$action)) {
-			
+
 			// If a layout exists use the view as content
 			if (is_object($this->layout)) {
 				$this->layout->content = sq::view($class.'/'.$action);
@@ -140,13 +140,13 @@ abstract class sqController extends component {
 			sq::error('404');
 		}
 	}
-	
-	// Default error action that may be overridden in the controller. You can 
+
+	// Default error action that may be overridden in the controller. You can
 	// also just create your own 404.php in the views directory and the
 	// framework will use your view with this action.
 	public function errorAction($error) {
 		sq::response()->status($error['code']);
-		
+
 		// If a layout exists use the view as content
 		if (is_object($this->layout)) {
 			$this->layout->content = sq::view('error', ['error' => $error]);
@@ -154,13 +154,13 @@ abstract class sqController extends component {
 			return sq::view('error', ['error' => $error]);
 		}
 	}
-	
+
 	// If debug mode is enabled this method will be used instead of the error
 	// action above. This method prints out a stack trace of the PHP error
 	// instead of a generic 404 page.
 	public function debugAction($error) {
 		sq::response()->status($error['code']);
-		
+
 		if (is_object($this->layout)) {
 			$this->layout->content = sq::view('debug', ['error' => $error]);
 		} else {
@@ -168,5 +168,3 @@ abstract class sqController extends component {
 		}
 	}
 }
-
-?>

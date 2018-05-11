@@ -13,24 +13,24 @@
  */
 
 abstract class sqWidget extends component {
-	
+
 	// Handle setting parameters to defined widget properties
 	public function __construct($params = [], $options = []) {
-		
+
 		// Set the properties in the params array to the widget
 		foreach ($params as $key => $val) {
 			if (!property_exists($this, $key)) {
 				sq::error('404', "Unsupported argument '{$key}' passed to ".get_class($this).' widget.');
 			}
-			
+
 			$this->$key = $val;
 		}
-		
+
 		$this->layout = 'widgets/'.get_class($this);
-		
+
 		parent::__construct($options);
 	}
-	
+
 	// Render the layout to the screen if there is one
 	public function render() {
 		if (is_object($this->layout)) {
@@ -38,5 +38,3 @@ abstract class sqWidget extends component {
 		}
 	}
 }
-
-?>

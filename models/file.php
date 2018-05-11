@@ -12,19 +12,19 @@
  */
 
 class file extends model {
-	
+
 	// Set memory limit to the value in model config and make sure the model
 	// directory exists
 	public function __construct($options) {
 		parent::__construct($options);
-		
+
 		if (!file_exists($this->options['path'])) {
 			mkdir($this->options['path'], 0777, true);
 		}
-		
+
 		ini_set('memory_limit', $this->options['memory-limit']);
 	}
-	
+
 	/**
 	 * Create a file
 	 *
@@ -33,12 +33,12 @@ class file extends model {
 	 */
 	public function create($data = null) {
 		$this->set($data);
-		
+
 		file_put_contents($this->options['path'].'/'.$this->data['file'], $this->data['content']);
-		
+
 		return $this->where($this->data['file'])->read();
 	}
-	
+
 	/**
 	 * Read files from the directory that match the where statment
 	 *
@@ -48,50 +48,50 @@ class file extends model {
 	 * file properties to add to the record object.
 	 */
 	public function read($type = null) {
-		
+
 		// If no where statement is applied and data is set assume the record
 		// being altered is the current one
 		if (empty($this->options['where']) && isset($this->data['id'])) {
 			$this->where($this->data['id']);
 		}
-		
+
 		// Loop through the items in the directory
 		foreach ($this->readDirectory($type) as $item) {
-			
+
 			// If this is a single record break out of the loop and set the data
 			// directly to the model
 			if ($this->isSingle()) {
 				$this->data = $item;
 				break;
 			}
-			
+
 			// Set the data to a model and place that model into the collection
 			$model = sq::model($this->options['name'], [
 				'use-layout' => false,
 				'load-relations' => $this->options['load-relations']
 			])->where($item['id'])->limit()->set($item);
-			
+
 			$model->isRead = true;
-			
+
 			$this->data[] = $model;
 		}
-		
+
 		$this->isRead = true;
-		
+
 		if (!$this->isSingle()) {
 			if ($this->options['order']) {
 				$this->order($this->options['order'], $this->options['order-direction']);
 			}
 		}
-		
+
 		// Call relation setup if enabled
 		if ($this->options['load-relations']) {
 			$this->relateModel();
 		}
-		
+
 		return $this;
 	}
-	
+
 	/**
 	 * Update an existing file
 	 *
@@ -100,30 +100,30 @@ class file extends model {
 	 * 'shorthand' parameters to pass in the data and a where statement.
 	 */
 	public function update($data = null, $where = null) {
-		
+
 		// Handle shorthand to update only file content
 		if (is_string($data)) {
 			$data = ['content' => $data];
 		}
-		
+
 		if ($where) {
 			$this->where($where);
 		}
-		
+
 		if (!$this->isRead) {
 			$this->read();
 		}
-		
+
 		$this->set($data);
-		
+
 		$data = $this->data;
-		
+
 		$this->delete()->create($data);
 		$this->onRelated('update');
-		
+
 		return $this;
 	}
-	
+
 	/**
 	 * Delete file(s) from directory
 	 *
@@ -134,13 +134,13 @@ class file extends model {
 		if ($where) {
 			$this->where($where);
 		}
-		
+
 		if (!$this->isRead) {
 			$this->read();
 		}
-		
+
 		$this->onRelated('delete');
-		
+
 		if ($this->isSingle()) {
 			unlink($this->options['path'].'/'.$this->data['file']);
 		} else {
@@ -148,23 +148,23 @@ class file extends model {
 				$item->delete();
 			}
 		}
-		
+
 		$this->data = [];
-		
+
 		return $this;
 	}
-	
+
 	/**
 	 * Counts records
 	 *
-	 * Returns the number of items in the collection matched by the where 
+	 * Returns the number of items in the collection matched by the where
 	 * statement. Returns the full number counted not just the first page when
 	 * using pagination.
 	 */
 	public function count() {
 		return count($this->readDirectory());
 	}
-	
+
 	/**
 	 * Uploads a file into the model directory
 	 *
@@ -173,23 +173,23 @@ class file extends model {
 	 * file. If a name isn't specified the existing file name will be used.
 	 */
 	public function upload($file = null, $name = null) {
-		
+
 		// File can either be a file array or a string to look for in the files
 		// array
 		if (is_string($file)) {
 			$file = $_FILES[$file];
 		}
-		
+
 		// Get name from upload file if it isn't specified
 		if (!$name) {
 			$name = basename($file['name']);
 		}
-				
+
 		move_uploaded_file($file['tmp_name'], $this->options['path'].'/'.$name);
-		
+
 		return $this->find($name);
 	}
-	
+
 	/**
 	 * Returns an empty model
 	 *
@@ -198,7 +198,7 @@ class file extends model {
 	 */
 	public function columns() {
 		$this->limit();
-		
+
 		$this->data = [
 			'content' => null,
 			'file' => null,
@@ -208,10 +208,10 @@ class file extends model {
 			'url' => null,
 			'id' => null
 		];
-		
+
 		return $this;
 	}
-	
+
 	/**
 	 * Creates an image variant
 	 *
@@ -230,12 +230,12 @@ class file extends model {
 		if (is_string($variant)) {
 			$variant = sq::config('variants/'.$variant);
 		}
-		
+
 		// If the variant format isn't specified it will match the master file
 		if (empty($variant['format'])) {
 			$variant['format'] = $this->extension;
 		}
-		
+
 		switch ($variant['format']) {
 			case 'gif':
 				$format = IMAGETYPE_GIF;
@@ -247,7 +247,7 @@ class file extends model {
 				$format = IMAGETYPE_JPEG;
 				break;
 		}
-		
+
 		// Generate the variation if it doesn't already exist
 		$variantPath = $this->options['path'].'/variants/'.$variant['w'].'x'.$variant['h'].'/'.$this->data['name'].'.'.$variant['format'];
 		if (!file_exists($variantPath) || $regenerate) {
@@ -255,30 +255,30 @@ class file extends model {
 			$image->resample($variant['w'], $variant['h']);
 			$image->save($variantPath, $format);
 		}
-		
+
 		return $variantPath;
 	}
-	
+
 	// Reads through a directory and returns an array of the file properties
 	private function readDirectory($readType = null) {
 		$data = [];
-		
+
 		$path = $this->options['path'];
 		if (!empty($this->options['where']['path'])) {
 			$path = $this->options['where']['path'];
 		}
-		
-		
+
+
 		foreach (new DirectoryIterator($path) as $file) {
-			
+
 			// Skip hidden files
 			if ($file->getFilename()[0] == '.') {
 				continue;
 			}
-			
+
 			if (!$readType || $file->getType() == $readType) {
 				$extension = pathinfo($file->getFilename(), PATHINFO_EXTENSION);
-				
+
 				// Use pathinfo here because getExtendsion isn't in PHP 5.3
 				$item = [
 					'file' => $file->getFilename(),
@@ -288,51 +288,51 @@ class file extends model {
 					'path' => $file->getPath(),
 					'type' => $file->getType()
 				];
-				
+
 				if ($file->isFile()) {
 					if ($this->options['read-content'] == 'always' || ($this->isSingle() && $this->options['read-content'])) {
 						$item['content'] = file_get_contents($file->getPathname());
 					}
 					$item['extension'] = $extension;
 				}
-				
+
 				// Skip if where statment isn't a match
 				if ($this->checkWhereStatement($item)) {
 					$data[] = $item;
 				}
 			}
 		}
-		
+
 		return $this->limitItems($data);
 	}
-	
+
 	// Utility method to trim the current items in the collection to the currect
 	// number
 	private function limitItems($items) {
 		$limit = $this->options['limit'];
-		
+
 		// Guard against no limit
 		if (!$limit) {
 			return $items;
 		}
-		
+
 		if (is_int($limit)) {
 			$limit = [0, $limit];
 		}
-		
+
 		return array_slice($items, $limit[0], $limit[1]);
 	}
-	
+
 	// Checks if the file read matches the where statument
 	private function checkWhereStatement($fileData) {
 		if (empty($this->options['where'])) {
 			return true;
 		}
-		
+
 		foreach ($this->options['where'] as $key => $val) {
 			if ($fileData[$key] == $val) {
 				$status = true;
-				
+
 				if ($this->options['where-operation'] == 'OR') {
 					return true;
 				}
@@ -340,9 +340,7 @@ class file extends model {
 				$status = false;
 			}
 		}
-		
+
 		return $status;
 	}
 }
-
-?>

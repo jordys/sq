@@ -17,28 +17,28 @@ sq::load('/defaults/model');
 sq::load('/defaults/auth');
 
 return [
-	
+
 	// Debug mode
 	'debug' => false,
-	
+
 	// Parameter to manually set the root path of the app. If false PHP will
 	// attempt to derive the path.
 	'base' => false,
-	
+
 	// Controller to call if none is requested
 	'default-controller' => 'site',
-	
+
 	// PHP timezone for date_default_timezone_set
 	'timezone' => 'America/Phoenix',
-	
+
 	// Directories to look in for autoloading classes. The order determines what
 	// directories are searched first. As soon as a class is found the script
 	// stops looking.
 	'autoload' => ['components', 'controllers', 'models', 'vendor'],
-	
+
 	// Enable logging of errors
 	'log-errors' => true,
-	
+
 	// Friendly labels for PHP errors used for in the log instead of the useless
 	// numbers
 	'error-labels' => [
@@ -58,5 +58,3 @@ return [
 		4096 => 'RECOVERABLE ERROR'
 	]
 ];
-
-?>

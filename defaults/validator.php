@@ -6,7 +6,7 @@
 
 return [
 	'validator' => [
-		
+
 		// Default error messages. {label} will be replaced with the name of the
 		// field and {value} will be replaced with the invalid value.
 		'messages' => [
@@ -19,5 +19,3 @@ return [
 		]
 	]
 ];
-
-?>

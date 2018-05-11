@@ -17,23 +17,23 @@ abstract class sqAsset extends component {
 
 	// Stores the asset path
 	private $path = null;
-	
+
 	// Checks to see if the asset is already built and builds it if necessary
 	public function __construct($path, $options) {
 		$this->path = $path;
-		
+
 		parent::__construct($options);
-		
+
 		if (!$this->check() || sq::config('debug')) {
 			$this->build();
 		}
 	}
-	
+
 	// Asset returns the file url when treated like a string
 	public function render() {
 		return sq::base().$this->getFilePath();
 	}
-	
+
 	/**
 	 * Checks if asset exists
 	 *
@@ -42,7 +42,7 @@ abstract class sqAsset extends component {
 	public function check() {
 		return file_exists($this->getFilePath());
 	}
-	
+
 	/**
 	 * Builds asset files
 	 *
@@ -52,18 +52,18 @@ abstract class sqAsset extends component {
 	public function build() {
 		$assetPath = 'assets/'.$this->path;
 		$buildPath = sq::root().$this->getFilePath();
-		
+
 		$fragments = explode('/', $this->path);
 		$module = $fragments[0];
 		array_shift($fragments);
 		$modulePath = 'modules/'.$module.'/assets/'.implode('/', $fragments);
-		
+
 		// Create built asset directory if it doesn't exist
 		$dir = dirname($buildPath);
 		if (!is_dir($dir)) {
 			mkdir($dir, $this->options['permissions'], true);
 		}
-		
+
 		// Directories searched for the asset in order: app/assets,
 		// app/<module>/assets, sq/assets, sq/<module>/assets
 		if (file_exists(sq::root().$assetPath)) {
@@ -75,34 +75,32 @@ abstract class sqAsset extends component {
 		} elseif (file_exists(sq::path().$modulePath)) {
 			self::recursiveCopy(sq::path().$modulePath, $buildPath);
 		}
-		
+
 		return $this;
 	}
-	
+
 	// Returns the md5 path of an asset
 	private function getFilePath() {
 		return $this->options['path'].'/'.md5($this->options['revision']).'/'.$this->path;
 	}
-	
+
 	// Utility function to copy directories recursively
 	private static function recursiveCopy($path, $destination) {
 		if (is_dir($path)) {
 			if (!file_exists($destination)) {
 				mkdir($destination);
 			}
-			
+
 			$handle = opendir($path);
 			while (false !== ($file = readdir($handle))) {
 				if ($file != '..' && $file[0] != '.') {
 					self::recursiveCopy($path.'/'.$file, $destination.'/'.$file);
 				}
 			}
-			
+
 			closedir($handle);
 		} else {
 			copy($path, $destination);
 		}
 	}
 }
-
-?>

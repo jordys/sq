@@ -17,7 +17,7 @@ return [
 			'password' => 'VARCHAR(255) NOT NULL',
 			'created'  => 'TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP'
 		],
-		
+
 		'fields' => [
 			'list' => [
 				'created' => 'date',
@@ -37,7 +37,7 @@ return [
 				'notes' => 'blurb'
 			]
 		],
-		
+
 		// Change password is a unique action to users so we override the inline
 		// actions
 		'inline-actions' => [
@@ -45,7 +45,7 @@ return [
 			'password' => 'Change Password',
 			'update' => 'Edit'
 		],
-		
+
 		// Types of users selectable in admin module
 		'user-types' => [
 			'user' => 'User',
@@ -53,5 +53,3 @@ return [
 		]
 	]
 ];
-
-?>
