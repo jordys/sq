@@ -376,6 +376,28 @@ abstract class sqModel extends component {
 		return $this->relate($model, $options, 'many-many');
 	}
 
+	/**
+	 * Generates a preview link
+	 *
+	 * Creates a preview link using the values declared in options. The preview
+	 * option array contains a route parameter map except the values will be
+	 * replaced with the keys from the currently selected model record.
+	 *
+	 * @return sqRoute The URL object of the preview page
+	 */
+	public function previewURL() {
+		$preview = $this->options['preview'];
+		foreach ($preview as $key => $val) {
+			if (isset($this->$val)) {
+				$preview[$key] = $this->$val;
+			} else {
+				throw new Error('The preview URL parameter "'.$val.'" does not exist on this model record. No URL can be generated.');
+			}
+		}
+
+		return sq::route()->to($preview);
+	}
+
 	// Creates a model relationship. Can be called directly or with the helper
 	// hasOne, hasMany, belongsTo and manyMany methods.
 	protected function relate($name, $options, $type) {
