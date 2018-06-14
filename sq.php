@@ -53,6 +53,9 @@ class sq {
 			}
 		}, E_ALL & E_NOTICE & E_USER_NOTICE);
 
+		// Require the autoloader for 3rd party code
+		require 'vendor/autoload.php';
+
 		// Framework configuration defaults
 		self::load('/defaults/main');
 
@@ -532,5 +535,3 @@ class sq {
 		return $options;
 	}
 }
-
-?>
