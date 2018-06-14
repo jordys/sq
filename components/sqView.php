@@ -407,4 +407,21 @@ var sq = {
 
 		return $string;
 	}
+
+	/**
+	 * Handles turning a word into it's plural form automatically
+	 *
+	 * @param int $value The number value that determines if the word should be
+	 *  singular or plural
+	 * @param string $singular The singular form of the word
+	 * @param string $plural The plural form of the word. If not specified the
+	 *  singular form will be used with an "s" bolted on the end.
+	 */
+	public static function pluralize($value, $singular, $plural = null) {
+		if ($value == 1) {
+			return $singular;
+		}
+
+		return $plural ?: $singular.'s';
+	}
 }
