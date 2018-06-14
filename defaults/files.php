@@ -9,7 +9,7 @@ return [
 		'type' => 'file',
 
 		'actions' => ['upload', 'folder' => 'New Folder'],
-		'inline-actions' => ['delete'],
+		'inline-actions' => ['delete' => 'Delete'],
 		'items-per-page' => 20,
 
 		'fields' => [
@@ -19,5 +19,14 @@ return [
 				'url' => 'link'
 			]
 		]
+	],
+
+	// SQ files is a database object that can overlay files in the system to
+	// add additional metadata such as captions, alt text and ordering code.
+	'extended_files' => [
+		'type' => 'extendedFile',
+
+		'actions' => ['upload'],
+		'inline-actions' => ['delete' => 'Delete'],
 	]
 ];

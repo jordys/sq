@@ -13,6 +13,10 @@ return [
 		// model config.
 		'default-type' => 'sql',
 
+		// Sub types of the model. For example a pages model may have 'home',
+		// 'hub' and 'standard' types. Null by default.
+		'types' => null,
+
 		// When true the model will be displayed as a hierarchy in the admin
 		// module
 		'hierarchy' => false,
@@ -49,8 +53,8 @@ return [
 		// Checks for form double submits and prevents them
 		'prevent-duplicates' => true,
 
-		// Tie model content to the currently authenticated user by the users_id
-		// field
+		// Tie model content to the currently authenticated user by the
+		// users_id field
 		'user-specific' => false,
 
 		// Set to false to disable model layout views
@@ -82,7 +86,10 @@ return [
 
 		// Actions for admin modules
 		'actions' => ['create' => 'New'],
-		'inline-actions' => ['delete' => 'Delete', 'update' => 'Edit']
+		'inline-actions' => [],
+
+		// Table schema array
+		'schema' => null
 	],
 
 	// SQL model type configuration
@@ -94,10 +101,7 @@ return [
 		'port' => 3306,
 		'username' => 'root',
 		'password' => 'root',
-		'dbname' => 'database',
-
-		// Table schema array
-		'schema' => null
+		'dbname' => 'database'
 	],
 
 	// File model type configuration
@@ -119,10 +123,18 @@ return [
 		'read-content' => 'single'
 	],
 
+	// File model type configuration
+	'extendedFile' => [
+		'list-view' => 'forms/grid',
+		'path' => 'uploads',
+		'memory-limit' => '16M',
+		'read-content' => 'single'
+	],
+
 	// Available image variant sizes. These variations can be called on file
 	// model for images to resize them on the fly. The variant file format is
-	// declarable as well. Formats can be gif, jpg or png. If not defined format
-	// will match the base file format.
+	// declarable as well. Formats can be gif, jpg or png. If not defined
+	// format will match the base file format.
 	'variants' => [
 		'small'  => ['w' => 150, 'h' => 150],
 		'medium' => ['w' => 400, 'h' => 400],

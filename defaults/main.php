@@ -15,6 +15,7 @@ sq::load('/defaults/view');
 sq::load('/defaults/form');
 sq::load('/defaults/model');
 sq::load('/defaults/auth');
+sq::load('/defaults/files');
 
 return [
 
