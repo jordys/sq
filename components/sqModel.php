@@ -289,16 +289,85 @@ abstract class sqModel extends component {
 
 		$offset = $perPage * $page - $perPage;
 
-		if ($this->isRead) {
-			$this->options['pages'] = ceil(count($this->data) / $perPage);
-			$this->data = array_splice($this->data, $offset, $perPage);
-		} else {
-			$this->options['pages'] = ceil($this->count() / $perPage);
-		}
-
+		$this->options['pages'] = ceil($this->count() / $perPage);
 		$this->options['limit'] = [$offset, $perPage];
+		$this->data = array_splice($this->data, $offset, $perPage);
 
 		return $this;
+	}
+
+	/**
+	 * Returns the correct user friendly title of the model
+	 *
+	 * The name option may either be passed in as a single value or an array of
+	 * two values. When an array is used the first value will be the plural
+	 * form of the title and the second will be the singular form.
+	 *
+	 * If only a single value is in the name option the singular form will be
+	 * assumed to be the plural form without the 's' at the end.
+	 *
+	 * @param string $plurality Return singular or plural form of the title. If
+	 *  left blank it will be inferred from the model.
+	 * @param string $type Return the title of the specified type not of the
+	 *  overall model
+	 * @return string The correct title for the model single|plural
+	 */
+	public function getTitle($plurality = null, $type = null) {
+		$title = isset($this->options['title'])
+			? $this->options['title']
+			: ucwords($this->options['name']);
+
+		if ($type) {
+			$title = $this->options['types'][$type];
+		}
+
+		// @TODO Unify this with the code in the view
+		if (is_string($title)) {
+			if (substr($title, -1) == 's') {
+				$singular = substr($title, 0, -1);
+			} else {
+				$singular = $title;
+				$title = $title.'s';
+			}
+
+			$title = [$title, $singular];
+		}
+
+		if ($plurality == 'singular' || (!$plurality && $this->isSingle())) {
+			return $title[1];
+		}
+
+		return $title[0];
+	}
+
+	/**
+	 * Generates a preview link
+	 *
+	 * Creates a preview link using the values declared in options. The preview
+	 * option array contains a route parameter map except the values will be
+	 * replaced with the keys from the currently selected model record.
+	 *
+	 * @return sqRoute The URL object of the preview page
+	 */
+	public function getPreviewURL() {
+		$preview = $this->options['preview'];
+
+		// Preview URLs may be unique for different types of content. If the
+		// model contains multiple types then different urls are required for
+		// each type.
+		if (isset($this->type)) {
+			$preview = $this->options['preview'][$this->type];
+		}
+
+		foreach ($preview as $key => $val) {
+			if (isset($this->$val)) {
+				$preview[$key] = $this->$val;
+			} else {
+				throw new Error('The preview URL parameter "'.$val.'" does not exist on this model record. No URL can be generated.');
+			}
+		}
+
+		return sq::route()->to($preview);
 	}
 
 	// Returns true if the object represents a single data entry. False if the
@@ -377,25 +446,12 @@ abstract class sqModel extends component {
 	}
 
 	/**
-	 * Generates a preview link
+	 * Returns the highest value in the specified column in the current set.
 	 *
-	 * Creates a preview link using the values declared in options. The preview
-	 * option array contains a route parameter map except the values will be
-	 * replaced with the keys from the currently selected model record.
-	 *
-	 * @return sqRoute The URL object of the preview page
+	 * @param string $key
 	 */
-	public function previewURL() {
-		$preview = $this->options['preview'];
-		foreach ($preview as $key => $val) {
-			if (isset($this->$val)) {
-				$preview[$key] = $this->$val;
-			} else {
-				throw new Error('The preview URL parameter "'.$val.'" does not exist on this model record. No URL can be generated.');
-			}
-		}
-
-		return sq::route()->to($preview);
+	public function max($column) {
+		return max(array_column($this->data, $column));
 	}
 
 	// Creates a model relationship. Can be called directly or with the helper
