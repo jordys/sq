@@ -174,9 +174,37 @@ abstract class sqForm extends model {
 		return htmlentities($attrs['symbol']).' '.self::element($name, $value, $attrs);
 	}
 
-	// Desplays a related model inline as a form within the form
-	public static function inline($name, $model, $value) {
+	public static function files($name, $model, $value = null) {
 		$model = sq::model($model);
+		$value = self::getValue($name, $value);
+
+		// @TODO Clean up this hack
+		if (!$value) {
+			echo '<span class="sq-help-text">Please pick a folder containing the images you want to use for your gallery.</span>';
+			return form::picker($name, [
+				'model' => 'files',
+				'button-text' => 'Choose Folder',
+				'open' => true,
+				'where' => ['type' => 'dir']
+			]);
+		}
+
+		echo '<span class="sq-help-text">Click and drag to reorder images. Images are stored in \''.sq::root().$value.'\'. Upload images there to add them to this gallery.</span>';
+
+		$model->search([
+			'path' => $value,
+			'type' => 'file'
+		]);
+
+		$model->layout->view = 'forms/files';
+
+		return $model;
+	}
+
+	// Desplays a related model inline as a form within the form
+	public static function inline($name, $model, $value = null) {
+		$model = sq::model($model);
+		$value = self::getValue($name, $value);
 
 		if ($value) {
 			$model->where($value);
@@ -198,6 +226,7 @@ abstract class sqForm extends model {
 			$options = ['model' => $options];
 		}
 
+		// @TODO Refactor this
 		$attrs['class'] = 'sq-picker-input';
 
 		$options['button-text'] = isset($options['button-text']) ? $options['button-text'] : 'Pick '.ucwords($options['model']);
@@ -205,18 +234,19 @@ abstract class sqForm extends model {
 
 		$input = self::text($name, $value, $attrs);
 
-		$data = '<div class="sq-picker '.(!empty($options['open']) ? 'is-open' : '').'">';
+		$data = '<div class="sq-picker '.(!empty($options['open']) ? 'is-open' : 'sq-picker-files').' '.(isset($options['class']) ? $options['class'] : '').'">';
 
 		if (!isset($options['show-field']) || $options['show-field'] == true) {
 			$data .= '
 				'.self::text($name, $value, $attrs).'
-				<button class="sq-picker-toggle">'.$options['button-text'].'</button>
+				<button class="'.(empty($options['open']) ? 'sq-toggle is-closed' : 'sq-pick').'">'.$options['button-text'].'</button>
 				<a href="clear" class="sq-picker-clear">Clear</a>';
 		} else {
 			$data .= self::hidden($name, $value, $attrs);
 		}
 
-		$model = sq::model($options['model'], ['picker' => true]);
+		$model = sq::model($options['model'], [
+			'picker' => true, 'inline-actions' => null]);
 
 		if (isset($options['where'])) {
 			$model->where($options['where']);
@@ -319,7 +349,7 @@ abstract class sqForm extends model {
 			$name = $match;
 		}
 
-		if (isset($_SESSION['sq-form-errors'][$name])) {
+		if (is_string($name) && isset($_SESSION['sq-form-errors'][$name])) {
 			foreach ($_SESSION['sq-form-errors'][$name] as $error) {
 				return '<span class="sq-error sq-error-message">'.$error['message'].'</span>';
 			}
@@ -348,7 +378,7 @@ abstract class sqForm extends model {
 			$value = null;
 		}
 
-		$attrs['value'] = htmlentities($value);
+		$attrs['value'] = self::getValue($name, $value);
 
 		if (empty($attrs['id'])) {
 			$attrs['id'] = self::parseId($name);
@@ -360,20 +390,27 @@ abstract class sqForm extends model {
 			$attrs['name'] = $name;
 		}
 
-		if (isset($_SESSION['sq-form-data'][$name])) {
-			$attrs['value'] = $_SESSION['sq-form-data'][$name];
-		} elseif (self::$model && isset($_SESSION['sq-form-data'][self::$model->options['name']][$name])) {
-			$attrs['value'] = $_SESSION['sq-form-data'][self::$model->options['name']][$name];
-		} elseif (!$value && self::$model && isset(self::$model->$name)) {
-			$attrs['value'] = self::$model->$name;
-		}
-
 		// Format dates nicely
 		if (isset($attrs['type']) && $attrs['type'] == 'date') {
 			$attrs['value'] = view::date(sq::config('form/date-format'), $attrs['value']);
 		}
 
 		return $attrs;
+	}
+
+	// Gets the value from the form
+	private static function getValue($name, $value) {
+		$value = htmlentities($value);
+
+		if (isset($_SESSION['sq-form-data'][$name])) {
+			$value = $_SESSION['sq-form-data'][$name];
+		} elseif (self::$model && isset($_SESSION['sq-form-data'][self::$model->options['name']][$name])) {
+			$value = $_SESSION['sq-form-data'][self::$model->options['name']][$name];
+		} elseif (!$value && self::$model && isset(self::$model->$name)) {
+			$value = self::$model->$name;
+		}
+
+		return $value;
 	}
 
 	// Gets attrs and then parses them and returns the result

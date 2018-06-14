@@ -142,7 +142,19 @@ class file extends model {
 		$this->onRelated('delete');
 
 		if ($this->isSingle()) {
-			unlink($this->options['path'].'/'.$this->data['file']);
+			if (filetype($this->id) == 'file') {
+				unlink($this->id);
+			} else {
+				$files = new RecursiveDirectoryIterator($this->id, RecursiveDirectoryIterator::SKIP_DOTS | RecursiveIteratorIterator::CHILD_FIRST);
+				foreach($files as $file) {
+					if ($file->isDir()) {
+						rmdir($file->getRealPath());
+					} else {
+						unlink($file->getRealPath());
+					}
+				}
+				rmdir($this->id);
+			}
 		} else {
 			foreach ($this->data as $item) {
 				$item->delete();
@@ -162,7 +174,7 @@ class file extends model {
 	 * using pagination.
 	 */
 	public function count() {
-		return count($this->readDirectory());
+		return count($this->readDirectory(null, true));
 	}
 
 	/**
@@ -206,6 +218,7 @@ class file extends model {
 			'extension' => null,
 			'path' => null,
 			'url' => null,
+			'type' => null,
 			'id' => null
 		];
 
@@ -260,14 +273,13 @@ class file extends model {
 	}
 
 	// Reads through a directory and returns an array of the file properties
-	private function readDirectory($readType = null) {
+	private function readDirectory($readType = null, $noLimit = null) {
 		$data = [];
 
 		$path = $this->options['path'];
 		if (!empty($this->options['where']['path'])) {
 			$path = $this->options['where']['path'];
 		}
-
 
 		foreach (new DirectoryIterator($path) as $file) {
 
@@ -277,14 +289,15 @@ class file extends model {
 			}
 
 			if (!$readType || $file->getType() == $readType) {
-				$extension = pathinfo($file->getFilename(), PATHINFO_EXTENSION);
+				$extension = $file->getExtension();
 
-				// Use pathinfo here because getExtendsion isn't in PHP 5.3
+				// Use pathinfo here because getExtension isn't in PHP 5.3
 				$item = [
+					'created' => $file->getCTime(),
 					'file' => $file->getFilename(),
 					'name' => $file->getBasename('.'.$extension),
 					'url' => sq::base().$file->getPathname(),
-					'id' => $file->getFilename(),
+					'id' => $file->getPathname(),
 					'path' => $file->getPath(),
 					'type' => $file->getType()
 				];
@@ -303,11 +316,15 @@ class file extends model {
 			}
 		}
 
+		if ($noLimit) {
+			return $data;
+		}
+
 		return $this->limitItems($data);
 	}
 
-	// Utility method to trim the current items in the collection to the currect
-	// number
+	// Utility method to trim the current items in the collection to the
+	// correct number
 	private function limitItems($items) {
 		$limit = $this->options['limit'];
 
