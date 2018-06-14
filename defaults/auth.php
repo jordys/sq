@@ -26,7 +26,10 @@ return [
 		// Automatically rehash passwords using no security standards
 		'rehash-passwords' => true,
 
+		// The type of username. Either 'email' or 'username'.
+		'username-type' => 'Email address',
+
 		// Message to be flashed when a login fails
-		'login-failed-message' => 'Username or password not recognized.'
+		'login-failed-message' => 'Email address or password not recognized.'
 	]
 ];

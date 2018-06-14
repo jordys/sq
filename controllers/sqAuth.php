@@ -48,8 +48,7 @@ abstract class sqAuth extends controller {
 	// sets a session. If the remember argument is true and the remember-me
 	// option is true a cookie will be set as well.
 	public function login($username, $password = false, $remember = false) {
-		$user = sq::model('users')
-			->find(['email' => $username]);
+		$user = sq::model('users')->find(['email' => $username]);
 
 		// Guard against invalid login
 		if ($password === false || !$user->count() || !self::authenticate($password, $user->password)) {
@@ -118,7 +117,7 @@ abstract class sqAuth extends controller {
 		$this->login($username, $password, $remember);
 
 		if (!sq::request()->isAjax) {
-			sq::response()->redirect();
+			sq::response()->reset();
 		}
 	}
 
@@ -127,7 +126,7 @@ abstract class sqAuth extends controller {
 		$this->logout();
 
 		if (!sq::request()->isAjax) {
-			sq::response()->redirect();
+			sq::response()->reset();
 		}
 	}
 }
