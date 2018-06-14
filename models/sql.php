@@ -251,8 +251,8 @@ class sql extends model {
 
 	// Returns count of records matched by the where query
 	public function count() {
-		if ($this->isRead) {
-			return count($this->data);
+		if ($this->isRead && !$this->options['pages']) {
+			return parent::count();
 		}
 
 		$query = 'SELECT COUNT(*) FROM '.$this->sanitize($this->options['table']);
