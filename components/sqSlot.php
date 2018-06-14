@@ -10,6 +10,11 @@
  *
  * More rendering types can be added by extending this class with static methods
  * for the type(s) you want to create.
+ *
+ * @example
+ * sq::slot('my-slot', 'Homepage Slot', ['type' => 'markdown'])
+ *
+ * @category component
  */
 
 abstract class sqSlot extends component {
@@ -18,25 +23,25 @@ abstract class sqSlot extends component {
 	public $slot;
 
 	// Cache of the slots model
-	protected static $slots;
+	protected static $model;
 
 	// Extended controller sets up the slot model
-	public function __construct($id, $name, $options) {
+	public function __construct($id, $title, $options) {
 		parent::__construct($options);
 
-		// Create model object if one doesn't already exist and read slots and
-		// cache them to the view
-		if (!self::$slots) {
-			self::$slots = sq::model('sq_slots')->read();
+		// Create model object if one doesn't already exist, read slots and
+		// cache them
+		if (!self::$model) {
+			self::$model = sq::model('sq_slots')->make()->all();
 		}
 
-		// Find the requested slot and create if it doesn't exist
-		$this->slot = self::$slots->find($id);
+		// Find or create the requested slot
+		$this->slot = self::$model->find($id);
 		if (!$this->slot) {
 			$this->slot = sq::model('sq_slots')->create([
-				'id' => $id,
-				'name' => $name,
-				'type' => $this->options['type'],
+				'id'      => $id,
+				'title'   => $title,
+				'type'    => $this->options['type'],
 				'content' => $this->options['content']
 			]);
 		}
@@ -72,12 +77,12 @@ abstract class sqSlot extends component {
 	}
 
 
-	/***************************************************************************
+	/**************************************************************************
 	 * Slot type methods
 	 *
 	 * These methods are called dynamically to generate the formatted slot
 	 * content. More can be created by extending this class.
-	 **************************************************************************/
+	 *************************************************************************/
 
 	// Render the slot content as markdown (default)
 	public static function markdown($slot) {
