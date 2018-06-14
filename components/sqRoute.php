@@ -27,7 +27,10 @@ abstract class sqRoute extends component {
 				$route = $val;
 			}
 
-			$routeParts = explode('/', $route);
+			// Strip query string off the end of the route url
+			$route = preg_replace('/.*(?=\?\w)/', '', $route);
+
+			$routeParts = explode('/', trim($route, '/'));
 
 			if (count($routeParts) + substr_count($route, '|') < count($uriParts)) {
 				continue;
@@ -46,11 +49,11 @@ abstract class sqRoute extends component {
 					$adjust--;
 				} elseif (strpos($routePart, '?') && isset($uriParts[$index]) && in_array($uriParts[$index], $routeParts)) {
 					$adjust++;
-				} elseif (array_key_exists($index, $uriParts) && $routePart[0] == '{') {
+				} elseif (array_key_exists($index, $uriParts) && isset($routePart[0]) && $routePart[0] == '{') {
 					$params[$this->getKey($routePart)] = $uriParts[$index];
 				} elseif (!array_key_exists($index, $uriParts) && strpos($routePart, '=') !== false) {
 					$params[$this->getKey($routePart)] = $this->getValue($routePart);
-				} elseif (isset($uriParts[$index]) && $uriParts[$index] !== $routePart && $routePart[0] != '{') {
+				} elseif (isset($uriParts[$index]) && $uriParts[$index] !== $routePart && isset($routePart[0]) && $routePart[0] != '{') {
 					continue 2;
 				}
 			}
@@ -75,6 +78,10 @@ abstract class sqRoute extends component {
 	public function to($fragments) {
 		$this->fragments = [];
 
+		if (module::$name) {
+			$this->append('module', module::$name);
+		}
+
 		return $this->append($fragments);
 	}
 
@@ -86,8 +93,14 @@ abstract class sqRoute extends component {
 	}
 
 	// Removes a fragment from the current url object
-	public function remove($fragment) {
-		unset($this->fragments[$fragment]);
+	public function remove($fragments) {
+		if (is_string($fragments)) {
+			$fragments = [$fragments];
+		}
+
+		foreach ($fragments as $fragment) {
+			unset($this->fragments[$fragment]);
+		}
 
 		return $this;
 	}
@@ -142,14 +155,6 @@ abstract class sqRoute extends component {
 			// then skip the rule
 			if ((substr_count($route, '{') - substr_count($route, '?')) > count($this->fragments)) {
 				continue;
-			}
-
-			// If the rule has params specified that don't match the supplied
-			// url fragments then skip the rule
-			foreach ($params as $key => $val) {
-				if (!isset($this->fragments[$key]) || $this->fragments[$key] != $val) {
-					continue 2;
-				}
 			}
 
 			// Loop through the array of url fragments and try to match them

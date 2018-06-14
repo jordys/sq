@@ -17,7 +17,7 @@ abstract class sqModule extends component {
 
 	// Name is a bit of a hack to allow the load function to know the name of
 	// module
-	private static $name;
+	public static $name;
 
 	// Basic module setup
 	public function __construct($options) {
