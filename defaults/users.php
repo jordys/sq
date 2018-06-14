@@ -38,8 +38,8 @@ return [
 			]
 		],
 
-		// Change password is a unique action to users so we override the inline
-		// actions
+		// Change password is a unique action to users so we override the
+		// inline actions
 		'inline-actions' => [
 			'delete' => 'Delete',
 			'password' => 'Change Password',
