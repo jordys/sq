@@ -448,10 +448,19 @@ abstract class sqModel extends component {
 	/**
 	 * Returns the highest value in the specified column in the current set.
 	 *
-	 * @param string $key
+	 * @param string $column Column to get the max value of
 	 */
 	public function max($column) {
 		return max(array_column($this->data, $column));
+	}
+
+	/**
+	 * Returns the lowest value in the specified column in the current set.
+	 *
+	 * @param string $column Column to get the min value of
+	 */
+	public function min($column) {
+		return min(array_column($this->data, $column));
 	}
 
 	// Creates a model relationship. Can be called directly or with the helper
