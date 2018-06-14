@@ -11,9 +11,6 @@ abstract class sqPagination extends widget {
 	// Model attribute is passed into the widget
 	public $model;
 
-	// Setup layout
-	public $layout = 'widgets/pagination';
-
 	// Init is always called after component setup. Here it's overridden to set
 	// the widget data to the model.
 	public function init() {
