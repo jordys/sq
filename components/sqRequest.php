@@ -52,6 +52,12 @@ abstract class sqRequest extends component {
 		return $this->param('any', $param, $default);
 	}
 
+	// Returns true if the passed in url matches the current URL
+	public function isCurrent($url) {
+		$protocol = (isset($_SERVER['HTTPS']) ? 'https' : 'http').'://';
+		return $url == $protocol.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+	}
+
 	// Gets a model passed as part of a form
 	public function model($name) {
 		if ($this->post('sq-model') && in_array($name, $this->post('sq-model'))) {
