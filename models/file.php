@@ -58,8 +58,8 @@ class file extends model {
 		// Loop through the items in the directory
 		foreach ($this->readDirectory($type) as $item) {
 
-			// If this is a single record break out of the loop and set the data
-			// directly to the model
+			// If this is a single record break out of the loop and set the
+			// data directly to the model
 			if ($this->isSingle()) {
 				$this->data = $item;
 				break;
@@ -264,9 +264,11 @@ class file extends model {
 		// Generate the variation if it doesn't already exist
 		$variantPath = $this->options['path'].'/variants/'.$variant['w'].'x'.$variant['h'].'/'.$this->data['name'].'.'.$variant['format'];
 		if (!file_exists($variantPath) || $regenerate) {
-			$image = new ImageManipulator(sq::root().$this->options['path'].'/'.$this->data['file']);
+			ini_set('memory_limit', '256M');
+			$image = new ImageManipulator(sq::root().$this->data['id']);
 			$image->resample($variant['w'], $variant['h']);
 			$image->save($variantPath, $format);
+			unset($image);
 		}
 
 		return $variantPath;
