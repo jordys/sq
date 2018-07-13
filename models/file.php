@@ -21,8 +21,6 @@ class file extends model {
 		if (!file_exists($this->options['path'])) {
 			mkdir($this->options['path'], 0777, true);
 		}
-
-		ini_set('memory_limit', $this->options['memory-limit']);
 	}
 
 	/**
@@ -264,14 +262,14 @@ class file extends model {
 		// Generate the variation if it doesn't already exist
 		$variantPath = $this->options['path'].'/variants/'.$variant['w'].'x'.$variant['h'].'/'.$this->data['name'].'.'.$variant['format'];
 		if (!file_exists($variantPath) || $regenerate) {
-			ini_set('memory_limit', '256M');
+			ini_set('memory_limit', $this->options['memory-limit']);
 			$image = new ImageManipulator(sq::root().$this->data['id']);
 			$image->resample($variant['w'], $variant['h']);
 			$image->save($variantPath, $format);
 			unset($image);
 		}
 
-		return $variantPath;
+		return sq::base().$variantPath;
 	}
 
 	// Reads through a directory and returns an array of the file properties

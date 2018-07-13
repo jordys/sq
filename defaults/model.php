@@ -115,7 +115,7 @@ return [
 
 		// Amount of memory allowed to be used for the image transformation
 		// process
-		'memory-limit' => '16M',
+		'memory-limit' => '128M',
 
 		// Read content from files. Values are false to never read, 'single' to
 		// online read for single file querries and 'always' to read content
