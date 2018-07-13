@@ -48,7 +48,7 @@ abstract class sqView extends component {
 	// In template variables. Setting these changes the value included in the
 	// html head tag.
 	public static $description, $doctype, $title, $language, $favicon, $id,
-		$head, $foot, $top, $charset, $keywords = [];
+		$class, $head, $foot, $top, $charset, $keywords = [];
 
 	// Setup the view
 	public function __construct($view, $data = [], $options = []) {
@@ -240,12 +240,8 @@ abstract class sqView extends component {
 		// Close head tag
 		$head .= '</head>';
 
-		// Open the body tag optionally with an id
-		if (self::$id) {
-			$head .= '<body id="'.self::$id.'">';
-		} else {
-			$head .= '<body>';
-		}
+		// Open the body tag optionally with an id and a class
+		$head .= '<body '.(self::$id ? 'id="'.self::$id.'"' : '').' '.(self::$class ? 'class="'.self::$class.'"' : '').'>';
 
 		return $head;
 	}
