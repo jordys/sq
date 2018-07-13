@@ -29,7 +29,7 @@
 	<div class="sq-grid-item" data-id="<?=$item->id ?>">
 		<? if ($item->type == 'file'): ?>
 			<a href="<?=$item->url ?>">
-				<?=listing::image($item->url) ?>
+				<img data-src="<?=$item->url ?>" src="<?=$item->variant('small') ?>"/>
 				<span class="sq-grid-label" title="<?=listing::text($item->name) ?>"><?=listing::text($item->name) ?></span>
 			</a>
 		<? else: ?>
