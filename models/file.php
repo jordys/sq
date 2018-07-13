@@ -262,6 +262,7 @@ class file extends model {
 		// Generate the variation if it doesn't already exist
 		$variantPath = $this->options['path'].'/variants/'.$variant['w'].'x'.$variant['h'].'/'.$this->data['name'].'.'.$variant['format'];
 		if (!file_exists($variantPath) || $regenerate) {
+			set_time_limit($this->options['time-limit']);
 			ini_set('memory_limit', $this->options['memory-limit']);
 			$image = new ImageManipulator(sq::root().$this->data['id']);
 			$image->resample($variant['w'], $variant['h']);

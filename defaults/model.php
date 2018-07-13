@@ -117,6 +117,9 @@ return [
 		// process
 		'memory-limit' => '128M',
 
+		// Ammount of time in seconds script will be given for image processing
+		'time-limit' => 500,
+
 		// Read content from files. Values are false to never read, 'single' to
 		// online read for single file querries and 'always' to read content
 		// when searching and reading a single file.
@@ -127,8 +130,10 @@ return [
 	'extendedFile' => [
 		'list-view' => 'forms/grid',
 		'path' => 'uploads',
-		'memory-limit' => '16M',
-		'read-content' => 'single'
+		'read-content' => 'single',
+		'memory-limit' => '128M',
+		'time-limit' => 500,
+		'read-content' => 'never'
 	],
 
 	// Available image variant sizes. These variations can be called on file

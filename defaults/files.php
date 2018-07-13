@@ -25,7 +25,6 @@ return [
 	// add additional metadata such as captions, alt text and ordering code.
 	'extended_files' => [
 		'type' => 'extendedFile',
-		'read-content' => 'never',
 
 		'actions' => ['upload'],
 		'inline-actions' => ['delete' => 'Delete'],
