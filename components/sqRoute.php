@@ -75,11 +75,17 @@ abstract class sqRoute extends component {
 
 	// Clears the current arguments and replaces them with the passed in
 	// fragments
-	public function to($fragments) {
+	public function to($fragments, $module = null) {
 		$this->fragments = [];
 
-		if (module::$name) {
+		// The current module is assumed
+		if (module::$name && $module === null) {
 			$this->append('module', module::$name);
+
+		// If false is passed for the module the url is generated without a
+		// module in it
+		} else if ($module !== false) {
+			$this->append('module', $module);
 		}
 
 		return $this->append($fragments);
@@ -147,8 +153,8 @@ abstract class sqRoute extends component {
 				$params = [];
 			}
 
-			// Remove default values from rule string because they aren't needed
-			// and mess matching up
+			// Remove default values from rule string because they aren't
+			// needed and mess matching up
 			$route = preg_replace('/\=[^{)]+?}/U', '?}', $route);
 
 			// If the rule has more sections than the supplied url fragments

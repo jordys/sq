@@ -367,7 +367,7 @@ abstract class sqModel extends component {
 			}
 		}
 
-		return sq::route()->to($preview);
+		return sq::route()->to($preview, false);
 	}
 
 	// Returns true if the object represents a single data entry. False if the
