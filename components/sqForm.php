@@ -392,6 +392,7 @@ abstract class sqForm extends model {
 
 		// Format dates nicely
 		if (isset($attrs['type']) && $attrs['type'] == 'date') {
+			$attrs['data-date'] = $attrs['value'];
 			$attrs['value'] = view::date(sq::config('form/date-format'), $attrs['value']);
 		}
 
