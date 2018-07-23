@@ -84,7 +84,7 @@ abstract class sqRoute extends component {
 
 		// If false is passed for the module the url is generated without a
 		// module in it
-		} else if ($module !== false) {
+		} else if ($module) {
 			$this->append('module', $module);
 		}
 

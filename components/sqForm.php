@@ -151,7 +151,7 @@ abstract class sqForm extends model {
 	// Similar to textarea but with a richtext class presumably to use tinyMCE
 	// or suchlike
 	public static function richtext($name, $value = null, $attrs = []) {
-		$attrs['class'] = 'sq-input-richtext';
+		$attrs['class'] = 'sq-rich-editor';
 
 		return self::textarea($name, $value, $attrs);
 	}
