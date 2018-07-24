@@ -1,23 +1,23 @@
 <? self::$title = $error['code'].' | '.self::$title ?>
-<section class="sq-debug">
+<div class="sq-debug">
 	<h2>Error <?=$error['code'] ?></h2>
 	<? if (isset($error['debug'])): ?>
 		<p class="sq-debug-message"><?=$error['debug'] ?></p>
 	<? endif ?>
 	<? if (isset($error['line'])): ?>
 		<p class="sq-debug-error"><strong>Line #<?=$error['line'] ?></strong> <?=$error['string'] ?> in <?=$error['file'] ?></p>
-		
+
 		<div class="sq-debug-trace">
 			<h2>Trace</h2>
 			<? foreach ($error['trace'] as $line):
 				if (!isset($line['class'])):
 					$line['class'] = null;
 				endif;
-				
+
 				if (!isset($line['type'])):
 					$line['type'] = null;
 				endif;
-				
+
 				if (isset($line['args'])):
 					$args = [];
 					foreach ($line['args'] as $arg):
@@ -31,10 +31,10 @@
 							$args[] = $arg;
 						endif;
 					endforeach;
-					
+
 					$line['args'] = '('.implode(', ', $args).')';
 				endif;
-				
+
 				?>
 				<p>
 					<? if (isset($line['line']) && isset($line['file'])): ?>
@@ -48,4 +48,4 @@
 			<? endforeach ?>
 		</div>
 	<? endif ?>
-</section>
+</div>
