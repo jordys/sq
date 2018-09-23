@@ -64,16 +64,20 @@ class ImageManipulator
 
         switch ($type) {
             case IMAGETYPE_GIF  :
-                $this->image = imagecreatefromgif($file);
+                $this->image = @imagecreatefromgif($file);
                 break;
             case IMAGETYPE_JPEG :
-                $this->image = imagecreatefromjpeg($file);
+                $this->image = @imagecreatefromjpeg($file);
                 break;
             case IMAGETYPE_PNG  :
-                $this->image = imagecreatefrompng($file);
+                $this->image = @imagecreatefrompng($file);
                 break;
             default             :
                 throw new InvalidArgumentException("Image type $type not supported");
+        }
+
+        if (!$this->image) {
+            $this->setImageFile(__DIR__.'/error.jpg');
         }
 
         return $this;
