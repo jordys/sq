@@ -54,8 +54,14 @@ abstract class sqRequest extends component {
 
 	// Returns true if the passed in url matches the current URL
 	public function isCurrent($url) {
-		$protocol = (isset($_SERVER['HTTPS']) ? 'https' : 'http').'://';
-		return $url == $protocol.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+		if (sq::config('base')) {
+			$base = sq::config('base');
+		} else {
+			$base = (isset($_SERVER['HTTPS']) ? 'https' : 'http').'://';
+			$base .= $_SERVER['HTTP_HOST'];
+		}
+
+		return $url == str_replace('//', '/', $base.$_SERVER['REQUEST_URI']);
 	}
 
 	// Gets a model passed as part of a form
