@@ -25,7 +25,7 @@ return [
 			'title'  => 'VARCHAR(100) NOT NULL',
 			'format' => 'VARCHAR(100) NOT NULL',
 			'help'   => 'VARCHAR(255) NOT NULL',
-			'value'  => 'VARCHAR(100)'
+			'value'  => 'TEXT'
 		],
 		'actions' => [],
 		'inline-actions' => [
