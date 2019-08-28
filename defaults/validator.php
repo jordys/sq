@@ -15,7 +15,8 @@ return [
 			'integer'  => '{label} needs to be an integer',
 			'email'    => '{value} is not a valid email address',
 			'url'      => '{value} is not a valid URL',
-			'generic'  => '{label} is not valid'
+			'generic'  => '{label} is not valid',
+			'color'    => '{value} is not a valid color code'
 		]
 	]
 ];

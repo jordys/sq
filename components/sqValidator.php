@@ -108,6 +108,19 @@ abstract class sqValidator extends component {
 		return !$value || filter_var($value, FILTER_VALIDATE_URL);
 	}
 
+	// Value is a color hex code
+	public static function color($value) {
+		if (!$value) {
+			return true;
+		}
+
+		if (!preg_match('/([a-f0-9]{3}){1,2}\b/i', $value)) {
+			return false;
+		}
+
+		return ltrim($value, '#');
+	}
+
 	// Marks a field as having a NULL state in the database and handles form
 	// parsing so the correct type is used
 	public static function nullable($value) {

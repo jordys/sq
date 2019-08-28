@@ -172,6 +172,14 @@ abstract class sqForm extends model {
 		return htmlentities($attrs['symbol']).' '.self::element($name, $value, $attrs);
 	}
 
+	// Color hex code input
+	public static function color($name, $value = null, $attrs = []) {
+		$attrs['class'] = 'sq-input-color';
+		$attrs['type'] = 'text';
+
+		return '# '.self::element($name, $value, $attrs);
+	}
+
 	public static function files($name, $model, $value = null) {
 		$model = sq::model($model);
 		$value = self::getValue($name, $value);
