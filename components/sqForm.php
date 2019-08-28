@@ -90,11 +90,8 @@ abstract class sqForm extends model {
 	// General form input
 	public static function element($name, $value = null, $attrs = []) {
 		if (self::inputError($name)) {
-			if (isset($attrs['class'])) {
-				$attrs['class'] .= ' sq-error sq-error-field';
-			}
-
-			$attrs['class'] = 'sq-error sq-error-field';
+			$attrs['class'] = $attrs['class'] ?? '';
+			$attrs['class'] .= ' sq-error sq-error-field';
 		}
 
 		return '<input '.self::buildAttrs($name, $attrs, $value).'/>'.self::inputError($name);
@@ -166,6 +163,7 @@ abstract class sqForm extends model {
 	// Money input
 	public static function currency($name, $value = null, $attrs = []) {
 		$attrs['class'] = 'sq-input-currency';
+		$attrs['type'] = 'text';
 
 		if (empty($attrs['symbol'])) {
 			$attrs['symbol'] = '$';

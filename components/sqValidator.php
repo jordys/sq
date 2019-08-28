@@ -48,18 +48,18 @@ abstract class sqValidator extends component {
 					}
 				}
 
-				$value = self::$rule($value);
+				$processedValue = self::$rule($value);
 
 				// If result isn't a simple boolean update the data with the
 				// result of the validation
-				if ($value !== true) {
-					$this->$field = $value;
+				if ($processedValue !== true) {
+					$this->$field = $processedValue;
 				}
 
-				if ($value === false) {
+				if ($processedValue === false) {
 					$this->errors[$field][] = [
 						'rule' => $rule,
-						'message' => $this->message($message, $field, $this->$field)
+						'message' => $this->message($message, $field, $value)
 					];
 
 					$this->isValid = false;
