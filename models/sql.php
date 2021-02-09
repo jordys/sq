@@ -374,7 +374,7 @@ class sql extends model {
 			if (!is_array($val) && !is_object($val)) {
 				$key = $this->sanitize($key);
 
-				if ($val === null || $val === '') {
+				if ($val === null) {
 					unset($data[$key]);
 					$set[] = "$key = NULL";
 				} else {
